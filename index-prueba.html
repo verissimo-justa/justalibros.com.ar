@@ -233,25 +233,32 @@
 
         function cerrarModal() { document.getElementById('modal-libro').style.display = 'none'; }
 
-        function filtrarCatalogo() {
-            const busqueda = document.getElementById('buscador').value.toLowerCase();
-            const catSeleccionada = document.getElementById('filtro-categoria').value;
-            const estSeleccionado = document.getElementById('filtro-estado');
+     function filtrarCatalogo() {
+    // Convertimos lo que escribe el usuario a minúsculas
+    const busqueda = document.getElementById('buscador').value.toLowerCase().trim();
+    const catSeleccionada = document.getElementById('filtro-categoria').value;
+    const estSeleccionado = document.getElementById('filtro-estado');
 
-            const filtrados = librosData.filter(libro => {
-                const coincideTexto = (libro.titulo && libro.titulo.toLowerCase().includes(busqueda)) || 
-                                      (libro.autor && libro.autor.toLowerCase().includes(busqueda)) || 
-                                      (libro.editorial && libro.editorial.toLowerCase().includes(busqueda));
-                
-                const coincideCategoria = !catSeleccionada || 
-                                          (libro.categoria1 && libro.categoria1 === catSeleccionada) || 
-                                          (libro.categoria2 && libro.categoria2 === catSeleccionada);
-                
-                const coincideEstado = !estSeleccionado || !estSeleccionado.value || (libro.estado && libro.estado === estSeleccionado.value);
-                
-                return coincideTexto && coincideCategoria && coincideEstado;
-            });
-            renderizarLibros(filtrados);
+    const filtrados = librosData.filter(libro => {
+        // Nos aseguramos de que existan los textos y los pasamos a minúsculas para comparar
+        const tituloLibro = libro.titulo ? libro.titulo.toLowerCase() : '';
+        const autorLibro = libro.autor ? libro.autor.toLowerCase() : '';
+        const editorialLibro = libro.editorial ? libro.editorial.toLowerCase() : '';
+
+        const coincideTexto = !busqueda || 
+                              tituloLibro.includes(busqueda) || 
+                              autorLibro.includes(busqueda) || 
+                              editorialLibro.includes(busqueda);
+        
+        const coincideCategoria = !catSeleccionada || 
+                                  (libro.categoria1 && libro.categoria1 === catSeleccionada) || 
+                                  (libro.categoria2 && libro.categoria2 === catSeleccionada);
+        
+        const coincideEstado = !estSeleccionado || !estSeleccionado.value || (libro.estado && libro.estado === estSeleccionado.value);
+        
+        return coincideTexto && coincideCategoria && coincideEstado;
+    });
+    renderizarLibros(filtrados);
         }
 
         document.getElementById('buscador').addEventListener('input', filtrarCatalogo);
