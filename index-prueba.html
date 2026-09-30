@@ -47,39 +47,41 @@
         .no-resultados { grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: #8c8177; font-size: 1.2rem; }
 
         /* --- Lupa / zoom --- */
-.portada-contenedor { cursor: zoom-in; }
+        .portada-contenedor { cursor: zoom-in; }
 
-.zoom-lens {
-    position: absolute;
-    border: 1px solid #7d6c5b;
-    background: rgba(255,255,255,0.15);
-    pointer-events: none;
-    display: none;
-    z-index: 5;
-    border-radius: 4px;
-}
+        .zoom-lens {
+            position: absolute;
+            border: 1px solid #7d6c5b;
+            background: rgba(255,255,255,0.15);
+            pointer-events: none;
+            display: none;
+            z-index: 5;
+            border-radius: 4px;
+        }
 
-.zoom-panel {
-    position: fixed;
-    width: 320px;
-    height: 320px;
-    border: 1px solid #e6e2da;
-    border-radius: 12px;
-    background-color: #ffffff;
-    background-repeat: no-repeat;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
-    pointer-events: none;
-    display: none;
-    z-index: 999;
-    overflow: hidden;
-}
+        .zoom-panel {
+            position: fixed;
+            width: 320px;
+            height: 320px;
+            border: 1px solid #e6e2da;
+            border-radius: 12px;
+            background-color: #ffffff;
+            background-repeat: no-repeat;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+            pointer-events: none;
+            display: none;
+            z-index: 999;
+            overflow: hidden;
+        }
 
-/* En el modal, la lupa también funciona */
-.modal-fotos img { cursor: zoom-in; }
-        
+        .modal-fotos img { cursor: zoom-in; }
     </style>
 </head>
 <body>
+    <!-- Lupa / zoom: deben existir ANTES del script -->
+    <div class="zoom-lens" id="zoom-lens"></div>
+    <div class="zoom-panel" id="zoom-panel"></div>
+
     <header>
         <h1>JUSTA Libros</h1>
         <p>Catálogo de libros usados en venta</p>
@@ -171,7 +173,6 @@
                 transformHeader: h => normalizar(h).replace(/\s+/g, '')
             });
 
-            // Mapeamos claves posibles a un formato interno uniforme
             return parsed.data
                 .map(r => ({
                     id:         (r.id || '').toString().trim(),
@@ -341,123 +342,111 @@
         document.getElementById('filtro-categoria').addEventListener('change', filtrarCatalogo);
         document.getElementById('filtro-estado').addEventListener('change', filtrarCatalogo);
 
-// ============================================================
-// LUPA / ZOOM al pasar el mouse por las imágenes
-// ============================================================
-(function iniciarLupa() {
-    const lens = document.getElementById('zoom-lens');
-    const panel = document.getElementById('zoom-panel');
-    const ZOOM = 2.5;               // factor de ampliación
-    const LENS_SIZE = 120;          // tamaño del lente en px
-    const PANEL_SIZE = 320;         // debe coincidir con el CSS
-
-    let imgActiva = null;
-
-    function posicionarPanel(e) {
-        let x = e.clientX + 20;
-        let y = e.clientY + 20;
-
-        // Evitamos que el panel se salga de la pantalla
-        if (x + PANEL_SIZE > window.innerWidth) x = e.clientX - PANEL_SIZE - 20;
-        if (y + PANEL_SIZE > window.innerHeight) y = e.clientY - PANEL_SIZE - 20;
-
-        panel.style.left = x + 'px';
-        panel.style.top = y + 'px';
-    }
-
-    function activarLupa(img) {
-        imgActiva = img;
-        const rect = img.getBoundingClientRect();
-
-        // El lente solo tiene sentido si la imagen ya se cargó
-        if (!img.complete || img.naturalWidth === 0) return;
-
-        lens.style.width = LENS_SIZE + 'px';
-        lens.style.height = LENS_SIZE + 'px';
-        lens.style.display = 'block';
-
-        // El panel usa la misma imagen como background ampliado
-        panel.style.backgroundImage = `url("${img.src}")`;
-        panel.style.backgroundSize = (rect.width * ZOOM) + 'px ' + (rect.height * ZOOM) + 'px';
-        panel.style.display = 'block';
-    }
-
-    function moverLupa(e) {
-        if (!imgActiva) return;
-
-        const rect = imgActiva.getBoundingClientRect();
-
-        // Coordenadas relativas a la imagen
-        let x = e.clientX - rect.left;
-        let y = e.clientY - rect.top;
-
-        // Límites del lente
-        let lx = x - LENS_SIZE / 2;
-        let ly = y - LENS_SIZE / 2;
-        if (lx < 0) lx = 0;
-        if (ly < 0) ly = 0;
-        if (lx > rect.width - LENS_SIZE) lx = rect.width - LENS_SIZE;
-        if (ly > rect.height - LENS_SIZE) ly = rect.height - LENS_SIZE;
-
-        // El lente se ubica dentro del contenedor .portada-contenedor (position:relative)
-        if (imgActiva.parentElement.classList.contains('portada-contenedor')) {
-            lens.style.left = lx + 'px';
-            lens.style.top = ly + 'px';
-        } else {
-            // Para las imágenes del modal, usamos coordenadas de viewport
-            lens.style.position = 'fixed';
-            lens.style.left = (rect.left + lx) + 'px';
-            lens.style.top = (rect.top + ly) + 'px';
-        }
-
-        // Desplazamos el fondo del panel para que coincida con la zona del lente
-        const bgX = -(lx * ZOOM);
-        const bgY = -(ly * ZOOM);
-        panel.style.backgroundPosition = `${bgX}px ${bgY}px`;
-
-        posicionarPanel(e);
-    }
-
-    function desactivarLupa() {
-        imgActiva = null;
-        lens.style.display = 'none';
-        lens.style.display = 'none';
-        panel.style.display = 'none';
-    }
-
-    // Delegación de eventos: funciona con tarjetas creadas dinámicamente
-    document.addEventListener('mouseover', (e) => {
-        const img = e.target.closest('img.portada-img, .modal-fotos img');
-        if (img && img.src && !img.src.startsWith('data:')) {
-            activarLupa(img);
-        }
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (imgActiva) moverLupa(e);
-    });
-
-    document.addEventListener('mouseout', (e) => {
-        const img = e.target.closest('img.portada-img, .modal-fotos img');
-        if (img && img === imgActiva) {
-            desactivarLupa();
-        }
-    });
-
-    // Si el modal se cierra, apagamos la lupa
-    const observer = new MutationObserver(() => {
-        if (document.getElementById('modal-libro').style.display === 'none') {
-            desactivarLupa();
-        }
-    });
-    observer.observe(document.getElementById('modal-libro'), { attributes: true, attributeFilter: ['style'] });
-})();
-        
         window.addEventListener('DOMContentLoaded', cargarCatalogo);
-    </script>
 
-<div class="zoom-lens" id="zoom-lens"></div>
-<div class="zoom-panel" id="zoom-panel"></div>
-    
+        // ============================================================
+        // LUPA / ZOOM al pasar el mouse por las imágenes
+        // Se inicializa cuando el DOM está listo
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const lens = document.getElementById('zoom-lens');
+            const panel = document.getElementById('zoom-panel');
+            const ZOOM = 2.5;
+            const LENS_SIZE = 120;
+            const PANEL_SIZE = 320;
+
+            let imgActiva = null;
+
+            function posicionarPanel(e) {
+                let x = e.clientX + 20;
+                let y = e.clientY + 20;
+
+                if (x + PANEL_SIZE > window.innerWidth) x = e.clientX - PANEL_SIZE - 20;
+                if (y + PANEL_SIZE > window.innerHeight) y = e.clientY - PANEL_SIZE - 20;
+
+                panel.style.left = x + 'px';
+                panel.style.top = y + 'px';
+            }
+
+            function activarLupa(img) {
+                if (!img || !img.complete || img.naturalWidth === 0) return;
+                if (img.src.startsWith('data:')) return;
+
+                imgActiva = img;
+
+                const rect = img.getBoundingClientRect();
+
+                lens.style.position = 'absolute';
+                lens.style.width = LENS_SIZE + 'px';
+                lens.style.height = LENS_SIZE + 'px';
+                lens.style.display = 'block';
+
+                panel.style.backgroundImage = `url("${img.src}")`;
+                panel.style.backgroundSize = (rect.width * ZOOM) + 'px ' + (rect.height * ZOOM) + 'px';
+                panel.style.display = 'block';
+            }
+
+            function moverLupa(e) {
+                if (!imgActiva) return;
+
+                const rect = imgActiva.getBoundingClientRect();
+
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+
+                let lx = x - LENS_SIZE / 2;
+                let ly = y - LENS_SIZE / 2;
+                if (lx < 0) lx = 0;
+                if (ly < 0) ly = 0;
+                if (lx > rect.width - LENS_SIZE) lx = rect.width - LENS_SIZE;
+                if (ly > rect.height - LENS_SIZE) ly = rect.height - LENS_SIZE;
+
+                if (imgActiva.parentElement.classList.contains('portada-contenedor')) {
+                    lens.style.position = 'absolute';
+                    lens.style.left = lx + 'px';
+                    lens.style.top = ly + 'px';
+                } else {
+                    lens.style.position = 'fixed';
+                    lens.style.left = (rect.left + lx) + 'px';
+                    lens.style.top = (rect.top + ly) + 'px';
+                }
+
+                const bgX = -(lx * ZOOM);
+                const bgY = -(ly * ZOOM);
+                panel.style.backgroundPosition = `${bgX}px ${bgY}px`;
+
+                posicionarPanel(e);
+            }
+
+            function desactivarLupa() {
+                imgActiva = null;
+                lens.style.display = 'none';
+                panel.style.display = 'none';
+            }
+
+            // Delegación: funciona con tarjetas creadas dinámicamente
+            document.addEventListener('mouseover', (e) => {
+                const img = e.target.closest('img.portada-img, .modal-fotos img');
+                if (img) activarLupa(img);
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (imgActiva) moverLupa(e);
+            });
+
+            document.addEventListener('mouseout', (e) => {
+                const img = e.target.closest('img.portada-img, .modal-fotos img');
+                if (img && img === imgActiva) desactivarLupa();
+            });
+
+            // Si el modal se cierra, apagamos la lupa
+            const observer = new MutationObserver(() => {
+                if (document.getElementById('modal-libro').style.display === 'none') {
+                    desactivarLupa();
+                }
+            });
+            observer.observe(document.getElementById('modal-libro'), { attributes: true, attributeFilter: ['style'] });
+        });
+    </script>
 </body>
 </html>
