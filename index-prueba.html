@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Justa Libros | Catálogo Oficial de Pruebas</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
-    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+
+    <!-- PapaParse para leer CSV correctamente -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Figtree', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { font-family: 'Figtree', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #fbfaf7; color: #1a1715; }
         header { max-width: 1200px; margin: 40px auto 20px; text-align: center; }
         header h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px; }
         header p { color: #6d655f; font-size: 1.1rem; }
@@ -20,7 +23,7 @@
         .tarjeta { background: #ffffff; border-radius: 12px; border: 1px solid #e6e2da; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .tarjeta:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.03); }
         .portada-contenedor { width: 100%; height: 300px; background: #f3efe6; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .portada-img { width: 100%; height: 100%; object-fit: cover; }
+        .portada-img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; }
         .portada-fallback { padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%; border-left: 12px solid #7d6c5b; background: linear-gradient(135deg, #f9f6f0, #eae4d7); position: absolute; top:0; left:0; z-index: 1; }
         .fallback-titulo { font-size: 1.1rem; font-weight: 700; color: #3a322d; line-height: 1.3; }
         .fallback-autor { font-size: 0.9rem; color: #7d6c5b; font-weight: 500; }
@@ -49,6 +52,7 @@
         <h1>JUSTA Libros</h1>
         <p>Catálogo de libros usados en venta</p>
     </header>
+
     <div class="panel-control">
         <div class="contador-libros" id="contador">Cargando estantes...</div>
         <input type="text" id="buscador" placeholder="Buscar por título, autor o editorial...">
@@ -59,13 +63,15 @@
             <option value="">Todos los estados</option>
         </select>
     </div>
+
     <div class="grilla" id="grilla-libros"></div>
+
     <div class="modal" id="modal-libro" onclick="if(event.target === this) cerrarModal()">
         <div class="modal-contenido">
             <button class="btn-cerrar" onclick="cerrarModal()">&times;</button>
             <div class="modal-fotos">
-                <img id="modal-tapa" src="" alt="Tapa" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://w3.org width=%22140%22 height=%22210%22><rect width=%22100%%22 height=%22100%%22 fill=%22%23eae4d7%22/><text x=%2250%%22 y=%2250%%22 font-family=%22sans-serif%22 font-size=%2214%22 fill=%22%237d6c5b%22 text-anchor=%22middle%22>Sin Tapa</text></svg>'">
-                <img id="modal-contratapa" src="" alt="Contratapa" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://w3.org width=%22140%22 height=%22210%22><rect width=%22100%%22 height=%22100%%22 fill=%22%23eae4d7%22/><text x=%2250%%22 y=%2250%%22 font-family=%22sans-serif%22 font-size=%2214%22 fill=%22%237d6c5b%22 text-anchor=%22middle%22>Sin Contrata</text></svg>'">
+                <img id="modal-tapa" src="" alt="Tapa">
+                <img id="modal-contratapa" src="" alt="Contratapa">
             </div>
             <div class="modal-info">
                 <h2 id="modal-titulo"></h2>
@@ -78,22 +84,39 @@
             </div>
         </div>
     </div>
-         <script>
-        // Ruta exacta a tu archivo local en la raíz de GitHub
+
+    <script>
+        // Ruta exacta al CSV publicado de tu Google Sheet
         const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?output=csv';
 
         let librosData = [];
 
+        // ---------- Utilidades ----------
+        const normalizar = (txt) => (txt || '')
+            .toString()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim();
+
+        const formatearPrecio = (precio) => {
+            if (!precio) return '-';
+            const num = parseInt(precio.toString().replace(/[^0-9]/g, ''), 10);
+            return isNaN(num) ? precio : '$' + num.toLocaleString('es-AR');
+        };
+
+        // ---------- Carga del catálogo ----------
         async function cargarCatalogo() {
+            const contador = document.getElementById('contador');
             try {
                 const respuesta = await fetch(URL_SHEETS_CSV);
+                if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+
                 const textoCsv = await respuesta.text();
-                
-                // Procesamos el texto de forma hiper-segura
                 librosData = interpretarCSV(textoCsv);
-                
+
                 if (librosData.length === 0) {
-                    document.getElementById('contador').innerText = "Catálogo vacío o formato no reconocido.";
+                    contador.innerText = "Catálogo vacío o formato no reconocido.";
                     return;
                 }
 
@@ -101,58 +124,66 @@
                 renderizarLibros(librosData);
             } catch (error) {
                 console.error("Error en la carga:", error);
-                document.getElementById('contador').innerText = "Error al conectar con el archivo de libros.";
+                contador.innerText = "Error al conectar con el archivo de libros.";
             }
         }
 
-function interpretarCSV(texto) {
-    // Limpiamos espacios y caracteres invisibles al inicio y final
-    const limpio = texto.replace(/^\uFEFF/, "").trim();
-    const lineas = limpio.split(/\r?\n/);
-    
-    // Si el archivo tiene menos de 2 líneas (encabezado + 1 libro), salimos
-    if (lineas.length < 2) return [];
+        // ---------- Parser CSV con PapaParse ----------
+        function interpretarCSV(texto) {
+            const limpio = texto.replace(/^\uFEFF/, '').trim();
+            if (!limpio) return [];
 
-    // Forzamos el separador por punto y coma (;)
-    const primeraLinea = lineas[0];
-    const separador = primeraLinea.includes(';') ? ';' : ',';
+            const parsed = Papa.parse(limpio, {
+                header: true,
+                skipEmptyLines: true,
+                transformHeader: h => normalizar(h).replace(/\s+/g, '')
+            });
 
-    const resultado = [];
-
-    // Empezamos en i = 1 para saltearnos la primera fila de encabezados
-    for (let i = 1; i < lineas.length; i++) {
-        const lineaActual = lineas[i].trim();
-        if (!lineaActual) continue;
-
-        // Separamos la línea en celdas por punto y coma de forma directa
-        const celdas = lineaActual.split(separador);
-        
-        // Función rápida para limpiar comillas molestas de las puntas
-        const limpiar = (txt) => txt ? txt.trim().replace(/^["']|["']$/g, '') : '';
-
-        // Mapeo directo por posición física de columna en tu Google Sheets:
-        // Col 0=id, 1=titulo, 2=autor, 3=editorial, 4=anio, 5=cat1, 6=cat2, 7=estado, 8=precio, 9=whatsapp
-        const libro = {
-            id: limpiar(celdas[0]),
-            titulo: limpiar(celdas[1]),
-            autor: limpiar(celdas[2]),
-            editorial: limpiar(celdas[3]),
-            anio: limpiar(celdas[4]),
-            categoria1: limpiar(celdas[5]),
-            categoria2: limpiar(celdas[6]),
-            estado: limpiar(celdas[7]),
-            precio: limpiar(celdas[8]),
-            whatsapp: celdas[9] ? celdas[9].trim().replace(/^["']|["']$/g, '') : ''
-        };
-
-        // Si la celda de título tiene texto, guardamos el libro sí o sí
-        if (libro.titulo) {
-            resultado.push(libro);
+            // Mapeamos claves posibles a un formato interno uniforme
+            return parsed.data
+                .map(r => ({
+                    id:         (r.id || '').toString().trim(),
+                    titulo:     (r.titulo || r.título || '').toString().trim(),
+                    autor:      (r.autor || '').toString().trim(),
+                    editorial:  (r.editorial || '').toString().trim(),
+                    anio:       (r.anio || r['año'] || r.ano || '').toString().trim(),
+                    categoria1: (r.categoria1 || r['categoria1'] || r.categoria || '').toString().trim(),
+                    categoria2: (r.categoria2 || r.subcategoria || r['subcategoría'] || '').toString().trim(),
+                    estado:     (r.estado || '').toString().trim(),
+                    precio:     (r.precio || '').toString().trim(),
+                    whatsapp:   (r.whatsapp || '').toString().trim()
+                }))
+                .filter(l => l.titulo);
         }
-    }
-    return resultado;
-}
 
+        // ---------- Filtros dinámicos ----------
+        function popularFiltros(libros) {
+            const selCat = document.getElementById('filtro-categoria');
+            const selEst = document.getElementById('filtro-estado');
+
+            const categorias = new Set();
+            const estados = new Set();
+
+            libros.forEach(l => {
+                if (l.categoria1) categorias.add(l.categoria1);
+                if (l.categoria2) categorias.add(l.categoria2);
+                if (l.estado) estados.add(l.estado);
+            });
+
+            [...categorias].sort().forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c; opt.textContent = c;
+                selCat.appendChild(opt);
+            });
+
+            [...estados].sort().forEach(e => {
+                const opt = document.createElement('option');
+                opt.value = e; opt.textContent = e;
+                selEst.appendChild(opt);
+            });
+        }
+
+        // ---------- Render de tarjetas ----------
         function renderizarLibros(libros) {
             const grilla = document.getElementById('grilla-libros');
             const contador = document.getElementById('contador');
@@ -166,49 +197,52 @@ function interpretarCSV(texto) {
 
             contador.innerText = `${libros.length} libros disponibles en este momento`;
 
+            const fragment = document.createDocumentFragment();
+
             libros.forEach(libro => {
                 const tarjeta = document.createElement('div');
                 tarjeta.className = 'tarjeta';
                 tarjeta.onclick = () => abrirModal(libro);
-                
-                // Limpiamos el precio por si tiene signos raros
-                let numPrecio = libro.precio ? libro.precio.replace(/[^0-9]/g, '') : '0';
-                let precioFormateado = parseInt(numPrecio) ? parseInt(numPrecio).toLocaleString('es-AR') : libro.precio;
 
                 tarjeta.innerHTML = `
                     <div class="portada-contenedor">
                         <div class="portada-fallback">
                             <div class="fallback-titulo">${libro.titulo}</div>
-                            <div class="fallback-autor">${libro.autor}</div>
+                            <div class="fallback-autor">${libro.autor || ''}</div>
                         </div>
-                        <img class="portada-img" src="./img/${libro.id}-tapa.jpg" alt="${libro.titulo}" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'">
+                        <img class="portada-img" src="./img/${libro.id}-tapa.jpg" alt="${libro.titulo}"
+                             onload="this.previousElementSibling.style.display='none'"
+                             onerror="this.style.display='none'">
                     </div>
                     <div class="info">
                         <h2>${libro.titulo}</h2>
-                        <p class="autor">${libro.autor}</p>
+                        <p class="autor">${libro.autor || ''}</p>
                         <div class="detalles">
                             <strong>Editorial:</strong> ${libro.editorial || '-'}<br>
                             <strong>Estado:</strong> ${libro.estado || '-'}
                         </div>
                     </div>
                     <div class="footer-tarjeta">
-                        <span class="precio">$${precioFormateado}</span>
-                        <span class="btn-comprar" style="background:#1a1715;">Ver ficha</span>
+                        <span class="precio">${formatearPrecio(libro.precio)}</span>
+                        <span class="btn-comprar">Ver ficha</span>
                     </div>
                 `;
-                grilla.appendChild(tarjeta);
+                fragment.appendChild(tarjeta);
             });
+
+            grilla.appendChild(fragment);
         }
 
+        // ---------- Modal ----------
         function abrirModal(libro) {
-            let numPrecio = libro.precio ? libro.precio.replace(/[^0-9]/g, '') : '0';
-            let precioFormateado = parseInt(numPrecio) ? parseInt(numPrecio).toLocaleString('es-AR') : libro.precio;
-
             document.getElementById('modal-titulo').innerText = libro.titulo;
-            document.getElementById('modal-autor').innerText = libro.autor;
-            document.getElementById('modal-precio').innerText = `$${precioFormateado}`;
-            document.getElementById('modal-btn-comprar').href = libro.whatsapp || '#';
-            
+            document.getElementById('modal-autor').innerText = libro.autor || '';
+            document.getElementById('modal-precio').innerText = formatearPrecio(libro.precio);
+
+            const btn = document.getElementById('modal-btn-comprar');
+            btn.href = libro.whatsapp || '#';
+            btn.style.display = libro.whatsapp ? 'inline-block' : 'none';
+
             document.getElementById('modal-txt-detalles').innerHTML = `
                 <p><strong>Editorial:</strong> ${libro.editorial || 'No especificada'}</p>
                 <p><strong>Año de edición:</strong> ${libro.anio || '-'}</p>
@@ -217,46 +251,65 @@ function interpretarCSV(texto) {
                 <p><strong>Estado de conservación:</strong> ${libro.estado || '-'}</p>
             `;
 
-            document.getElementById('modal-tapa').src = `/img/${libro.id}-tapa.jpg`;
-            document.getElementById('modal-contratapa').src = `/img/${libro.id}-contratapa.jpg`;
+            const tapa = document.getElementById('modal-tapa');
+            const contra = document.getElementById('modal-contratapa');
+
+            tapa.src = `./img/${libro.id}-tapa.jpg`;
+            contra.src = `./img/${libro.id}-contratapa.jpg`;
+
+            tapa.onerror = function() { this.src = placeholderSVG('Sin Tapa'); };
+            contra.onerror = function() { this.src = placeholderSVG('Sin Contratapa'); };
+
             document.getElementById('modal-libro').style.display = 'flex';
         }
 
-        function cerrarModal() { document.getElementById('modal-libro').style.display = 'none'; }
-
-     function filtrarCatalogo() {
-    // Convertimos lo que escribe el usuario a minúsculas
-    const busqueda = document.getElementById('buscador').value.toLowerCase().trim();
-    const catSeleccionada = document.getElementById('filtro-categoria').value;
-    const estSeleccionado = document.getElementById('filtro-estado');
-
-    const filtrados = librosData.filter(libro => {
-        // Nos aseguramos de que existan los textos y los pasamos a minúsculas para comparar
-        const tituloLibro = libro.titulo ? libro.titulo.toLowerCase() : '';
-        const autorLibro = libro.autor ? libro.autor.toLowerCase() : '';
-        const editorialLibro = libro.editorial ? libro.editorial.toLowerCase() : '';
-
-        const coincideTexto = !busqueda || 
-                              tituloLibro.includes(busqueda) || 
-                              autorLibro.includes(busqueda) || 
-                              editorialLibro.includes(busqueda);
-        
-        const coincideCategoria = !catSeleccionada || 
-                                  (libro.categoria1 && libro.categoria1 === catSeleccionada) || 
-                                  (libro.categoria2 && libro.categoria2 === catSeleccionada);
-        
-        const coincideEstado = !estSeleccionado || !estSeleccionado.value || (libro.estado && libro.estado === estSeleccionado.value);
-        
-        return coincideTexto && coincideCategoria && coincideEstado;
-    });
-    renderizarLibros(filtrados);
+        function cerrarModal() {
+            document.getElementById('modal-libro').style.display = 'none';
         }
 
+        function placeholderSVG(texto) {
+            return 'data:image/svg+xml;utf8,' + encodeURIComponent(
+                `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="210">
+                    <rect width="100%" height="100%" fill="#eae4d7"/>
+                    <text x="50%" y="50%" font-family="sans-serif" font-size="14" fill="#7d6c5b" text-anchor="middle">${texto}</text>
+                </svg>`
+            );
+        }
+
+        // ---------- Filtro principal ----------
+        function filtrarCatalogo() {
+            const busqueda = normalizar(document.getElementById('buscador').value);
+            const catSeleccionada = document.getElementById('filtro-categoria').value;
+            const estSeleccionado = document.getElementById('filtro-estado').value;
+
+            const filtrados = librosData.filter(libro => {
+                const titulo = normalizar(libro.titulo);
+                const autor = normalizar(libro.autor);
+                const editorial = normalizar(libro.editorial);
+
+                const coincideTexto = !busqueda ||
+                    titulo.includes(busqueda) ||
+                    autor.includes(busqueda) ||
+                    editorial.includes(busqueda);
+
+                const coincideCategoria = !catSeleccionada ||
+                    libro.categoria1 === catSeleccionada ||
+                    libro.categoria2 === catSeleccionada;
+
+                const coincideEstado = !estSeleccionado || libro.estado === estSeleccionado;
+
+                return coincideTexto && coincideCategoria && coincideEstado;
+            });
+
+            renderizarLibros(filtrados);
+        }
+
+        // ---------- Eventos ----------
         document.getElementById('buscador').addEventListener('input', filtrarCatalogo);
         document.getElementById('filtro-categoria').addEventListener('change', filtrarCatalogo);
         document.getElementById('filtro-estado').addEventListener('change', filtrarCatalogo);
 
-        window.onload = cargarCatalogo;
+        window.addEventListener('DOMContentLoaded', cargarCatalogo);
     </script>
 </body>
 </html>
