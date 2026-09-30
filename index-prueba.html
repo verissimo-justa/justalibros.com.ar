@@ -80,7 +80,7 @@
     </div>
      <script>
         // ⚠️ REEMPLAZA EL ENLACE DE ABAJO POR TU ENLACE LARGO DE GOOGLE SHEETS EN FORMATO .CSV
-        const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?output=csv';
+const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?gid=0&single=true&output=csv';
 
         let librosData = [];
         async function cargarCatalogo() {
@@ -95,25 +95,25 @@
             }
         }
 function csvToJson(csv) {
-    // Limpiamos caracteres invisibles raros que suele meter Excel/Sheets al inicio
+    // Limpiamos el texto de saltos de línea raros
     const limpio = csv.replace(/^\uFEFF/, "").trim();
     const lineas = limpio.split(/\r?\n/);
     
-    // Separamos los encabezados usando una coma inteligente
-    const encabezados = lineas[0].split(',').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+    // Google Sheets en español separa los encabezados con PUNTO Y COMA (;)
+    const encabezados = lineas[0].split(';').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
     const resultado = [];
 
     for (let i = 1; i < lineas.length; i++) {
         const lineaActual = lineas[i].trim();
         if (!lineaActual) continue;
         
-        // Expresión de desglose avanzada para no romper el texto si tiene comas internas
-        const celdas = lineaActual.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lineaActual.split(',');
+        // Separamos las celdas usando punto y coma (;) en lugar de coma tradicional
+        const celdas = lineaActual.split(';');
         const obj = {};
         
         encabezados.forEach((encabezado, index) => {
             let valor = celdas[index] ? celdas[index].trim() : '';
-            // Le quitamos las comillas externas al texto procesado
+            // Le quitamos las comillas externas si las tuviera
             if (valor.startsWith('"') && valor.endsWith('"')) {
                 valor = valor.slice(1, -1);
             }
