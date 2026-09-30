@@ -94,22 +94,35 @@
                 document.getElementById('contador').innerText = "Error al cargar. Verifica el enlace CSV.";
             }
         }
-        function csvToJson(csv) {
-            const lineas = csv.split('\n');
-            const encabezados = lineas[0].split(',').map(h => h.trim().toLowerCase());
-            const resultado = [];
-            for (let i = 1; i < lineas.length; i++) {
-                if (!lineas[i].trim()) continue;
-                const celdas = lineas[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*\$)/g) || lineas[i].split(',');
-                const obj = {};
-                encabezados.forEach((encabezado, index) => {
-                    let valor = celdas[index] ? celdas[index].trim() : '';
-                    if (valor.startsWith('"') && valor.endsWith('"')) valor = valor.slice(1, -1);
-                    obj[encabezado] = valor;
-                });
-                resultado.push(obj);
+function csvToJson(csv) {
+    // Limpiamos caracteres invisibles raros que suele meter Excel/Sheets al inicio
+    const limpio = csv.replace(/^\uFEFF/, "").trim();
+    const lineas = limpio.split(/\r?\n/);
+    
+    // Separamos los encabezados usando una coma inteligente
+    const encabezados = lineas[0].split(',').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+    const resultado = [];
+
+    for (let i = 1; i < lineas.length; i++) {
+        const lineaActual = lineas[i].trim();
+        if (!lineaActual) continue;
+        
+        // Expresión de desglose avanzada para no romper el texto si tiene comas internas
+        const celdas = lineaActual.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lineaActual.split(',');
+        const obj = {};
+        
+        encabezados.forEach((encabezado, index) => {
+            let valor = celdas[index] ? celdas[index].trim() : '';
+            // Le quitamos las comillas externas al texto procesado
+            if (valor.startsWith('"') && valor.endsWith('"')) {
+                valor = valor.slice(1, -1);
             }
-            return resultado;
+            obj[encabezado] = valor;
+        });
+        resultado.push(obj);
+    }
+    return resultado;
+}
         }
         function popularFiltros(libros) {
             const catSelect = document.getElementById('filtro-categoria');
