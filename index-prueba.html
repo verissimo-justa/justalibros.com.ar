@@ -78,10 +78,12 @@
             </div>
         </div>
     </div>
-     <script>
-        // ⚠️ REEMPLAZA EL ENLACE DE ABAJO POR TU ENLACE LARGO DE GOOGLE SHEETS EN FORMATO .CSV
-const URL_SHEETS_CSV = '/justa-catalogo-202609.csv';
+       <script>
+        // Dirección exacta de tu archivo local en la raíz de GitHub
+        const URL_SHEETS_CSV = '/justa-catalogo-202609.csv';
+
         let librosData = [];
+
         async function cargarCatalogo() {
             try {
                 const respuesta = await fetch(URL_SHEETS_CSV);
@@ -90,61 +92,69 @@ const URL_SHEETS_CSV = '/justa-catalogo-202609.csv';
                 popularFiltros(librosData);
                 renderizarLibros(librosData);
             } catch (error) {
-                document.getElementById('contador').innerText = "Error al cargar. Verifica el enlace CSV.";
+                console.error(error);
+                document.getElementById('contador').innerText = "Error al cargar el archivo de libros.";
             }
         }
-function csvToJson(csv) {
-    // Limpiamos el texto de saltos de línea raros
-    const limpio = csv.replace(/^\uFEFF/, "").trim();
-    const lineas = limpio.split(/\r?\n/);
-    
-    // Google Sheets en español separa los encabezados con PUNTO Y COMA (;)
-    const encabezados = lineas[0].split(';').map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
-    const resultado = [];
 
-    for (let i = 1; i < lineas.length; i++) {
-        const lineaActual = lineas[i].trim();
-        if (!lineaActual) continue;
-        
-        // Separamos las celdas usando punto y coma (;) en lugar de coma tradicional
-        const celdas = lineaActual.split(';');
-        const obj = {};
-        
-        encabezados.forEach((encabezado, index) => {
-            let valor = celdas[index] ? celdas[index].trim() : '';
-            // Le quitamos las comillas externas si las tuviera
-            if (valor.startsWith('"') && valor.endsWith('"')) {
-                valor = valor.slice(1, -1);
+        function csvToJson(csv) {
+            // Removemos saltos de línea raros e iniciales
+            const limpio = csv.replace(/^\uFEFF/, "").trim();
+            const lineas = limpio.split(/\r?\n/);
+            
+            // Separamos la primera fila usando el punto y coma (;)
+            const encabezados = lineas[0].split(';').map(h => h.trim().toLowerCase().replace(/^"|"\$/g, ''));
+            const resultado = [];
+
+            for (let i = 1; i < lineas.length; i++) {
+                const lineaActual = lineas[i].trim();
+                if (!lineaActual) continue;
+                
+                // Separación limpia por punto y coma nativo de nuestra región
+                const celdas = lineaActual.split(';');
+                const obj = {};
+                
+                encabezados.forEach((encabezado, index) => {
+                    let valor = celdas[index] ? celdas[index].trim() : '';
+                    if (valor.startsWith('"') && valor.endsWith('"')) {
+                        valor = valor.slice(1, -1);
+                    }
+                    obj[encabezado] = valor;
+                });
+                resultado.push(obj);
             }
-            obj[encabezado] = valor;
-        });
-        resultado.push(obj);
-    }
-    return resultado;
-}
+            return resultado;
         }
+
         function popularFiltros(libros) {
             const catSelect = document.getElementById('filtro-categoria');
             const estSelect = document.getElementById('filtro-estado');
-            const categorias = new Set(); const estados = new Set();
+            const categorias = new Set(); 
+            const estados = new Set();
+
             libros.forEach(l => {
                 if(l.categoria1) categorias.add(l.categoria1.trim());
                 if(l.categoria2) categorias.add(l.categoria2.trim());
                 if(l.estado) estados.add(l.estado.trim());
             });
+
             Array.from(categorias).sort().forEach(cat => catSelect.innerHTML += `<option value="${cat}">${cat}</option>`);
             Array.from(estados).sort().forEach(est => estSelect.innerHTML += `<option value="${est}">${est}</option>`);
         }
+
         function renderizarLibros(libros) {
             const grilla = document.getElementById('grilla-libros');
             const contador = document.getElementById('contador');
             grilla.innerHTML = '';
+
             if (libros.length === 0) {
                 grilla.innerHTML = `<div class="no-resultados">FICHA NO ENCONTRADA. Probá con otra búsqueda.</div>`;
                 contador.innerText = "0 libros encontrados";
                 return;
             }
+
             contador.innerText = `${libros.length} libros disponibles en este momento`;
+
             libros.forEach(libro => {
                 const tarjeta = document.createElement('div');
                 tarjeta.className = 'tarjeta';
@@ -173,11 +183,13 @@ function csvToJson(csv) {
                 grilla.appendChild(tarjeta);
             });
         }
+
         function abrirModal(libro) {
             document.getElementById('modal-titulo').innerText = libro.titulo;
             document.getElementById('modal-autor').innerText = libro.autor;
             document.getElementById('modal-precio').innerText = `$${parseInt(libro.precio).toLocaleString('es-AR')}`;
             document.getElementById('modal-btn-comprar').href = libro.whatsapp;
+            
             document.getElementById('modal-txt-detalles').innerHTML = `
                 <p><strong>Editorial:</strong> ${libro.editorial || 'No especificada'}</p>
                 <p><strong>Año de edición:</strong> ${libro.anio || '-'}</p>
@@ -185,15 +197,19 @@ function csvToJson(csv) {
                 <p><strong>Subcategoría:</strong> ${libro.categoria2 || '-'}</p>
                 <p><strong>Estado de conservación:</strong> ${libro.estado || '-'}</p>
             `;
+
             document.getElementById('modal-tapa').src = `/img/${libro.id}-tapa.jpg`;
             document.getElementById('modal-contratapa').src = `/img/${libro.id}-contratapa.jpg`;
             document.getElementById('modal-libro').style.display = 'flex';
         }
+
         function cerrarModal() { document.getElementById('modal-libro').style.display = 'none'; }
+
         function filtrarCatalogo() {
             const busqueda = document.getElementById('buscador').value.toLowerCase();
             const catSeleccionada = document.getElementById('filtro-categoria').value;
             const estSeleccionado = document.getElementById('filtro-estado').value;
+
             const filtrados = librosData.filter(libro => {
                 const coincideTexto = libro.titulo.toLowerCase().includes(busqueda) || libro.autor.toLowerCase().includes(busqueda) || (libro.editorial && libro.editorial.toLowerCase().includes(busqueda));
                 const coincideCategoria = !catSeleccionada || (libro.categoria1 && libro.categoria1.trim() === catSeleccionada) || (libro.categoria2 && libro.categoria2.trim() === catSeleccionada);
@@ -202,9 +218,11 @@ function csvToJson(csv) {
             });
             renderizarLibros(filtrados);
         }
+
         document.getElementById('buscador').addEventListener('input', filtrarCatalogo);
         document.getElementById('filtro-categoria').addEventListener('change', filtrarCatalogo);
         document.getElementById('filtro-estado').addEventListener('change', filtrarCatalogo);
+
         window.onload = cargarCatalogo;
     </script>
 </body>
