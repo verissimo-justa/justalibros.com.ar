@@ -1,275 +1,180 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-     <link rel="preconnect" href="https://googleapis.com">
-<link rel="preconnect" href="https://gstatic.com" crossorigin>
-<link href="https://googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Justa Libros | Catálogo Oficial</title>
-    <!-- Favicon Emoji -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
-    
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Figtree', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #fbfaf7; /* Tono papel hueso minimalista */
-            color: #1a1715;
-            padding: 20px;
-        }
-        header {
-            max-width: 1200px;
-            margin: 40px auto 20px;
-            text-align: center;
-        }
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 5px;
-        }
-        header p { color: #6d655f; font-size: 1.1rem; }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Justa Libros | Catálogo Oficial de Pruebas</title>
+ <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+ 
+ <style>
+ * { box-sizing: border-box; margin: 0; padding: 0; }
+ body {
+ font-family: 'Figtree', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+ background-color: #fbfaf7;
+ color: #1a1715;
+ padding: 20px;
+ }
+ header { max-width: 1200px; margin: 40px auto 20px; text-align: center; }
+ header h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px; }
+ header p { color: #6d655f; font-size: 1.1rem; }
 
-        /* Panel de búsqueda y filtros estilo Videoclub Argento */
-        .panel-control {
-            max-width: 1200px;
-            margin: 0 auto 40px;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #e6e2da;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .panel-control input, .panel-control select {
-            padding: 12px 16px;
-            font-size: 1rem;
-            border: 1px solid #dcd7cd;
-            border-radius: 8px;
-            background: #fbfaf7;
-            color: #1a1715;
-            outline: none;
-            flex: 1;
-            min-width: 200px;
-        }
-        .panel-control input:focus, .panel-control select:focus {
-            border-color: #7d6c5b;
-            background: #ffffff;
-        }
-        .contador-libros {
-            width: 100%;
-            font-size: 0.9rem;
-            color: #8c8177;
-            font-weight: 600;
-            margin-bottom: -5px;
-        }
+ .panel-control {
+ max-width: 1200px;
+ margin: 0 auto 40px;
+ background: #ffffff;
+ padding: 20px;
+ border-radius: 12px;
+ border: 1px solid #e6e2da;
+ display: flex;
+ gap: 15px;
+ flex-wrap: wrap;
+ }
+ .panel-control input, .panel-control select {
+ padding: 12px 16px; font-size: 1rem; border: 1px solid #dcd7cd;
+ border-radius: 8px; background: #fbfaf7; color: #1a1715; outline: none; flex: 1; min-width: 200px;
+ }
+ .panel-control input:focus, .panel-control select:focus { border-color: #7d6c5b; background: #ffffff; }
+ .contador-libros { width: 100%; font-size: 0.9rem; color: #8c8177; font-weight: 600; margin-bottom: -5px; }
 
-        /* Grilla de Tarjetas */
-        .grilla {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-            max-width: 1200px;
-            margin: 0 auto 60px;
-        }
-        .tarjeta {
-            background: #ffffff;
-            border-radius: 12px;
-            border: 1px solid #e6e2da;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .tarjeta:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
-        }
+ .grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto 60px; }
+ .tarjeta {
+ background: #ffffff; border-radius: 12px; border: 1px solid #e6e2da;
+ overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+ }
+ .tarjeta:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.03); }
 
-        /* Contenedor de portadas inteligentes */
-        .portada-contenedor {
-            width: 100%;
-            height: 300px;
-            background: #f3efe6;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .portada-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none; /* Se activa por JS si la imagen existe */
-        }
-        /* Portada genérica si no hay foto */
-        .portada-fallback {
-            padding: 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            width: 100%;
-            border-left: 12px solid #7d6c5b; /* Lomo del libro */
-            background: linear-gradient(135deg, #f9f6f0, #eae4d7);
-        }
-        .fallback-titulo { font-size: 1.1rem; font-weight: 700; color: #3a322d; line-height: 1.3; }
-        .fallback-autor { font-size: 0.9rem; color: #7d6c5b; font-weight: 500; }
+ .portada-contenedor { width: 100%; height: 300px; background: #f3efe6; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+ .portada-img { width: 100%; height: 100%; object-fit: cover; }
+ .portada-fallback {
+ padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;
+ height: 100%; width: 100%; border-left: 12px solid #7d6c5b; background: linear-gradient(135deg, #f9f6f0, #eae4d7);
+ position: absolute; top:0; left:0; z-index: 1;
+ }
+ .fallback-titulo { font-size: 1.1rem; font-weight: 700; color: #3a322d; line-height: 1.3; }
+ .fallback-autor { font-size: 0.9rem; color: #7d6c5b; font-weight: 500; }
 
-        .info {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        .info h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
-        .info .autor { font-size: 0.95rem; color: #6d655f; margin-bottom: 8px; }
-        .info .detalles { font-size: 0.8rem; color: #9c9289; margin-bottom: auto; line-height: 1.4; }
-        .info .detalles span { display: block; }
-        
-        .footer-tarjeta {
-            padding: 15px;
-            background: #fbfaf7;
-            border-top: 1px solid #eae6df;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .precio { font-size: 1.2rem; font-weight: 700; color: #1a1715; }
-        .btn-comprar {
-            background: #1a1715;
-            color: #ffffff;
-            text-decoration: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-        .btn-comprar:hover { background: #4a413a; }
+ .info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+ .info h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
+ .info .autor { font-size: 0.95rem; color: #6d655f; margin-bottom: 8px; }
+ .info .detalles { font-size: 0.8rem; color: #9c9289; margin-bottom: auto; line-height: 1.4; }
+ 
+ .footer-tarjeta { padding: 15px; background: #fbfaf7; border-top: 1px solid #eae6df; display: flex; align-items: center; justify-content: space-between; }
+ .precio { font-size: 1.2rem; font-weight: 700; color: #1a1715; }
+ .btn-comprar { background: #1a1715; color: #ffffff; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; }
 
-        /* Mensaje de no resultados */
-        .no-resultados {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 80px 20px;
-            color: #8c8177;
-            font-size: 1.2rem;
-        }
-    </style>
+ /* VENTANA MODAL FLOTANTE (Detalle Tapa/Contratapa) */
+ .modal {
+ display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+ background: rgba(26, 23, 21, 0.6); backdrop-filter: blur(4px); z-index: 100;
+ justify-content: center; align-items: center; padding: 20px;
+ }
+ .modal-contenido {
+ background: #ffffff; padding: 30px; border-radius: 16px; max-width: 700px; width: 100%;
+ position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+ display: flex; gap: 25px; flex-wrap: wrap;
+ }
+ .btn-cerrar {
+ position: absolute; top: 15px; right: 20px; font-size: 1.8rem; background: none;
+ border: none; color: #9c9289; cursor: pointer; outline: none;
+ }
+ .modal-fotos { display: flex; gap: 15px; flex: 1; min-width: 280px; justify-content: center; }
+ .modal-fotos img { width: 140px; height: 210px; object-fit: cover; border-radius: 6px; border: 1px solid #e6e2da; background: #f3efe6; }
+ .modal-info { flex: 12; min-width: 280px; display: flex; flex-direction: column; }
+ .modal-info h2 { font-size: 1.6rem; margin-bottom: 5px; }
+ .modal-info .autor { font-size: 1.1rem; color: #6d655f; margin-bottom: 20px; }
+ .modal-detalles { font-size: 0.95rem; color: #4a413a; margin-bottom: 30px; line-height: 1.6; }
+ .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #eae6df; }
+
+ .no-resultados { grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: #8c8177; font-size: 1.2rem; }
+ </style>
 </head>
 <body>
 
-    <header>
-        <h1>JUSTA libros</h1>
-        <p>Catálogo de libros usados en venta</p>
-    </header>
+ <header>
+ <h1>JUSTA Libros</h1>
+ <p>Catálogo de libros usados en venta</p>
+ </header>
 
-    <div class="panel-control">
-        <div class="contador-libros" id="contador">Cargando estantes...</div>
-        <input type="text" id="buscador" placeholder="Buscar por título, autor o editorial...">
-        <select id="filtro-categoria">
-            <option value="">Todas las categorías</option>
-        </select>
-        <select id="filtro-estado">
-            <option value="">Todos los estados</option>
-        </select>
-    </div>
+ <div class="panel-control">
+ <div class="contador-libros" id="contador">Cargando estantes...</div>
+ <input type="text" id="buscador" placeholder="Buscar por título, autor o editorial...">
+ <select id="filtro-categoria">
+ <option value="">Todas las categorías</option>
+ </select>
+ <select id="filtro-estado">
+ <option value="">Todos los estados</option>
+ </select>
+ </div>
 
-    <div class="grilla" id="grilla-libros">
-        <!-- Los libros se cargarán aquí automáticamente -->
-    </div>
+ <div class="grilla" id="grilla-libros"></div>
 
-    <script>
-        // ⚠️ PEGA AQUÍ TU ENLACE LARGO DE GOOGLE SHEETS (.CSV)
-        const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?output=csv';
+ <!-- ESTRUCTURA DE LA VENTANA MODAL -->
+ <div class="modal" id="modal-libro" onclick="if(event.target === this) cerrarModal()">
+ <div class="modal-contenido">
+ <button class="btn-cerrar" onclick="cerrarModal()">×</button>
+ <div class="modal-fotos">
+ <img id="modal-tapa" src="" alt="Tapa" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://w3.org width=%22140%22 height=%22210%22><rect width=%22100%%22 height=%22100%%22 fill=%22%23eae4d7%22/><text x=%2250%%22 y=%2250%%22 font-family=%22sans-serif%22 font-size=%2214%22 fill=%22%237d6c5b%22 text-anchor=%22middle%22>Sin Tapa</text></svg>'">
+ <img id="modal-contratapa" src="" alt="Contratapa" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://w3.org width=%22140%22 height=%22210%22><rect width=%22100%%22 height=%22100%%22 fill=%22%23eae4d7%22/><text x=%2250%%22 y=%2250%%22 font-family=%22sans-serif%22 font-size=%2214%22 fill=%22%237d6c5b%22 text-anchor=%22middle%22>Sin Contrata</text></svg>'">
+ </div>
+ <div class="modal-info">
+ <h2 id="modal-titulo"></h2>
+ <div class="autor" id="modal-autor"></div>
+ <div class="modal-detalles" id="modal-txt-detalles"></div>
+ <div class="modal-footer">
+ <span class="precio" id="modal-precio"></span>
+ <a href="" id="modal-btn-comprar" target="_blank" class="btn-comprar">Comprar</a>
+ </div>
+ </div>
+ </div>
+ </div>
 
-        let librosData = [];
+ <script>
+ // EL BUSCADOR AUTOMÁTICO ENCONTRARÁ ESTA VARIABLE PARA TU ENLACE GOOGLE SHEETS
+ const URL_SHEETS_CSV = 'https://google.com';
 
-        async function cargarCatalogo() {
-            try {
-                const respuesta = await fetch(URL_SHEETS_CSV);
-                const textoCsv = await respuesta.text();
-                librosData = csvToJson(textoCsv);
-                
-                popularFiltros(librosData);
-                renderizarLibros(librosData);
-            } catch (error) {
-                console.error("Error cargando los libros:", error);
-                document.getElementById('contador').innerText = "Error al cargar el catálogo. Comprobá el enlace CSV.";
-            }
-        }
+ let librosData = [];
 
-        function csvToJson(csv) {
-            const lineas = csv.split('\n');
-            const encabezados = lineas[0].split(',').map(h => h.trim().toLowerCase());
-            const resultado = [];
+ async function cargarCatalogo() {
+ try {
+ const respuesta = await fetch(URL_SHEETS_CSV);
+ const textoCsv = await respuesta.text();
+ librosData = csvToJson(textoCsv);
+ popularFiltros(librosData);
+ renderizarLibros(librosData);
+ } catch (error) {
+ document.getElementById('contador').innerText = "Error al cargar. Verifica el enlace CSV.";
+ }
+ }
 
-            for (let i = 1; i < lineas.length; i++) {
-                if (!lineas[i].trim()) continue;
-                
-                // Expresión regular para separar por comas respetando los textos con comillas
-                const celdas = lineas[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lineas[i].split(',');
-                const obj = {};
-                
-                encabezados.forEach((encabezado, index) => {
-                    let valor = celdas[index] ? celdas[index].trim() : '';
-                    if (valor.startsWith('"') && valor.endsWith('"')) {
-                        valor = valor.slice(1, -1);
-                    }
-                    obj[encabezado] = valor;
-                });
-                resultado.push(obj);
-            }
-            return resultado;
-        }
+ function csvToJson(csv) {
+ const lineas = csv.split('\n');
+ const encabezados = lineas[0].split(',').map(h => h.trim().toLowerCase());
+ const resultado = [];
 
-        function popularFiltros(libros) {
-            const catSelect = document.getElementById('filtro-categoria');
-            const estSelect = document.getElementById('filtro-estado');
-            
-            const categorias = new Set();
-            const estados = new Set();
+ for (let i = 1; i < lineas.length; i++) {
+ if (!lineas[i].trim()) continue;
+ const celdas = lineas[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lineas[i].split(',');
+ const obj = {};
+ encabezados.forEach((encabezado, index) => {
+ let valor = celdas[index] ? celdas[index].trim() : '';
+ if (valor.startsWith('"') && valor.endsWith('"')) valor = valor.slice(1, -1);
+ obj[encabezado] = valor;
+ });
+ resultado.push(obj);
+ }
+ return resultado;
+ }
 
-            libros.forEach(l => {
-                if(l.categoria1) categorias.add(l.categoria1.trim());
-                if(l.categoria2) categorias.add(l.categoria2.trim());
-                if(l.estado) estados.add(l.estado.trim());
-            });
+ function popularFiltros(libros) {
+ const catSelect = document.getElementById('filtro-categoria');
+ const estSelect = document.getElementById('filtro-estado');
+ const categorias = new Set(); const estados = new Set();
 
-            Array.from(categorias).sort().forEach(cat => {
-                catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
-            });
-            Array.from(estados).sort().forEach(est => {
-                estSelect.innerHTML += `<option value="${est}">${est}</option>`;
-            });
-        }
+ libros.forEach(l => {
+ if(l.categoria1) categorias.add(l.categoria1.trim());
+ if(l.categoria2) categorias.add(l.categoria2.trim());
+ if(l.estado) estados.add(l.estado.trim());
+ });
 
-        function renderizarLibros(libros) {
-            const grilla = document.getElementById('grilla-libros');
-            const contador = document.getElementById('contador');
-            grilla.innerHTML = '';
+ Array.from(categorias).sort().forEach(cat => catSelect.innerHTML += `<option value="${cat}">${cat}</option>`);
 
-            if (libros.length === 0) {
-                grilla.innerHTML = `<div class="no-resultados">FICHA NO ENCONTRADA. Probá con otra búsqueda o filtros.</div>`;
-                contador.innerText = "0 libros encontrados";
-                return;
-            }
-
-            contador.innerText = `${libros.length} libros disponibles en este momento`;
-
-            libros.forEach(libro => {
-                const tarjeta = document.createElement('div');
-                tarjeta.className = 'tarjeta';
-
-                // Renderizado condicional de portada: si no carga la foto, se activa el fallback estético
-                tarjeta.innerHTML = `
-                    <div class="portada-contenedor">
-                        <img class="portada-img" src="/img/${libro.id}-tapa.jpg" alt="Portada de ${libro.titulo}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="portada-fallback" style="display:flex;">
-                            <div class="fallback-titulo">${libro.titulo}</div>
