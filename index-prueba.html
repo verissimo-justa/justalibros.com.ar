@@ -80,7 +80,7 @@
     </div>
          <script>
         // Ruta exacta a tu archivo local en la raíz de GitHub
-        const URL_SHEETS_CSV = '/justa-catalogo-202609.csv';
+        const URL_SHEETS_CSV = './justa-catalogo-202609.csv';
 
         let librosData = [];
 
@@ -190,7 +190,7 @@
                             <div class="fallback-titulo">${libro.titulo}</div>
                             <div class="fallback-autor">${libro.autor}</div>
                         </div>
-                        <img class="portada-img" src="/img/${libro.id}-tapa.jpg" alt="${libro.titulo}" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'">
+                        <img class="portada-img" src="./img/${libro.id}-tapa.jpg" alt="${libro.titulo}" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'">
                     </div>
                     <div class="info">
                         <h2>${libro.titulo}</h2>
