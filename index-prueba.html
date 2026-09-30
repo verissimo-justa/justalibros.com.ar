@@ -78,8 +78,8 @@
             </div>
         </div>
     </div>
-       <script>
-        // Dirección exacta de tu archivo local en la raíz de GitHub
+         <script>
+        // Ruta exacta a tu archivo local en la raíz de GitHub
         const URL_SHEETS_CSV = '/justa-catalogo-202609.csv';
 
         let librosData = [];
@@ -88,54 +88,60 @@
             try {
                 const respuesta = await fetch(URL_SHEETS_CSV);
                 const textoCsv = await respuesta.text();
-                librosData = csvToJson(textoCsv);
+                
+                // Procesamos el texto de forma hiper-segura
+                librosData = interpretarCSV(textoCsv);
+                
+                if (librosData.length === 0) {
+                    document.getElementById('contador').innerText = "Catálogo vacío o formato no reconocido.";
+                    return;
+                }
+
                 popularFiltros(librosData);
                 renderizarLibros(librosData);
             } catch (error) {
-                console.error(error);
-                document.getElementById('contador').innerText = "Error al cargar el archivo de libros.";
+                console.error("Error en la carga:", error);
+                document.getElementById('contador').innerText = "Error al conectar con el archivo de libros.";
             }
         }
-function parseCSVLine(line, sep = ';') {
-    const result = [];
-    let cur = '', inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-        const c = line[i];
-        if (c === '"') {
-            if (inQuotes && line[i+1] === '"') { cur += '"'; i++; }
-            else inQuotes = !inQuotes;
-        } else if (c === sep && !inQuotes) {
-            result.push(cur); cur = '';
-        } else cur += c;
-    }
-    result.push(cur);
-    return result;
-}
-        function csvToJson(csv) {
-            // Removemos saltos de línea raros e iniciales
-            const limpio = csv.replace(/^\uFEFF/, "").trim();
+
+        function interpretarCSV(texto) {
+            // Limpiamos caracteres invisibles raros de Excel/Google
+            const limpio = texto.replace(/^\uFEFF/, "").trim();
             const lineas = limpio.split(/\r?\n/);
-            
-            // Separamos la primera fila usando el punto y coma (;)
-            const encabezados = lineas[0].split(';').map(h => h.trim().toLowerCase().replace(/^"|"$/g, '').trim());
+            if (lineas.length < 2) return [];
+
+            // Forzamos las columnas en el orden exacto que configuraste en tu Sheets
+            // id, titulo, autor, editorial, anio, categoria1, categoria2, estado, precio, whatsapp
             const resultado = [];
 
             for (let i = 1; i < lineas.length; i++) {
                 const lineaActual = lineas[i].trim();
                 if (!lineaActual) continue;
+
+                // Separamos por punto y coma (;) que es el estándar de Sheets en nuestra región
+                const celdas = lineaActual.split(';');
                 
-                // Separación limpia por punto y coma nativo de nuestra región
-                const celdas = parseCSVLine(lineaActual);
-                const obj = {};
-                
-                encabezados.forEach((encabezado, index) => {
-                    let valor = celdas[index] ? celdas[index].trim() : '';
-                    if (valor.startsWith('"') && valor.endsWith('"')) {
-                        valor = valor.slice(1, -1);
-                    }
-                    obj[encabezado] = valor;
-                });
-                resultado.push(obj);
+                // Creamos el objeto limpiando comillas externas de cada celda
+                const limpiarTexto = (txt) => txt ? txt.trim().replace(/^["']|["']\$/g, '') : '';
+
+                const libro = {
+                    id: limpiarTexto(celdas[0]),
+                    titulo: limpiarTexto(celdas[1]),
+                    autor: limpiarTexto(celdas[2]),
+                    editorial: limpiarTexto(celdas[3]),
+                    anio: limpiarTexto(celdas[4]),
+                    categoria1: limpiarTexto(celdas[5]),
+                    categoria2: limpiarTexto(celdas[6]),
+                    estado: limpiarTexto(celdas[7]),
+                    precio: limpiarTexto(celdas[8]),
+                    whatsapp: celdas[9] ? celdas[9].trim().replace(/^["']|["']\$/g, '') : ''
+                };
+
+                // Si el renglón tiene al menos un título, lo damos por válido
+                if (libro.titulo) {
+                    resultado.push(libro);
+                }
             }
             return resultado;
         }
@@ -147,9 +153,9 @@ function parseCSVLine(line, sep = ';') {
             const estados = new Set();
 
             libros.forEach(l => {
-                if(l.categoria1) categorias.add(l.categoria1.trim());
-                if(l.categoria2) categorias.add(l.categoria2.trim());
-                if(l.estado) estados.add(l.estado.trim());
+                if(l.categoria1) categorias.add(l.categoria1);
+                if(l.categoria2) categorias.add(l.categoria2);
+                if(l.estado) estados.add(l.estado);
             });
 
             Array.from(categorias).sort().forEach(cat => catSelect.innerHTML += `<option value="${cat}">${cat}</option>`);
@@ -162,7 +168,7 @@ function parseCSVLine(line, sep = ';') {
             grilla.innerHTML = '';
 
             if (libros.length === 0) {
-                grilla.innerHTML = `<div class="no-resultados">FICHA NO ENCONTRADA. Probá con otra búsqueda.</div>`;
+                grilla.innerHTML = `<div class="no-resultados">FICHA NO ENCONTRADA. Probá con otra búsqueda o filtros.</div>`;
                 contador.innerText = "0 libros encontrados";
                 return;
             }
@@ -173,6 +179,11 @@ function parseCSVLine(line, sep = ';') {
                 const tarjeta = document.createElement('div');
                 tarjeta.className = 'tarjeta';
                 tarjeta.onclick = () => abrirModal(libro);
+                
+                // Limpiamos el precio por si tiene signos raros
+                let numPrecio = libro.precio ? libro.precio.replace(/[^0-9]/g, '') : '0';
+                let precioFormateado = parseInt(numPrecio) ? parseInt(numPrecio).toLocaleString('es-AR') : libro.precio;
+
                 tarjeta.innerHTML = `
                     <div class="portada-contenedor">
                         <div class="portada-fallback">
@@ -186,11 +197,11 @@ function parseCSVLine(line, sep = ';') {
                         <p class="autor">${libro.autor}</p>
                         <div class="detalles">
                             <strong>Editorial:</strong> ${libro.editorial || '-'}<br>
-                            <strong>Estado:</strong> ${libro.estado}
+                            <strong>Estado:</strong> ${libro.estado || '-'}
                         </div>
                     </div>
                     <div class="footer-tarjeta">
-                        <span class="precio">$${parseInt(libro.precio).toLocaleString('es-AR')}</span>
+                        <span class="precio">$${precioFormateado}</span>
                         <span class="btn-comprar" style="background:#1a1715;">Ver ficha</span>
                     </div>
                 `;
@@ -199,10 +210,13 @@ function parseCSVLine(line, sep = ';') {
         }
 
         function abrirModal(libro) {
+            let numPrecio = libro.precio ? libro.precio.replace(/[^0-9]/g, '') : '0';
+            let precioFormateado = parseInt(numPrecio) ? parseInt(numPrecio).toLocaleString('es-AR') : libro.precio;
+
             document.getElementById('modal-titulo').innerText = libro.titulo;
             document.getElementById('modal-autor').innerText = libro.autor;
-            document.getElementById('modal-precio').innerText = `$$Number(libro.precio.replace(/\./g, '').replace(',', '.')) || 0.toLocaleString('es-AR')}`;
-            document.getElementById('modal-btn-comprar').href = libro.whatsapp;
+            document.getElementById('modal-precio').innerText = `$${precioFormateado}`;
+            document.getElementById('modal-btn-comprar').href = libro.whatsapp || '#';
             
             document.getElementById('modal-txt-detalles').innerHTML = `
                 <p><strong>Editorial:</strong> ${libro.editorial || 'No especificada'}</p>
@@ -222,12 +236,19 @@ function parseCSVLine(line, sep = ';') {
         function filtrarCatalogo() {
             const busqueda = document.getElementById('buscador').value.toLowerCase();
             const catSeleccionada = document.getElementById('filtro-categoria').value;
-            const estSeleccionado = document.getElementById('filtro-estado').value;
+            const estSeleccionado = document.getElementById('filtro-estado');
 
             const filtrados = librosData.filter(libro => {
-                const coincideTexto = libro.titulo.toLowerCase().includes(busqueda) || libro.autor.toLowerCase().includes(busqueda) || (libro.editorial && libro.editorial.toLowerCase().includes(busqueda));
-                const coincideCategoria = !catSeleccionada || (libro.categoria1 && libro.categoria1.trim() === catSeleccionada) || (libro.categoria2 && libro.categoria2.trim() === catSeleccionada);
-                const coincideEstado = !estSeleccionado || (libro.estado && libro.estado.trim() === estSeleccionado);
+                const coincideTexto = (libro.titulo && libro.titulo.toLowerCase().includes(busqueda)) || 
+                                      (libro.autor && libro.autor.toLowerCase().includes(busqueda)) || 
+                                      (libro.editorial && libro.editorial.toLowerCase().includes(busqueda));
+                
+                const coincideCategoria = !catSeleccionada || 
+                                          (libro.categoria1 && libro.categoria1 === catSeleccionada) || 
+                                          (libro.categoria2 && libro.categoria2 === catSeleccionada);
+                
+                const coincideEstado = !estSeleccionado || !estSeleccionado.value || (libro.estado && libro.estado === estSeleccionado.value);
+                
                 return coincideTexto && coincideCategoria && coincideEstado;
             });
             renderizarLibros(filtrados);
@@ -237,8 +258,7 @@ function parseCSVLine(line, sep = ';') {
         document.getElementById('filtro-categoria').addEventListener('change', filtrarCatalogo);
         document.getElementById('filtro-estado').addEventListener('change', filtrarCatalogo);
 
-        window.addEventListener('load', cargarCatalogo);
+        window.onload = cargarCatalogo;
     </script>
 </body>
 </html>
-
