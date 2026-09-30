@@ -105,62 +105,53 @@
             }
         }
 
-        function interpretarCSV(texto) {
-            // Limpiamos caracteres invisibles raros de Excel/Google
-            const limpio = texto.replace(/^\uFEFF/, "").trim();
-            const lineas = limpio.split(/\r?\n/);
-            if (lineas.length < 2) return [];
+function interpretarCSV(texto) {
+    // Limpiamos espacios y caracteres invisibles al inicio y final
+    const limpio = texto.replace(/^\uFEFF/, "").trim();
+    const lineas = limpio.split(/\r?\n/);
+    
+    // Si el archivo tiene menos de 2 líneas (encabezado + 1 libro), salimos
+    if (lineas.length < 2) return [];
 
-            // Forzamos las columnas en el orden exacto que configuraste en tu Sheets
-            // id, titulo, autor, editorial, anio, categoria1, categoria2, estado, precio, whatsapp
-            const resultado = [];
+    // Forzamos el separador por punto y coma (;)
+    const primeraLinea = lineas[0];
+    const separador = primeraLinea.includes(';') ? ';' : ',';
 
-            for (let i = 1; i < lineas.length; i++) {
-                const lineaActual = lineas[i].trim();
-                if (!lineaActual) continue;
+    const resultado = [];
 
-                // Separamos por punto y coma (;) que es el estándar de Sheets en nuestra región
-                const celdas = lineaActual.split(';');
-                
-                // Creamos el objeto limpiando comillas externas de cada celda
-                const limpiarTexto = (txt) => txt ? txt.trim().replace(/^["']|["']\$/g, '') : '';
+    // Empezamos en i = 1 para saltearnos la primera fila de encabezados
+    for (let i = 1; i < lineas.length; i++) {
+        const lineaActual = lineas[i].trim();
+        if (!lineaActual) continue;
 
-                const libro = {
-                    id: limpiarTexto(celdas[0]),
-                    titulo: limpiarTexto(celdas[1]),
-                    autor: limpiarTexto(celdas[2]),
-                    editorial: limpiarTexto(celdas[3]),
-                    anio: limpiarTexto(celdas[4]),
-                    categoria1: limpiarTexto(celdas[5]),
-                    categoria2: limpiarTexto(celdas[6]),
-                    estado: limpiarTexto(celdas[7]),
-                    precio: limpiarTexto(celdas[8]),
-                    whatsapp: celdas[9] ? celdas[9].trim().replace(/^["']|["']\$/g, '') : ''
-                };
+        // Separamos la línea en celdas por punto y coma de forma directa
+        const celdas = lineaActual.split(separador);
+        
+        // Función rápida para limpiar comillas molestas de las puntas
+        const limpiar = (txt) => txt ? txt.trim().replace(/^["']|["']$/g, '') : '';
 
-                // Si el renglón tiene al menos un título, lo damos por válido
-                if (libro.titulo) {
-                    resultado.push(libro);
-                }
-            }
-            return resultado;
+        // Mapeo directo por posición física de columna en tu Google Sheets:
+        // Col 0=id, 1=titulo, 2=autor, 3=editorial, 4=anio, 5=cat1, 6=cat2, 7=estado, 8=precio, 9=whatsapp
+        const libro = {
+            id: limpiar(celdas[0]),
+            titulo: limpiar(celdas[1]),
+            autor: limpiar(celdas[2]),
+            editorial: limpiar(celdas[3]),
+            anio: limpiar(celdas[4]),
+            categoria1: limpiar(celdas[5]),
+            categoria2: limpiar(celdas[6]),
+            estado: limpiar(celdas[7]),
+            precio: limpiar(celdas[8]),
+            whatsapp: celdas[9] ? celdas[9].trim().replace(/^["']|["']$/g, '') : ''
+        };
+
+        // Si la celda de título tiene texto, guardamos el libro sí o sí
+        if (libro.titulo) {
+            resultado.push(libro);
         }
-
-        function popularFiltros(libros) {
-            const catSelect = document.getElementById('filtro-categoria');
-            const estSelect = document.getElementById('filtro-estado');
-            const categorias = new Set(); 
-            const estados = new Set();
-
-            libros.forEach(l => {
-                if(l.categoria1) categorias.add(l.categoria1);
-                if(l.categoria2) categorias.add(l.categoria2);
-                if(l.estado) estados.add(l.estado);
-            });
-
-            Array.from(categorias).sort().forEach(cat => catSelect.innerHTML += `<option value="${cat}">${cat}</option>`);
-            Array.from(estados).sort().forEach(est => estSelect.innerHTML += `<option value="${est}">${est}</option>`);
-        }
+    }
+    return resultado;
+}
 
         function renderizarLibros(libros) {
             const grilla = document.getElementById('grilla-libros');
