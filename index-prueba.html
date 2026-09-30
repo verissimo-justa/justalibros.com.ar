@@ -80,7 +80,7 @@
     </div>
        <script>
         // Dirección exacta de tu archivo local en la raíz de GitHub
-        const URL_SHEETS_CSV = 'https://github.com/verissimo-justa/justa.com.ar/justa-catalogo-202609.csv';
+        const URL_SHEETS_CSV = './justa-catalogo-202609.csv';
 
         let librosData = [];
 
@@ -96,14 +96,28 @@
                 document.getElementById('contador').innerText = "Error al cargar el archivo de libros.";
             }
         }
-
+function parseCSVLine(line, sep = ';') {
+    const result = [];
+    let cur = '', inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') {
+            if (inQuotes && line[i+1] === '"') { cur += '"'; i++; }
+            else inQuotes = !inQuotes;
+        } else if (c === sep && !inQuotes) {
+            result.push(cur); cur = '';
+        } else cur += c;
+    }
+    result.push(cur);
+    return result;
+}
         function csvToJson(csv) {
             // Removemos saltos de línea raros e iniciales
             const limpio = csv.replace(/^\uFEFF/, "").trim();
             const lineas = limpio.split(/\r?\n/);
             
             // Separamos la primera fila usando el punto y coma (;)
-            const encabezados = lineas[0].split(';').map(h => h.trim().toLowerCase().replace(/^"|"\$/g, ''));
+            const encabezados = lineas[0].split(';').map(h => h.trim().toLowerCase().replace(/^"|"$/g, '').trim());
             const resultado = [];
 
             for (let i = 1; i < lineas.length; i++) {
@@ -111,7 +125,7 @@
                 if (!lineaActual) continue;
                 
                 // Separación limpia por punto y coma nativo de nuestra región
-                const celdas = lineaActual.split(';');
+                const celdas = parseCSVLine(lineaActual);
                 const obj = {};
                 
                 encabezados.forEach((encabezado, index) => {
@@ -165,7 +179,7 @@
                             <div class="fallback-titulo">${libro.titulo}</div>
                             <div class="fallback-autor">${libro.autor}</div>
                         </div>
-                        <img class="portada-img" src="/img/${libro.id}-tapa.jpg" alt="${libro.titulo}" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'">
+                        <img class="portada-img" src="./img/${libro.id}-tapa.jpg" alt="${libro.titulo}" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none'">
                     </div>
                     <div class="info">
                         <h2>${libro.titulo}</h2>
@@ -187,7 +201,7 @@
         function abrirModal(libro) {
             document.getElementById('modal-titulo').innerText = libro.titulo;
             document.getElementById('modal-autor').innerText = libro.autor;
-            document.getElementById('modal-precio').innerText = `$${parseInt(libro.precio).toLocaleString('es-AR')}`;
+            document.getElementById('modal-precio').innerText = `$$Number(libro.precio.replace(/\./g, '').replace(',', '.')) || 0.toLocaleString('es-AR')}`;
             document.getElementById('modal-btn-comprar').href = libro.whatsapp;
             
             document.getElementById('modal-txt-detalles').innerHTML = `
@@ -223,7 +237,7 @@
         document.getElementById('filtro-categoria').addEventListener('change', filtrarCatalogo);
         document.getElementById('filtro-estado').addEventListener('change', filtrarCatalogo);
 
-        window.onload = cargarCatalogo;
+        window.addEventListener('load', cargarCatalogo);
     </script>
 </body>
 </html>
