@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Justa Libros | Prueba de catálogo</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
-
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+    
     <!-- PapaParse para leer CSV correctamente -->
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
@@ -220,23 +220,30 @@
             const categorias = new Set();
             const estados = new Set();
 
-            libros.forEach(l => {
-                if (l.categoria1) categorias.add(l.categoria1);
-                if (l.categoria2) categorias.add(l.categoria2);
-                if (l.estado) estados.add(l.estado);
-            });
+// Orden fijo deseado para los estados
+const ORDEN_ESTADOS = ['como nuevo', 'muy bueno', 'bueno', 'regular'];
 
-            [...categorias].sort().forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c; opt.textContent = c;
-                selCat.appendChild(opt);
-            });
+// Recolectamos los estados que realmente existen en el catálogo
+const estadosSet = new Set();
+libros.forEach(l => {
+    if (l.estado) estadosSet.add(l.estado);
+});
 
-            [...estados].sort().forEach(e => {
-                const opt = document.createElement('option');
-                opt.value = e; opt.textContent = e;
-                selEst.appendChild(opt);
-            });
+// Ordenamos según ORDEN_ESTADOS; los que no estén en la lista van al final por orden alfabético
+const estadosOrdenados = [...estadosSet].sort((a, b) => {
+    const ia = ORDEN_ESTADOS.indexOf(normalizar(a));
+    const ib = ORDEN_ESTADOS.indexOf(normalizar(b));
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+});
+
+estadosOrdenados.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e; opt.textContent = e;
+    selEst.appendChild(opt);
+});
         }
 
         // ---------- Render de tarjetas ----------
