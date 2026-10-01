@@ -78,10 +78,13 @@
     </style>
 </head>
 <body>
-    <!-- Lupa / zoom: deben existir ANTES del script -->
+
     <div class="zoom-lens" id="zoom-lens"></div>
     <div class="zoom-panel" id="zoom-panel"></div>
 
+    <header>...</header>
+    ...
+    <div class="modal" id="modal-libro">...</div>
     <header>
         <h1>JUSTA Libros</h1>
         <p>Catálogo de libros usados en venta</p>
@@ -349,8 +352,6 @@
         // Se inicializa cuando el DOM está listo
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
-            const lens = document.getElementById('zoom-lens');
-            const panel = document.getElementById('zoom-panel');
             const ZOOM = 2.5;
             const LENS_SIZE = 120;
             const PANEL_SIZE = 320;
