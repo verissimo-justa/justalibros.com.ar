@@ -48,15 +48,16 @@
 
         /* --- Pop-up de imagen ampliada --- */
 .img-popup-overlay img {
-    max-width: 800px;
-    max-height: 800px;
-    width: 80%;
-    height: 80%;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
     object-fit: contain;
     border-radius: 12px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     cursor: default;
-    background: transparent;   /* 👈 sin fondo blanco */
+    background: transparent;
+    display: block;
 }
 .img-popup-overlay.activo {
     display: flex;
