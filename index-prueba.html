@@ -67,7 +67,25 @@
 .img-popup-overlay.activo {
     display: flex;
 }
+.img-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(26, 23, 21, 0.85);
+    backdrop-filter: blur(6px);
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    cursor: zoom-out;
+}
 
+.img-popup-overlay.activo {
+    display: flex;
+}
 .img-popup-overlay img {
     max-width: 90vw;
     max-height: 90vh;
