@@ -47,6 +47,27 @@
         .no-resultados { grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: #8c8177; font-size: 1.2rem; }
 
         /* --- Pop-up de imagen ampliada --- */
+/* --- Pop-up de imagen ampliada --- */
+.img-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(26, 23, 21, 0.85);
+    backdrop-filter: blur(6px);
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    cursor: zoom-out;
+}
+
+.img-popup-overlay.activo {
+    display: flex;
+}
+
 .img-popup-overlay img {
     max-width: 90vw;
     max-height: 90vh;
@@ -58,11 +79,6 @@
     cursor: default;
     background: transparent;
     display: block;
-}
-.img-popup-overlay.activo {
-    display: flex;
-    visibility: visible;
-    opacity: 1;
 }
     </style>
 </head>
