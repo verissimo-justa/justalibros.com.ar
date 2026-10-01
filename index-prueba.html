@@ -22,8 +22,7 @@
         .grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto 60px; }
         .tarjeta { background: #ffffff; border-radius: 12px; border: 1px solid #e6e2da; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .tarjeta:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.03); }
-        .portada-contenedor { width: 100%; height: 300px; background: #f3efe6; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .portada-img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; }
+        .portada-contenedor { width: 100%; aspect-ratio: 4 / 5; background: #f3efe6; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }        .portada-img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; }
         .portada-fallback { padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%; border-left: 12px solid #7d6c5b; background: linear-gradient(135deg, #f9f6f0, #eae4d7); position: absolute; top:0; left:0; z-index: 1; }
         .fallback-titulo { font-size: 1.1rem; font-weight: 700; color: #3a322d; line-height: 1.3; }
         .fallback-autor { font-size: 0.9rem; color: #7d6c5b; font-weight: 500; }
