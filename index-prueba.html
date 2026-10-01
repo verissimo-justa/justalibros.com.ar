@@ -47,30 +47,26 @@
         .no-resultados { grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: #8c8177; font-size: 1.2rem; }
 
         /* --- Pop-up de imagen ampliada --- */
-        .img-popup-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(26, 23, 21, 0.75);
-            backdrop-filter: blur(4px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            cursor: zoom-out;
-        }
-        .img-popup-overlay.activo { display: flex; }
-        .img-popup-overlay img {
-            width: 800px;
-            height: 800px;
-            max-width: 90vw;
-            max-height: 90vh;
-            object-fit: contain;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-            cursor: default;
-        }
+ .img-popup-overlay {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 23, 21, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    cursor: zoom-out;
+    transition: opacity 0.2s ease;
+}
+.img-popup-overlay.activo {
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+}
     </style>
 </head>
 <body>
@@ -114,7 +110,7 @@
 
     <!-- Pop-up de imagen ampliada (FUERA del modal) -->
     <div class="img-popup-overlay" id="img-popup" onclick="cerrarPopupImagen()">
-        <img id="img-popup-src" src="" alt="Imagen ampliada" onclick="event.stopPropagation()">
+    <img id="img-popup-src" src="" alt="" onclick="event.stopPropagation()">
     </div>
 
     <script>
@@ -340,20 +336,26 @@
         }
 
         // ---------- Pop-up de imagen ampliada ----------
-        function abrirPopupImagen(src, alt) {
-            const overlay = document.getElementById('img-popup');
-            const img = document.getElementById('img-popup-src');
-            img.src = src;
-            img.alt = alt || 'Imagen ampliada';
-            overlay.classList.add('activo');
-        }
+function abrirPopupImagen(src, alt) {
+    const overlay = document.getElementById('img-popup');
+    const img = document.getElementById('img-popup-src');
+    img.src = src;
+    img.alt = alt || '';
+    overlay.classList.add('activo');
+}
 
-        function cerrarPopupImagen() {
-            const overlay = document.getElementById('img-popup');
-            const img = document.getElementById('img-popup-src');
-            overlay.classList.remove('activo');
-            img.src = '';
+function cerrarPopupImagen() {
+    const overlay = document.getElementById('img-popup');
+    const img = document.getElementById('img-popup-src');
+    overlay.classList.remove('activo');
+    // Solo limpiamos el src DESPUÉS de la transición, para evitar parpadeos
+    setTimeout(() => {
+        if (!overlay.classList.contains('activo')) {
+            img.removeAttribute('src');
+            img.removeAttribute('alt');
         }
+    }, 200);
+}
 
         // ---------- Eventos ----------
         document.getElementById('buscador').addEventListener('input', filtrarCatalogo);
