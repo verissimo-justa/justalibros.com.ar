@@ -45,7 +45,40 @@
         .modal-detalles { font-size: 0.95rem; color: #4a413a; margin-bottom: 30px; line-height: 1.6; }
         .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #eae6df; }
         .no-resultados { grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: #8c8177; font-size: 1.2rem; }
+        .modal-fotos img { cursor: pointer;}   /* manito */
+        
+<div class="modal-fotos">
+    <img id="modal-tapa" src="" alt="Tapa" title="Ampliar imagen">
+    <img id="modal-contratapa" src="" alt="Contratapa" title="Ampliar imagen">
+</div>
+        
+/* --- Pop-up de imagen ampliada --- */
+.img-popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 23, 21, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    cursor: zoom-out;
+}
+.img-popup-overlay.activo { display: flex; }
+.img-popup-overlay img {
+    width: 800px;
+    height: 800px;
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    cursor: default;
+}
     </style>
+
 </head>
 <body>
     <header>
@@ -73,6 +106,9 @@
                 <img id="modal-tapa" src="" alt="Tapa">
                 <img id="modal-contratapa" src="" alt="Contratapa">
             </div>
+            <div class="img-popup-overlay" id="img-popup" onclick="cerrarPopupImagen()">
+    <img id="img-popup-src" src="" alt="Imagen ampliada" onclick="event.stopPropagation()">
+</div>
             <div class="modal-info">
                 <h2 id="modal-titulo"></h2>
                 <div class="autor" id="modal-autor"></div>
@@ -308,6 +344,37 @@
         document.getElementById('filtro-categoria').addEventListener('change', filtrarCatalogo);
         document.getElementById('filtro-estado').addEventListener('change', filtrarCatalogo);
 
+// ============================================================
+// Pop-up para ampliar imágenes del modal
+// ============================================================
+function abrirPopupImagen(src, alt) {
+    const overlay = document.getElementById('img-popup');
+    const img = document.getElementById('img-popup-src');
+    img.src = src;
+    img.alt = alt || 'Imagen ampliada';
+    overlay.classList.add('activo');
+}
+
+function cerrarPopupImagen() {
+    document.getElementById('img-popup').classList.remove('activo');
+    // Liberamos la imagen para que no quede cargada
+    document.getElementById('img-popup-src').src = '';
+}
+
+// Cerramos también con la tecla Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') cerrarPopupImagen();
+});
+
+// Hacer clickeables las fotos del modal (tapa y contratapa)
+document.addEventListener('DOMContentLoaded', () => {
+    ['modal-tapa', 'modal-contratapa'].forEach(id => {
+        const img = document.getElementById(id);
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', () => abrirPopupImagen(img.src, img.alt));
+    });
+});
+        
         window.addEventListener('DOMContentLoaded', cargarCatalogo);
     </script>
 </body>
