@@ -469,13 +469,18 @@
                 }
             });
         });
-document.getElementById('ordenar-por').addEventListener('click', (e) => {
-    // Si el usuario hace clic en la opción "aleatorio" que ya estaba seleccionada,
+// Guardamos el último valor para detectar si el usuario re-selecciona "aleatorio"
+let ultimoOrden = '';
+document.getElementById('ordenar-por').addEventListener('change', function() {
+    const actual = this.value;
+
+    // Si vuelve a elegir "aleatorio" (aunque ya estuviera elegido antes),
     // forzamos un rebarajado
-    if (e.target.tagName === 'OPTION' && e.target.value === 'aleatorio'
-        && document.getElementById('ordenar-por').value === 'aleatorio') {
+    if (actual === 'aleatorio' && ultimoOrden === 'aleatorio') {
         filtrarCatalogo();
     }
+
+    ultimoOrden = actual;
 });
         // ---------- Inicio ----------
         window.addEventListener('DOMContentLoaded', cargarCatalogo);
