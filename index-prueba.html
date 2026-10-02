@@ -216,21 +216,15 @@ header h1 .tagline {
             outline: none;
         }
         .modal-fotos img {
-            width: 140px;
-            height: 210px;
-            object-fit: cover;
-            border-radius: 6px;
-            border: 1px solid #e6e2da;
-            background: #f3efe6;
-            cursor: zoom-in;                 /* 👈 lupa en el modal */
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
+             width: 140px;
+             height: 210px;
+             object-fit: cover;
+             border-radius: 6px;
+             border: 1px solid #e6e2da;
+             background: #f3efe6;
+             cursor: pointer;
         }
         
-        .modal-fotos img:hover {
-            transform: scale(1.08);          /* 👈 se agranda un 8% */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            z-index: 5;
-        }
         .modal-info { flex: 12; min-width: 280px; display: flex; flex-direction: column; }
         .modal-info h2 { font-size: 1.6rem; margin-bottom: 5px; }
         .modal-info .autor { font-size: 1.1rem; color: #6d655f; margin-bottom: 20px; }
@@ -281,6 +275,34 @@ header h1 .tagline {
             background: transparent;
             display: block;
         }
+/* ---------- Lupa en el pop-up de imagen ampliada ---------- */
+#img-popup-src {
+    cursor: crosshair;
+}
+
+#img-popup-src.lupa-activa {
+    cursor: none;
+}
+
+.lupa-circular {
+    position: fixed;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.85);
+    box-shadow:
+        0 0 0 2px rgba(0,0,0,0.25),
+        0 12px 30px rgba(0,0,0,0.45);
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 100000;
+    display: none;
+    overflow: hidden;
+}
+
+.lupa-circular.activa {
+    display: block;
+}
     </style>
 </head>
 <body>
@@ -337,6 +359,8 @@ header h1 .tagline {
     <div class="img-popup-overlay" id="img-popup" onclick="cerrarPopupImagen()">
         <img id="img-popup-src" src="" alt="" onclick="event.stopPropagation()">
     </div>
+    
+    <div class="lupa-circular" id="lupa-circular"></div>
 
     <script>
         // ============================================================
@@ -724,7 +748,83 @@ header h1 .tagline {
                 }
             }, 200);
         }
+// ============================================================
+// LUPA CIRCULAR SOBRE LA IMAGEN AMPLIADA
+// ============================================================
+        (() => {
+            const lupa = document.getElementById('lupa-circular');
+            const popupImg = document.getElementById('img-popup-src');
+        
+            const ZOOM = 2.2;           // factor de ampliación
+            const LUPA_SIZE = 220;      // debe coincidir con el width/height del CSS
+            const LUPA_RADIO = LUPA_SIZE / 2;
+        
+            function activar(e) {
+                // Solo si hay imagen cargada
+                if (!popupImg.src || popupImg.src.startsWith('data:')) return;
+                if (!popupImg.complete || popupImg.naturalWidth === 0) return;
+        
+                // Configuramos el fondo de la lupa con la misma imagen del pop-up
+                lupa.style.backgroundImage = `url("${popupImg.src}")`;
+        
+                // Tamaño del fondo = tamaño renderizado de la imagen * ZOOM
+                const rect = popupImg.getBoundingClientRect();
+                const bgW = rect.width * ZOOM;
+                const bgH = rect.height * ZOOM;
+                lupa.style.backgroundSize = `${bgW}px ${bgH}px`;
+        
+                lupa.classList.add('activa');
+                popupImg.classList.add('lupa-activa');
+                mover(e);
+            }
+        
+            function mover(e) {
+                if (!lupa.classList.contains('activa')) return;
+        
+                const rect = popupImg.getBoundingClientRect();
+        
+                // Posición relativa del mouse dentro de la imagen (0..1)
+                const relX = (e.clientX - rect.left) / rect.width;
+                const relY = (e.clientY - rect.top) / rect.height;
+        
+                // Posición de la lupa en la pantalla (centrada en el cursor)
+                let lx = e.clientX - LUPA_RADIO;
+                let ly = e.clientY - LUPA_RADIO;
+        
+                // Que no se salga de la pantalla
+                if (lx < 0) lx = 0;
+                if (ly < 0) ly = 0;
+                if (lx + LUPA_SIZE > window.innerWidth) lx = window.innerWidth - LUPA_SIZE;
+                if (ly + LUPA_SIZE > window.innerHeight) ly = window.innerHeight - LUPA_SIZE;
+        
+                lupa.style.left = lx + 'px';
+                lupa.style.top = ly + 'px';
+        
+                // Fondo: movemos la imagen ampliada para que coincida con la zona bajo el cursor
+                const bgW = rect.width * ZOOM;
+                const bgH = rect.height * ZOOM;
+                const bgX = -(relX * bgW - LUPA_RADIO);
+                const bgY = -(relY * bgH - LUPA_RADIO);
+                lupa.style.backgroundPosition = `${bgX}px ${bgY}px`;
+            }
+        
+            function desactivar() {
+                lupa.classList.remove('activa');
+                popupImg.classList.remove('lupa-activa');
+            }
+        
+            // Eventos
+            popupImg.addEventListener('mouseenter', activar);
+            popupImg.addEventListener('mousemove', mover);
+            popupImg.addEventListener('mouseleave', desactivar);
+        
+            // Al cerrar el pop-up, desactivamos la lupa
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'img-popup') desactivar();
+            });
+        })();
 
+        
         // ============================================================
         // EVENTOS
         // ============================================================
