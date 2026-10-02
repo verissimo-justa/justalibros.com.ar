@@ -469,19 +469,7 @@
                 }
             });
         });
-// Guardamos el último valor para detectar si el usuario re-selecciona "aleatorio"
-let ultimoOrden = '';
-document.getElementById('ordenar-por').addEventListener('change', function() {
-    const actual = this.value;
 
-    // Si vuelve a elegir "aleatorio" (aunque ya estuviera elegido antes),
-    // forzamos un rebarajado
-    if (actual === 'aleatorio' && ultimoOrden === 'aleatorio') {
-        filtrarCatalogo();
-    }
-
-    ultimoOrden = actual;
-});
         // ---------- Inicio ----------
         window.addEventListener('DOMContentLoaded', cargarCatalogo);
     </script>
