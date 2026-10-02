@@ -5,54 +5,223 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JUSTA | libros que buscan relecturas</title>
 
+    <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
     <link rel="apple-touch-icon" href="./favicon.png">
 
+    <!-- Tipografía -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <!-- Librerías -->
+    <script defer src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Figtree', 'Inter', Roboto, Helvetica, Arial, sans-serif; background: #fbfaf7; color: #1a1715; }
+
+        body {
+            font-family: 'Figtree', 'Inter', Roboto, Helvetica, Arial, sans-serif;
+            background: #fbfaf7;
+            color: #1a1715;
+        }
+
+        /* ---------- Header ---------- */
         header { max-width: 1200px; margin: 40px auto 20px; text-align: center; }
         header h1 { font-size: 4.5rem; font-weight: 600; letter-spacing: -1px; margin-bottom: 5px; }
         header p { color: #6d655f; font-size: 1.1rem; }
-        .panel-control { max-width: 1200px; margin: 0 auto 40px; background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e6e2da; display: flex; gap: 15px; flex-wrap: wrap; }
-        .panel-control input, .panel-control select { padding: 12px 16px; font-size: 1rem; border: 1px solid #dcd7cd; border-radius: 8px; background: #fbfaf7; color: #1a1715; outline: none; flex: 1; min-width: 200px; }
-        .panel-control input:focus, .panel-control select:focus { border-color: #7d6c5b; background: #ffffff; }
-        .contador-libros { width: 100%; font-size: 0.9rem; color: #8c8177; font-weight: 600; margin-bottom: -5px; }
-        .grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto 60px; }
-        .tarjeta { background: #ffffff; border-radius: 12px; border: 1px solid #e6e2da; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
-        .tarjeta:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.03); }
-        .portada-contenedor { width: 100%; aspect-ratio: 4 / 5; background: #f3efe6; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .portada-img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; }
-        .portada-fallback { padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%; border-left: 12px solid #7d6c5b; background: linear-gradient(135deg, #f9f6f0, #eae4d7); position: absolute; top:0; left:0; z-index: 1; }
+
+        /* ---------- Panel de control ---------- */
+        .panel-control {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e6e2da;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .panel-control input,
+        .panel-control select {
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid #dcd7cd;
+            border-radius: 8px;
+            background: #fbfaf7;
+            color: #1a1715;
+            outline: none;
+            flex: 1;
+            min-width: 200px;
+        }
+        .panel-control input:focus,
+        .panel-control select:focus {
+            border-color: #7d6c5b;
+            background: #ffffff;
+        }
+        .contador-libros {
+            width: 100%;
+            font-size: 0.9rem;
+            color: #8c8177;
+            font-weight: 600;
+            margin-bottom: -5px;
+        }
+
+        /* ---------- Grilla ---------- */
+        .grilla {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto 60px;
+        }
+
+        /* ---------- Tarjeta ---------- */
+        .tarjeta {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e6e2da;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .tarjeta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
+        }
+        .portada-contenedor {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            background: #f3efe6;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .portada-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+        }
+        .portada-fallback {
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            width: 100%;
+            border-left: 12px solid #7d6c5b;
+            background: linear-gradient(135deg, #f9f6f0, #eae4d7);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
         .fallback-titulo { font-size: 1.1rem; font-weight: 700; color: #3a322d; line-height: 1.3; }
         .fallback-autor { font-size: 0.9rem; color: #7d6c5b; font-weight: 500; }
+
         .info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
         .info h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
         .info .autor { font-size: 0.95rem; color: #6d655f; margin-bottom: 8px; }
         .info .detalles { font-size: 0.8rem; color: #9c9289; margin-bottom: auto; line-height: 1.4; }
-        .footer-tarjeta { padding: 15px; background: #fbfaf7; border-top: 1px solid #eae6df; display: flex; align-items: center; justify-content: space-between; }
+
+        .footer-tarjeta {
+            padding: 15px;
+            background: #fbfaf7;
+            border-top: 1px solid #eae6df;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
         .precio { font-size: 1.2rem; font-weight: 700; color: #1a1715; }
-        .btn-comprar { background: #1a1715; color: #ffffff; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 23, 21, 0.6); backdrop-filter: blur(4px); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
-        .modal-contenido { background: #ffffff; padding: 30px; border-radius: 16px; max-width: 700px; width: 100%; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.15); display: flex; gap: 25px; flex-wrap: wrap; }
-        .btn-cerrar { position: absolute; top: 15px; right: 20px; font-size: 1.8rem; background: none; border: none; color: #9c9289; cursor: pointer; outline: none; }
+        .btn-comprar {
+            background: #1a1715;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* ---------- Modal ---------- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 23, 21, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-contenido {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        .btn-cerrar {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            color: #9c9289;
+            cursor: pointer;
+            outline: none;
+        }
         .modal-fotos { display: flex; gap: 15px; flex: 1; min-width: 280px; justify-content: center; }
-        .modal-fotos img { width: 140px; height: 210px; object-fit: cover; border-radius: 6px; border: 1px solid #e6e2da; background: #f3efe6; cursor: pointer; }
+        .modal-fotos img {
+            width: 140px;
+            height: 210px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #e6e2da;
+            background: #f3efe6;
+            cursor: pointer;
+        }
         .modal-info { flex: 12; min-width: 280px; display: flex; flex-direction: column; }
         .modal-info h2 { font-size: 1.6rem; margin-bottom: 5px; }
         .modal-info .autor { font-size: 1.1rem; color: #6d655f; margin-bottom: 20px; }
         .modal-detalles { font-size: 0.95rem; color: #4a413a; margin-bottom: 30px; line-height: 1.6; }
-        .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #eae6df; }
-        .no-resultados { grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: #8c8177; font-size: 1.2rem; }
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #eae6df;
+        }
 
-        /* --- Pop-up de imagen ampliada --- */
+        .no-resultados {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            color: #8c8177;
+            font-size: 1.2rem;
+        }
+
+        /* ---------- Pop-up de imagen ampliada ---------- */
         .img-popup-overlay {
             display: none;
             position: fixed;
@@ -99,7 +268,7 @@
             <option value="">Todos los estados</option>
         </select>
         <select id="ordenar-por">
-            <option value="">Ordenar por...</option>
+            <option value="">Últimos cargados (por defecto)</option>
             <option value="titulo-asc">Título (A-Z)</option>
             <option value="autor-asc">Autor (A-Z)</option>
             <option value="precio-asc">Precio (de menor a mayor)</option>
@@ -128,22 +297,30 @@
                 <div class="modal-detalles" id="modal-txt-detalles"></div>
                 <div class="modal-footer">
                     <span class="precio" id="modal-precio"></span>
-                    <a href="" id="modal-btn-comprar" target="_blank" class="btn-comprar">Comprar</a>
+                    <a href="" id="modal-btn-comprar" target="_blank" rel="noopener" class="btn-comprar">Comprar</a>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Pop-up de imagen ampliada -->
     <div class="img-popup-overlay" id="img-popup" onclick="cerrarPopupImagen()">
         <img id="img-popup-src" src="" alt="" onclick="event.stopPropagation()">
     </div>
 
     <script>
+        // ============================================================
+        // CONFIGURACIÓN
+        // ============================================================
         const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?output=csv';
+        const ORDEN_ESTADOS = ['como nuevo', 'muy bueno', 'bueno', 'regular'];
 
+        // Estado global
         let librosData = [];
 
-        // ---------- Utilidades ----------
+        // ============================================================
+        // UTILIDADES
+        // ============================================================
         const normalizar = (txt) => (txt || '')
             .toString()
             .normalize('NFD')
@@ -172,7 +349,16 @@
             return isNaN(n) ? -Infinity : n;
         };
 
-        // ---------- Carga del catálogo ----------
+        const placeholderSVG = (texto) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+            `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="210">
+                <rect width="100%" height="100%" fill="#eae4d7"/>
+                <text x="50%" y="50%" font-family="sans-serif" font-size="14" fill="#7d6c5b" text-anchor="middle">${texto}</text>
+            </svg>`
+        );
+
+        // ============================================================
+        // CARGA DEL CATÁLOGO
+        // ============================================================
         async function cargarCatalogo() {
             const contador = document.getElementById('contador');
             try {
@@ -183,19 +369,21 @@
                 librosData = interpretarCSV(textoCsv);
 
                 if (librosData.length === 0) {
-                    contador.innerText = "Catálogo vacío o formato no reconocido.";
+                    contador.innerText = 'Catálogo vacío o formato no reconocido.';
                     return;
                 }
 
                 popularFiltros(librosData);
                 filtrarCatalogo();
             } catch (error) {
-                console.error("Error en la carga:", error);
-                contador.innerText = "Error al conectar con el archivo de libros.";
+                console.error('Error en la carga:', error);
+                contador.innerText = 'Error al conectar con el archivo de libros.';
             }
         }
 
-        // ---------- Parser CSV con PapaParse ----------
+        // ============================================================
+        // PARSER CSV
+        // ============================================================
         function interpretarCSV(texto) {
             const limpio = texto.replace(/^\uFEFF/, '').trim();
             if (!limpio) return [];
@@ -222,18 +410,20 @@
                 }))
                 .map(l => ({
                     ...l,
-                    // Campo calculado: nombre + apellido en el orden correcto
+                    // Campo calculado: nombre + apellido
                     autor: [l.autorN, l.autorA].filter(Boolean).join(' ')
                 }))
                 .filter(l => l.titulo && l.id);
         }
 
-        // ---------- Filtros dinámicos ----------
+        // ============================================================
+        // FILTROS DINÁMICOS (llenado de <select>)
+        // ============================================================
         function popularFiltros(libros) {
             const selCat = document.getElementById('filtro-categoria');
             const selEst = document.getElementById('filtro-estado');
 
-            // Categorías
+            // ----- Categorías -----
             const categoriasSet = new Set();
             libros.forEach(l => {
                 if (l.categoria1) categoriasSet.add(l.categoria1);
@@ -246,29 +436,31 @@
                 selCat.appendChild(opt);
             });
 
-            // Estados
-            const ORDEN_ESTADOS = ['como nuevo', 'muy bueno', 'bueno', 'regular'];
+            // ----- Estados (orden personalizado) -----
             const estadosSet = new Set();
             libros.forEach(l => {
                 if (l.estado) estadosSet.add(l.estado);
             });
-            [...estadosSet].sort((a, b) => {
-                const ia = ORDEN_ESTADOS.indexOf(normalizar(a));
-                const ib = ORDEN_ESTADOS.indexOf(normalizar(b));
-                if (ia === -1 && ib === -1) return a.localeCompare(b);
-                if (ia === -1) return 1;
-                if (ib === -1) return -1;
-                return ia - ib;
-            }).forEach(e => {
-                const opt = document.createElement('option');
-                opt.value = e;
-                opt.textContent = e;
-                selEst.appendChild(opt);
-            });
+            [...estadosSet]
+                .sort((a, b) => {
+                    const ia = ORDEN_ESTADOS.indexOf(normalizar(a));
+                    const ib = ORDEN_ESTADOS.indexOf(normalizar(b));
+                    if (ia === -1 && ib === -1) return a.localeCompare(b);
+                    if (ia === -1) return 1;
+                    if (ib === -1) return -1;
+                    return ia - ib;
+                })
+                .forEach(e => {
+                    const opt = document.createElement('option');
+                    opt.value = e;
+                    opt.textContent = e;
+                    selEst.appendChild(opt);
+                });
         }
 
-        // ---------- Render de tarjetas ----------
-        // ---------- Render de tarjetas ----------
+        // ============================================================
+        // RENDER DE TARJETAS
+        // ============================================================
         function renderizarLibros(libros) {
             const grilla = document.getElementById('grilla-libros');
             const contador = document.getElementById('contador');
@@ -276,7 +468,7 @@
 
             if (libros.length === 0) {
                 grilla.innerHTML = `<div class="no-resultados">FICHA NO ENCONTRADA. Probá con otra búsqueda o filtros.</div>`;
-                contador.innerText = "0 libros encontrados";
+                contador.innerText = '0 libros encontrados';
                 return;
             }
 
@@ -318,7 +510,9 @@
             grilla.appendChild(fragment);
         }
 
-        // ---------- Modal ----------
+        // ============================================================
+        // MODAL DE FICHA
+        // ============================================================
         function abrirModal(libro) {
             document.getElementById('modal-titulo').innerText = libro.titulo;
             document.getElementById('modal-autor').innerText = libro.autor || '';
@@ -345,8 +539,14 @@
             tapa.src = `./img/${libro.id}-tapa.jpg`;
             contra.src = `./img/${libro.id}-contratapa.jpg`;
 
-            tapa.onerror = function() { this.src = placeholderSVG('Sin Tapa'); };
-            contra.onerror = function() { this.src = placeholderSVG('Sin Contratapa'); };
+            tapa.onerror = function() {
+                this.onerror = null;
+                this.src = placeholderSVG('Sin Tapa');
+            };
+            contra.onerror = function() {
+                this.onerror = null;
+                this.src = placeholderSVG('Sin Contratapa');
+            };
 
             document.getElementById('modal-libro').style.display = 'flex';
         }
@@ -355,25 +555,18 @@
             document.getElementById('modal-libro').style.display = 'none';
         }
 
-        function placeholderSVG(texto) {
-            return 'data:image/svg+xml;utf8,' + encodeURIComponent(
-                `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="210">
-                    <rect width="100%" height="100%" fill="#eae4d7"/>
-                    <text x="50%" y="50%" font-family="sans-serif" font-size="14" fill="#7d6c5b" text-anchor="middle">${texto}</text>
-                </svg>`
-            );
-        }
-
-        // ---------- Filtro + orden ----------
+        // ============================================================
+        // FILTRO + ORDEN
+        // ============================================================
         function filtrarCatalogo() {
-            const busqueda = normalizar(document.getElementById('buscador').value);
+            const busqueda       = normalizar(document.getElementById('buscador').value);
             const catSeleccionada = document.getElementById('filtro-categoria').value;
             const estSeleccionado = document.getElementById('filtro-estado').value;
-            const criterio = document.getElementById('ordenar-por').value;
+            const criterio        = document.getElementById('ordenar-por').value;
 
             const filtrados = librosData.filter(libro => {
-                const titulo = normalizar(libro.titulo);
-                const autor = normalizar(libro.autor);
+                const titulo    = normalizar(libro.titulo);
+                const autor     = normalizar(libro.autor);
                 const editorial = normalizar(libro.editorial);
 
                 const coincideTexto = !busqueda ||
@@ -394,49 +587,69 @@
             renderizarLibros(ordenados);
         }
 
-        // ---------- Ordenamiento ----------
+        // ============================================================
+        // ORDENAMIENTO
+        // ============================================================
         function aplicarOrden(libros, criterio) {
-            if (!criterio) return libros;
-
             const copia = [...libros];
+
+            // Sin criterio → últimos cargados primero (id más alto primero)
+            if (!criterio) {
+                copia.sort((a, b) => numeroId(b.id) - numeroId(a.id));
+                return copia;
+            }
 
             switch (criterio) {
                 case 'titulo-asc':
-                    copia.sort((a, b) => normalizar(a.titulo).localeCompare(normalizar(b.titulo)));
+                    copia.sort((a, b) => {
+                        const ta = normalizar(a.titulo);
+                        const tb = normalizar(b.titulo);
+                        if (ta < tb) return -1;
+                        if (ta > tb) return 1;
+                        return 0;
+                    });
                     break;
-case 'autor-asc':
-    copia.sort((a, b) => {
-        const apeA = normalizar(a.autorA);
-        const apeB = normalizar(b.autorA);
-        const nomA = normalizar(a.autorN);
-        const nomB = normalizar(b.autorN);
 
-        if (apeA < apeB) return -1;
-        if (apeA > apeB) return 1;
-        if (nomA < nomB) return -1;
-        if (nomA > nomB) return 1;
-        return 0;
-    });
-    break;
+                case 'autor-asc':
+                    copia.sort((a, b) => {
+                        const apeA = normalizar(a.autorA);
+                        const apeB = normalizar(b.autorA);
+                        const nomA = normalizar(a.autorN);
+                        const nomB = normalizar(b.autorN);
+                        if (apeA < apeB) return -1;
+                        if (apeA > apeB) return 1;
+                        if (nomA < nomB) return -1;
+                        if (nomA > nomB) return 1;
+                        return 0;
+                    });
+                    break;
+
                 case 'precio-asc':
                     copia.sort((a, b) => numeroPrecio(a.precio) - numeroPrecio(b.precio));
                     break;
+
                 case 'precio-desc':
                     copia.sort((a, b) => numeroPrecio(b.precio) - numeroPrecio(a.precio));
                     break;
+
                 case 'recientes':
                     copia.sort((a, b) => numeroId(b.id) - numeroId(a.id));
                     break;
+
                 case 'antiguos':
                     copia.sort((a, b) => numeroId(a.id) - numeroId(b.id));
                     break;
+
                 case 'anio-asc':
                     copia.sort((a, b) => numeroAnio(a.anio) - numeroAnio(b.anio));
                     break;
+
                 case 'anio-desc':
                     copia.sort((a, b) => numeroAnio(b.anio) - numeroAnio(a.anio));
                     break;
+
                 case 'aleatorio':
+                    // Barajado Fisher-Yates
                     for (let i = copia.length - 1; i > 0; i--) {
                         const j = Math.floor(Math.random() * (i + 1));
                         [copia[i], copia[j]] = [copia[j], copia[i]];
@@ -447,7 +660,9 @@ case 'autor-asc':
             return copia;
         }
 
-        // ---------- Pop-up de imagen ampliada ----------
+        // ============================================================
+        // POP-UP DE IMAGEN AMPLIADA
+        // ============================================================
         function abrirPopupImagen(src, alt) {
             const overlay = document.getElementById('img-popup');
             const img = document.getElementById('img-popup-src');
@@ -468,7 +683,9 @@ case 'autor-asc':
             }, 200);
         }
 
-        // ---------- Eventos ----------
+        // ============================================================
+        // EVENTOS
+        // ============================================================
         document.getElementById('buscador').addEventListener('input', filtrarCatalogo);
         document.getElementById('filtro-categoria').addEventListener('change', filtrarCatalogo);
         document.getElementById('filtro-estado').addEventListener('change', filtrarCatalogo);
@@ -488,7 +705,9 @@ case 'autor-asc':
             });
         });
 
-        // ---------- Inicio ----------
+        // ============================================================
+        // INICIO
+        // ============================================================
         window.addEventListener('DOMContentLoaded', cargarCatalogo);
     </script>
 </body>
