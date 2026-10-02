@@ -210,16 +210,22 @@
                 .map(r => ({
                     id:         (r.id || '').toString().trim(),
                     titulo:     (r.titulo || r.título || '').toString().trim(),
-                    autor:      (r.autor || '').toString().trim(),
+                    autorN:     (r.autor_n || '').toString().trim(),
+                    autorA:     (r.autor_a || '').toString().trim(),
                     editorial:  (r.editorial || '').toString().trim(),
                     anio:       (r.anio || r['año'] || r.ano || '').toString().trim(),
-                    categoria1: (r.categoria1 || r['categoria1'] || r.categoria || '').toString().trim(),
-                    categoria2: (r.categoria2 || r.subcategoria || r['subcategoría'] || '').toString().trim(),
+                    categoria1: (r.categoria1 || r.categoria || '').toString().trim(),
+                    categoria2: (r.categoria2 || r.subcategoria || '').toString().trim(),
                     estado:     (r.estado || '').toString().trim(),
                     precio:     (r.precio || '').toString().trim(),
                     whatsapp:   (r.whatsapp || '').toString().trim()
                 }))
-                .filter(l => l.titulo);
+                .map(l => ({
+                    ...l,
+                    // Campo calculado: nombre + apellido en el orden correcto
+                    autor: [l.autorN, l.autorA].filter(Boolean).join(' ')
+                }))
+                .filter(l => l.titulo && l.id);
         }
 
         // ---------- Filtros dinámicos ----------
@@ -261,6 +267,7 @@
             });
         }
 
+        // ---------- Render de tarjetas ----------
         // ---------- Render de tarjetas ----------
         function renderizarLibros(libros) {
             const grilla = document.getElementById('grilla-libros');
@@ -397,9 +404,20 @@
                 case 'titulo-asc':
                     copia.sort((a, b) => normalizar(a.titulo).localeCompare(normalizar(b.titulo)));
                     break;
-                case 'autor-asc':
-                    copia.sort((a, b) => normalizar(a.autor).localeCompare(normalizar(b.autor)));
-                    break;
+case 'autor-asc':
+    copia.sort((a, b) => {
+        const apeA = normalizar(a.autorA);
+        const apeB = normalizar(b.autorA);
+        const nomA = normalizar(a.autorN);
+        const nomB = normalizar(b.autorN);
+
+        if (apeA < apeB) return -1;
+        if (apeA > apeB) return 1;
+        if (nomA < nomB) return -1;
+        if (nomA > nomB) return 1;
+        return 0;
+    });
+    break;
                 case 'precio-asc':
                     copia.sort((a, b) => numeroPrecio(a.precio) - numeroPrecio(b.precio));
                     break;
