@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>JUSTA | libros que buscan relecturas</title>
-    
-<link rel="icon" type="image/x-icon" href="./favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="./favicon.svg">
-<link rel="apple-touch-icon" href="./favicon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- PapaParse para leer CSV correctamente -->
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
+    <link rel="apple-touch-icon" href="./favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <style>
@@ -30,7 +28,8 @@
         .grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto 60px; }
         .tarjeta { background: #ffffff; border-radius: 12px; border: 1px solid #e6e2da; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .tarjeta:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.03); }
-        .portada-contenedor { width: 100%; aspect-ratio: 4 / 5; background: #f3efe6; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }        .portada-img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; }
+        .portada-contenedor { width: 100%; aspect-ratio: 4 / 5; background: #f3efe6; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .portada-img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; }
         .portada-fallback { padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%; border-left: 12px solid #7d6c5b; background: linear-gradient(135deg, #f9f6f0, #eae4d7); position: absolute; top:0; left:0; z-index: 1; }
         .fallback-titulo { font-size: 1.1rem; font-weight: 700; color: #3a322d; line-height: 1.3; }
         .fallback-autor { font-size: 0.9rem; color: #7d6c5b; font-weight: 500; }
@@ -54,57 +53,34 @@
         .no-resultados { grid-column: 1 / -1; text-align: center; padding: 80px 20px; color: #8c8177; font-size: 1.2rem; }
 
         /* --- Pop-up de imagen ampliada --- */
-/* --- Pop-up de imagen ampliada --- */
-.img-popup-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(26, 23, 21, 0.85);
-    backdrop-filter: blur(6px);
-    z-index: 99999;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    cursor: zoom-out;
-}
-
-.img-popup-overlay.activo {
-    display: flex;
-}
-.img-popup-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(26, 23, 21, 0.85);
-    backdrop-filter: blur(6px);
-    z-index: 99999;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    cursor: zoom-out;
-}
-
-.img-popup-overlay.activo {
-    display: flex;
-}
-.img-popup-overlay img {
-    max-width: 90vw;
-    max-height: 90vh;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    cursor: default;
-    background: transparent;
-    display: block;
-}
+        .img-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(26, 23, 21, 0.85);
+            backdrop-filter: blur(6px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            cursor: zoom-out;
+        }
+        .img-popup-overlay.activo { display: flex; }
+        .img-popup-overlay img {
+            max-width: 90vw;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            cursor: default;
+            background: transparent;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -121,6 +97,18 @@
         </select>
         <select id="filtro-estado">
             <option value="">Todos los estados</option>
+        </select>
+        <select id="ordenar-por">
+            <option value="">Ordenar por...</option>
+            <option value="titulo-asc">Título (A-Z)</option>
+            <option value="autor-asc">Autor (A-Z)</option>
+            <option value="precio-asc">Precio (de menor a mayor)</option>
+            <option value="precio-desc">Precio (de mayor a menor)</option>
+            <option value="recientes">Últimos cargados</option>
+            <option value="antiguos">Primeros cargados</option>
+            <option value="anio-asc">Año de edición (ascendente)</option>
+            <option value="anio-desc">Año de edición (descendente)</option>
+            <option value="aleatorio">Aleatoriamente</option>
         </select>
     </div>
 
@@ -145,13 +133,12 @@
             </div>
         </div>
     </div>
-    
+
     <div class="img-popup-overlay" id="img-popup" onclick="cerrarPopupImagen()">
         <img id="img-popup-src" src="" alt="" onclick="event.stopPropagation()">
     </div>
-    
+
     <script>
-        // Ruta exacta al CSV publicado de tu Google Sheet
         const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?output=csv';
 
         let librosData = [];
@@ -170,6 +157,21 @@
             return isNaN(num) ? precio : '$' + num.toLocaleString('es-AR');
         };
 
+        const numeroPrecio = (p) => {
+            const n = parseInt((p || '').toString().replace(/[^0-9]/g, ''), 10);
+            return isNaN(n) ? Infinity : n;
+        };
+
+        const numeroAnio = (a) => {
+            const n = parseInt((a || '').toString().replace(/[^0-9]/g, ''), 10);
+            return isNaN(n) ? Infinity : n;
+        };
+
+        const numeroId = (id) => {
+            const n = parseInt((id || '').toString().replace(/[^0-9]/g, ''), 10);
+            return isNaN(n) ? -Infinity : n;
+        };
+
         // ---------- Carga del catálogo ----------
         async function cargarCatalogo() {
             const contador = document.getElementById('contador');
@@ -186,7 +188,7 @@
                 }
 
                 popularFiltros(librosData);
-                renderizarLibros(librosData);
+                filtrarCatalogo();
             } catch (error) {
                 console.error("Error en la carga:", error);
                 contador.innerText = "Error al conectar con el archivo de libros.";
@@ -221,48 +223,43 @@
         }
 
         // ---------- Filtros dinámicos ----------
-function popularFiltros(libros) {
-    const selCat = document.getElementById('filtro-categoria');
-    const selEst = document.getElementById('filtro-estado');
+        function popularFiltros(libros) {
+            const selCat = document.getElementById('filtro-categoria');
+            const selEst = document.getElementById('filtro-estado');
 
-    // ---------- CATEGORÍAS (orden alfabético normal) ----------
-    const categoriasSet = new Set();
-    libros.forEach(l => {
-        if (l.categoria1) categoriasSet.add(l.categoria1);
-        if (l.categoria2) categoriasSet.add(l.categoria2);
-    });
+            // Categorías
+            const categoriasSet = new Set();
+            libros.forEach(l => {
+                if (l.categoria1) categoriasSet.add(l.categoria1);
+                if (l.categoria2) categoriasSet.add(l.categoria2);
+            });
+            [...categoriasSet].sort().forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c;
+                selCat.appendChild(opt);
+            });
 
-    [...categoriasSet].sort().forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        selCat.appendChild(opt);
-    });
-
-    // ---------- ESTADOS (orden personalizado) ----------
-    const ORDEN_ESTADOS = ['como nuevo', 'muy bueno', 'bueno', 'regular'];
-
-    const estadosSet = new Set();
-    libros.forEach(l => {
-        if (l.estado) estadosSet.add(l.estado);
-    });
-
-    const estadosOrdenados = [...estadosSet].sort((a, b) => {
-        const ia = ORDEN_ESTADOS.indexOf(normalizar(a));
-        const ib = ORDEN_ESTADOS.indexOf(normalizar(b));
-        if (ia === -1 && ib === -1) return a.localeCompare(b);
-        if (ia === -1) return 1;
-        if (ib === -1) return -1;
-        return ia - ib;
-    });
-
-    estadosOrdenados.forEach(e => {
-        const opt = document.createElement('option');
-        opt.value = e;
-        opt.textContent = e;
-        selEst.appendChild(opt);
-    });
-}
+            // Estados
+            const ORDEN_ESTADOS = ['como nuevo', 'muy bueno', 'bueno', 'regular'];
+            const estadosSet = new Set();
+            libros.forEach(l => {
+                if (l.estado) estadosSet.add(l.estado);
+            });
+            [...estadosSet].sort((a, b) => {
+                const ia = ORDEN_ESTADOS.indexOf(normalizar(a));
+                const ib = ORDEN_ESTADOS.indexOf(normalizar(b));
+                if (ia === -1 && ib === -1) return a.localeCompare(b);
+                if (ia === -1) return 1;
+                if (ib === -1) return -1;
+                return ia - ib;
+            }).forEach(e => {
+                const opt = document.createElement('option');
+                opt.value = e;
+                opt.textContent = e;
+                selEst.appendChild(opt);
+            });
+        }
 
         // ---------- Render de tarjetas ----------
         function renderizarLibros(libros) {
@@ -335,7 +332,6 @@ function popularFiltros(libros) {
             const tapa = document.getElementById('modal-tapa');
             const contra = document.getElementById('modal-contratapa');
 
-            // Limpiamos onerror anterior para evitar loops si el src cambia
             tapa.onerror = null;
             contra.onerror = null;
 
@@ -361,11 +357,12 @@ function popularFiltros(libros) {
             );
         }
 
-        // ---------- Filtro principal ----------
+        // ---------- Filtro + orden ----------
         function filtrarCatalogo() {
             const busqueda = normalizar(document.getElementById('buscador').value);
             const catSeleccionada = document.getElementById('filtro-categoria').value;
             const estSeleccionado = document.getElementById('filtro-estado').value;
+            const criterio = document.getElementById('ordenar-por').value;
 
             const filtrados = librosData.filter(libro => {
                 const titulo = normalizar(libro.titulo);
@@ -386,48 +383,87 @@ function popularFiltros(libros) {
                 return coincideTexto && coincideCategoria && coincideEstado;
             });
 
-            renderizarLibros(filtrados);
+            const ordenados = aplicarOrden(filtrados, criterio);
+            renderizarLibros(ordenados);
+        }
+
+        // ---------- Ordenamiento ----------
+        function aplicarOrden(libros, criterio) {
+            if (!criterio) return libros;
+
+            const copia = [...libros];
+
+            switch (criterio) {
+                case 'titulo-asc':
+                    copia.sort((a, b) => normalizar(a.titulo).localeCompare(normalizar(b.titulo)));
+                    break;
+                case 'autor-asc':
+                    copia.sort((a, b) => normalizar(a.autor).localeCompare(normalizar(b.autor)));
+                    break;
+                case 'precio-asc':
+                    copia.sort((a, b) => numeroPrecio(a.precio) - numeroPrecio(b.precio));
+                    break;
+                case 'precio-desc':
+                    copia.sort((a, b) => numeroPrecio(b.precio) - numeroPrecio(a.precio));
+                    break;
+                case 'recientes':
+                    copia.sort((a, b) => numeroId(b.id) - numeroId(a.id));
+                    break;
+                case 'antiguos':
+                    copia.sort((a, b) => numeroId(a.id) - numeroId(b.id));
+                    break;
+                case 'anio-asc':
+                    copia.sort((a, b) => numeroAnio(a.anio) - numeroAnio(b.anio));
+                    break;
+                case 'anio-desc':
+                    copia.sort((a, b) => numeroAnio(b.anio) - numeroAnio(a.anio));
+                    break;
+                case 'aleatorio':
+                    for (let i = copia.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [copia[i], copia[j]] = [copia[j], copia[i]];
+                    }
+                    break;
+            }
+
+            return copia;
         }
 
         // ---------- Pop-up de imagen ampliada ----------
-function abrirPopupImagen(src, alt) {
-    const overlay = document.getElementById('img-popup');
-    const img = document.getElementById('img-popup-src');
-    img.src = src;
-    img.alt = alt || '';
-    overlay.classList.add('activo');
-}
-
-function cerrarPopupImagen() {
-    const overlay = document.getElementById('img-popup');
-    const img = document.getElementById('img-popup-src');
-    overlay.classList.remove('activo');
-    // Solo limpiamos el src DESPUÉS de la transición, para evitar parpadeos
-    setTimeout(() => {
-        if (!overlay.classList.contains('activo')) {
-            img.removeAttribute('src');
-            img.removeAttribute('alt');
+        function abrirPopupImagen(src, alt) {
+            const overlay = document.getElementById('img-popup');
+            const img = document.getElementById('img-popup-src');
+            img.src = src;
+            img.alt = alt || '';
+            overlay.classList.add('activo');
         }
-    }, 200);
-}
+
+        function cerrarPopupImagen() {
+            const overlay = document.getElementById('img-popup');
+            const img = document.getElementById('img-popup-src');
+            overlay.classList.remove('activo');
+            setTimeout(() => {
+                if (!overlay.classList.contains('activo')) {
+                    img.removeAttribute('src');
+                    img.removeAttribute('alt');
+                }
+            }, 200);
+        }
 
         // ---------- Eventos ----------
         document.getElementById('buscador').addEventListener('input', filtrarCatalogo);
         document.getElementById('filtro-categoria').addEventListener('change', filtrarCatalogo);
         document.getElementById('filtro-estado').addEventListener('change', filtrarCatalogo);
+        document.getElementById('ordenar-por').addEventListener('change', filtrarCatalogo);
 
-        // Escape cierra el pop-up (y también el modal si está abierto)
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                cerrarPopupImagen();
-            }
+            if (e.key === 'Escape') cerrarPopupImagen();
         });
 
-        // Hacer clickeables las fotos del modal
         ['modal-tapa', 'modal-contratapa'].forEach(id => {
             const img = document.getElementById(id);
             img.addEventListener('click', (e) => {
-                e.stopPropagation(); // que no cierre el modal
+                e.stopPropagation();
                 if (img.src && !img.src.startsWith('data:')) {
                     abrirPopupImagen(img.src, img.alt);
                 }
