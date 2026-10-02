@@ -469,7 +469,14 @@
                 }
             });
         });
-
+document.getElementById('ordenar-por').addEventListener('click', (e) => {
+    // Si el usuario hace clic en la opción "aleatorio" que ya estaba seleccionada,
+    // forzamos un rebarajado
+    if (e.target.tagName === 'OPTION' && e.target.value === 'aleatorio'
+        && document.getElementById('ordenar-por').value === 'aleatorio') {
+        filtrarCatalogo();
+    }
+});
         // ---------- Inicio ----------
         window.addEventListener('DOMContentLoaded', cargarCatalogo);
     </script>
