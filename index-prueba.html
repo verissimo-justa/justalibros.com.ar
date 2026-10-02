@@ -28,33 +28,34 @@
         }
 
         /* ---------- Header ---------- */
-        header {
-            max-width: 900px;
-            margin: 40px auto 20px 0;   /* 👈 ojo, ver abajo */
-            text-align: left;
-        }
-        header h1 {
-            font-family: 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 3.5rem;
-            font-weight: 500;
-            letter-spacing: -0.5px;
-            line-height: 1.1;
-            color: #1a1715;
-        }
-        header h1 .punto {
-            font-weight: 500;
-        }
-        header h1 .tagline {
-            font-weight: 200;
-            color: #1a1715;
-        }
-        @media (max-width: 700px) {
-            header h1 { font-size: 2rem; }
-        }
+header {
+    max-width: 1200px;
+    margin: 40px auto 20px;
+    text-align: left;
+}
+header h1 {
+    font-family: 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 2.5rem;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    color: #1a1715;
+}
+header h1 .punto {
+    font-weight: 700;
+}
+header h1 .tagline {
+    font-weight: 200;
+    color: #1a1715;
+}
+
+@media (max-width: 700px) {
+    header h1 { font-size: 1.6rem; }
+}
 
         /* ---------- Panel de control ---------- */
         .panel-control {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto 40px;
             background: #ffffff;
             padding: 20px;
@@ -94,7 +95,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 25px;
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto 60px;
         }
 
