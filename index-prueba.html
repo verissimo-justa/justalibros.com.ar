@@ -215,7 +215,6 @@ header h1 .tagline {
             cursor: pointer;
             outline: none;
         }
-        .modal-fotos { display: flex; gap: 15px; flex: 1; min-width: 280px; justify-content: center; }
         .modal-fotos img {
             width: 140px;
             height: 210px;
@@ -223,7 +222,14 @@ header h1 .tagline {
             border-radius: 6px;
             border: 1px solid #e6e2da;
             background: #f3efe6;
-            cursor: pointer;
+            cursor: zoom-in;                 /* 👈 lupa en el modal */
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+        
+        .modal-fotos img:hover {
+            transform: scale(1.08);          /* 👈 se agranda un 8% */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            z-index: 5;
         }
         .modal-info { flex: 12; min-width: 280px; display: flex; flex-direction: column; }
         .modal-info h2 { font-size: 1.6rem; margin-bottom: 5px; }
