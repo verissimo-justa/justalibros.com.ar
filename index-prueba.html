@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JUSTA | libros que buscan relecturas</title>
+    <title>justa. libros que buscan relecturas</title>
 
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
@@ -13,7 +13,7 @@
     <!-- Tipografía -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <!-- Librerías -->
     <script defer src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -22,15 +22,35 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Figtree', 'Inter', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: #fbfaf7;
             color: #1a1715;
         }
 
         /* ---------- Header ---------- */
-        header { max-width: 1200px; margin: 40px auto 20px; text-align: center; }
-        header h1 { font-size: 4.5rem; font-weight: 600; letter-spacing: -1px; margin-bottom: 5px; }
-        header p { color: #6d655f; font-size: 1.1rem; }
+        header {
+            max-width: 1200px;
+            margin: 40px auto 20px;
+            text-align: left;
+        }
+        header h1 {
+            font-family: 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 3.5rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            color: #1a1715;
+        }
+        header h1 .punto {
+            font-weight: 700;
+        }
+        header h1 .tagline {
+            font-weight: 300;
+            color: #1a1715;
+        }
+        @media (max-width: 700px) {
+            header h1 { font-size: 2rem; }
+        }
 
         /* ---------- Panel de control ---------- */
         .panel-control {
@@ -254,8 +274,7 @@
 </head>
 <body>
     <header>
-        <h1>JUSTA</h1>
-        <p>libros que buscan relecturas</p>
+        <h1>justa<span class="punto">.</span> <span class="tagline">libros que buscan relecturas<span class="punto">.</span></span></h1>
     </header>
 
     <div class="panel-control">
@@ -378,6 +397,8 @@
             } catch (error) {
                 console.error('Error en la carga:', error);
                 contador.innerText = 'Error al conectar con el archivo de libros.';
+                document.getElementById('grilla-libros').innerHTML =
+                    `<div class="no-resultados">No se pudo cargar el catálogo. Recargá la página o intentá más tarde.</div>`;
             }
         }
 
@@ -410,20 +431,19 @@
                 }))
                 .map(l => ({
                     ...l,
-                    // Campo calculado: nombre + apellido
                     autor: [l.autorN, l.autorA].filter(Boolean).join(' ')
                 }))
                 .filter(l => l.titulo && l.id);
         }
 
         // ============================================================
-        // FILTROS DINÁMICOS (llenado de <select>)
+        // FILTROS DINÁMICOS
         // ============================================================
         function popularFiltros(libros) {
             const selCat = document.getElementById('filtro-categoria');
             const selEst = document.getElementById('filtro-estado');
 
-            // ----- Categorías -----
+            // Categorías
             const categoriasSet = new Set();
             libros.forEach(l => {
                 if (l.categoria1) categoriasSet.add(l.categoria1);
@@ -436,7 +456,7 @@
                 selCat.appendChild(opt);
             });
 
-            // ----- Estados (orden personalizado) -----
+            // Estados (orden personalizado)
             const estadosSet = new Set();
             libros.forEach(l => {
                 if (l.estado) estadosSet.add(l.estado);
@@ -559,7 +579,7 @@
         // FILTRO + ORDEN
         // ============================================================
         function filtrarCatalogo() {
-            const busqueda       = normalizar(document.getElementById('buscador').value);
+            const busqueda        = normalizar(document.getElementById('buscador').value);
             const catSeleccionada = document.getElementById('filtro-categoria').value;
             const estSeleccionado = document.getElementById('filtro-estado').value;
             const criterio        = document.getElementById('ordenar-por').value;
@@ -593,7 +613,6 @@
         function aplicarOrden(libros, criterio) {
             const copia = [...libros];
 
-            // Sin criterio → últimos cargados primero (id más alto primero)
             if (!criterio) {
                 copia.sort((a, b) => numeroId(b.id) - numeroId(a.id));
                 return copia;
@@ -649,7 +668,6 @@
                     break;
 
                 case 'aleatorio':
-                    // Barajado Fisher-Yates
                     for (let i = copia.length - 1; i > 0; i--) {
                         const j = Math.floor(Math.random() * (i + 1));
                         [copia[i], copia[j]] = [copia[j], copia[i]];
