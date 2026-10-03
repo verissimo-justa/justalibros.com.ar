@@ -804,16 +804,17 @@
 
         // ============================================================
         // LUPA CIRCULAR SOBRE LA IMAGEN AMPLIADA
+        // Soporta mouse (desktop) y touch (mobile)
         // ============================================================
         (() => {
             const lupa = document.getElementById('lupa-circular');
             const popupImg = document.getElementById('img-popup-src');
 
-            const ZOOM = 2.2;
-            const LUPA_SIZE = 220;
+            const ZOOM = 1.9;
+            const LUPA_SIZE = 320;
             const LUPA_RADIO = LUPA_SIZE / 2;
 
-            function activar(e) {
+            function activar(clientX, clientY) {
                 if (!popupImg.src || popupImg.src.startsWith('data:')) return;
                 if (!popupImg.complete || popupImg.naturalWidth === 0) return;
 
@@ -826,18 +827,18 @@
 
                 lupa.classList.add('activa');
                 popupImg.classList.add('lupa-activa');
-                mover(e);
+                mover(clientX, clientY);
             }
 
-            function mover(e) {
+            function mover(clientX, clientY) {
                 if (!lupa.classList.contains('activa')) return;
 
                 const rect = popupImg.getBoundingClientRect();
-                const relX = (e.clientX - rect.left) / rect.width;
-                const relY = (e.clientY - rect.top) / rect.height;
+                const relX = (clientX - rect.left) / rect.width;
+                const relY = (clientY - rect.top) / rect.height;
 
-                let lx = e.clientX - LUPA_RADIO;
-                let ly = e.clientY - LUPA_RADIO;
+                let lx = clientX - LUPA_RADIO;
+                let ly = clientY - LUPA_RADIO;
 
                 if (lx < 0) lx = 0;
                 if (ly < 0) ly = 0;
@@ -859,10 +860,35 @@
                 popupImg.classList.remove('lupa-activa');
             }
 
-            popupImg.addEventListener('mouseenter', activar);
-            popupImg.addEventListener('mousemove', mover);
+            // ---------- Mouse (desktop) ----------
+            popupImg.addEventListener('mouseenter', (e) => activar(e.clientX, e.clientY));
+            popupImg.addEventListener('mousemove',  (e) => mover(e.clientX, e.clientY));
             popupImg.addEventListener('mouseleave', desactivar);
 
+            // ---------- Touch (mobile) ----------
+            // Solo activamos si hay un solo dedo sobre la pantalla
+            popupImg.addEventListener('touchstart', (e) => {
+                if (e.touches.length !== 1) return;
+                e.preventDefault(); // evita el zoom nativo del navegador
+                const t = e.touches[0];
+                activar(t.clientX, t.clientY);
+            }, { passive: false });
+
+            popupImg.addEventListener('touchmove', (e) => {
+                if (e.touches.length !== 1) return;
+                e.preventDefault();
+                const t = e.touches[0];
+                mover(t.clientX, t.clientY);
+            }, { passive: false });
+
+            popupImg.addEventListener('touchend', (e) => {
+                // Si el usuario levantó el último dedo, desactivamos
+                if (e.touches.length === 0) desactivar();
+            });
+
+            popupImg.addEventListener('touchcancel', desactivar);
+
+            // ---------- Cierre del pop-up ----------
             document.addEventListener('click', (e) => {
                 if (e.target.id === 'img-popup') desactivar();
             });
