@@ -806,8 +806,17 @@
         // LUPA CIRCULAR SOBRE LA IMAGEN AMPLIADA
         // Soporta mouse (desktop) y touch (mobile)
         // ============================================================
+        
         (() => {
             const lupa = document.getElementById('lupa-circular');
+            const popupImg = document.getElementById('img-popup-src');
+
+            // Detectar si el dispositivo tiene pantalla táctil principal
+            const esTactil = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+            const ZOOM       = esTactil ? 2.6 : 1.9;   // mobile más zoom, desktop igual
+            const LUPA_SIZE  = 320;
+            const LUPA_RADIO = LUPA_SIZE / 2;            const lupa = document.getElementById('lupa-circular');
             const popupImg = document.getElementById('img-popup-src');
 
             const ZOOM = 1.9;
