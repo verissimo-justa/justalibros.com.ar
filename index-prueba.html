@@ -332,91 +332,98 @@
             display: block;
         }
 
-        /* ---------- Lupa sobre la imagen ampliada ---------- */
-        #img-popup-src {
-            cursor: crosshair;
-        }
-        #img-popup-src.lupa-activa {
-            cursor: none;
-        }
-        .lupa-circular {
-            position: fixed;
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.85);
-            box-shadow:
-                0 0 0 2px rgba(26, 31, 43, 0.25),
-                0 12px 30px rgba(26, 31, 43, 0.45);
-            background-repeat: no-repeat;
-            pointer-events: none;
-            z-index: 100000;
-            display: none;
-            overflow: hidden;
-        }
-        .lupa-circular.activa {
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>justa<span class="punto">.</span> <span class="tagline">libros que buscan relecturas</span></h1>
-    </header>
+        // ============================================================
+        // LUPA CIRCULAR SOBRE LA IMAGEN AMPLIADA
+        // Soporta mouse (desktop) y touch (mobile)
+        // ============================================================
+        (() => {
+            const lupa = document.getElementById('lupa-circular');
+            const popupImg = document.getElementById('img-popup-src');
 
-    <div class="panel-control">
-        <div class="contador-libros" id="contador">Cargando estantes...</div>
-        <input type="text" id="buscador" placeholder="Buscar por título, autor o editorial...">
-        <select id="filtro-categoria">
-            <option value="">Todas las categorías</option>
-        </select>
-        <select id="filtro-estado">
-            <option value="">Todos los estados</option>
-        </select>
-        <select id="ordenar-por">
-            <option value="">Ordenar por...</option>
-            <option value="titulo-asc">Título (A-Z)</option>
-            <option value="autor-asc">Autor (A-Z)</option>
-            <option value="precio-asc">Precio (de menor a mayor)</option>
-            <option value="precio-desc">Precio (de mayor a menor)</option>
-            <option value="recientes">Últimos cargados</option>
-            <option value="antiguos">Primeros cargados</option>
-            <option value="anio-asc">Año de edición (ascendente)</option>
-            <option value="anio-desc">Año de edición (descendente)</option>
-            <option value="aleatorio">Aleatoriamente</option>
-        </select>
-    </div>
+            // Detectar si el dispositivo tiene pantalla táctil principal
+            const esTactil = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+            const ZOOM       = esTactil ? 2.6 : 1.9;   // mobile más zoom, desktop igual
+            const LUPA_SIZE  = 320;
+            const LUPA_RADIO = LUPA_SIZE / 2;
 
-    <div class="grilla" id="grilla-libros"></div>
+            function activar(clientX, clientY) {
+                if (!popupImg.src || popupImg.src.startsWith('data:')) return;
+                if (!popupImg.complete || popupImg.naturalWidth === 0) return;
 
-    <!-- Modal de ficha del libro -->
-    <div class="modal" id="modal-libro" onclick="if(event.target === this) cerrarModal()">
-        <div class="modal-contenido">
-            <button class="btn-cerrar" onclick="cerrarModal()">&times;</button>
-            <div class="modal-fotos">
-                <img id="modal-tapa" src="" alt="Tapa" title="Ampliar imagen">
-                <img id="modal-contratapa" src="" alt="Contratapa" title="Ampliar imagen">
-            </div>
-            <div class="modal-info">
-                <h2 id="modal-titulo"></h2>
-                <div class="autor" id="modal-autor"></div>
-                <div class="modal-detalles" id="modal-txt-detalles"></div>
-                <div class="modal-footer">
-                    <span class="precio" id="modal-precio"></span>
-                    <a href="" id="modal-btn-comprar" target="_blank" rel="noopener" class="btn-comprar">Comprar</a>
-                </div>
-            </div>
-        </div>
-    </div>
+                lupa.style.backgroundImage = `url("${popupImg.src}")`;
 
-    <!-- Pop-up de imagen ampliada -->
-    <div class="img-popup-overlay" id="img-popup" onclick="cerrarPopupImagen()">
-        <img id="img-popup-src" src="" alt="" onclick="event.stopPropagation()">
-    </div>
+                const rect = popupImg.getBoundingClientRect();
+                const bgW = rect.width * ZOOM;
+                const bgH = rect.height * ZOOM;
+                lupa.style.backgroundSize = `${bgW}px ${bgH}px`;
 
-    <!-- Lupa circular -->
-    <div class="lupa-circular" id="lupa-circular"></div>
+                lupa.classList.add('activa');
+                popupImg.classList.add('lupa-activa');
+                mover(clientX, clientY);
+            }
 
+            function mover(clientX, clientY) {
+                if (!lupa.classList.contains('activa')) return;
+
+                const rect = popupImg.getBoundingClientRect();
+                const relX = (clientX - rect.left) / rect.width;
+                const relY = (clientY - rect.top) / rect.height;
+
+                let lx = clientX - LUPA_RADIO;
+                let ly = clientY - LUPA_RADIO;
+
+                if (lx < 0) lx = 0;
+                if (ly < 0) ly = 0;
+                if (lx + LUPA_SIZE > window.innerWidth) lx = window.innerWidth - LUPA_SIZE;
+                if (ly + LUPA_SIZE > window.innerHeight) ly = window.innerHeight - LUPA_SIZE;
+
+                lupa.style.left = lx + 'px';
+                lupa.style.top = ly + 'px';
+
+                const bgW = rect.width * ZOOM;
+                const bgH = rect.height * ZOOM;
+                const bgX = -(relX * bgW - LUPA_RADIO);
+                const bgY = -(relY * bgH - LUPA_RADIO);
+                lupa.style.backgroundPosition = `${bgX}px ${bgY}px`;
+            }
+
+            function desactivar() {
+                lupa.classList.remove('activa');
+                popupImg.classList.remove('lupa-activa');
+            }
+
+            // ---------- Mouse (desktop) ----------
+            popupImg.addEventListener('mouseenter', (e) => activar(e.clientX, e.clientY));
+            popupImg.addEventListener('mousemove',  (e) => mover(e.clientX, e.clientY));
+            popupImg.addEventListener('mouseleave', desactivar);
+
+            // ---------- Touch (mobile) ----------
+            popupImg.addEventListener('touchstart', (e) => {
+                if (e.touches.length !== 1) return;
+                e.preventDefault();
+                const t = e.touches[0];
+                activar(t.clientX, t.clientY);
+            }, { passive: false });
+
+            popupImg.addEventListener('touchmove', (e) => {
+                if (e.touches.length !== 1) return;
+                e.preventDefault();
+                const t = e.touches[0];
+                mover(t.clientX, t.clientY);
+            }, { passive: false });
+
+            popupImg.addEventListener('touchend', (e) => {
+                if (e.touches.length === 0) desactivar();
+            });
+
+            popupImg.addEventListener('touchcancel', desactivar);
+
+            // ---------- Cierre del pop-up ----------
+            document.addEventListener('click', (e) => {
+                if (e.target.id === 'img-popup') desactivar();
+            });
+        })();
+        
     <script>
         // ============================================================
         // CONFIGURACIÓN
