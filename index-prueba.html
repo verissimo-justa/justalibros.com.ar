@@ -862,4 +862,23 @@
                 if (!popupImg.src || popupImg.src.startsWith('data:')) return;
                 if (!popupImg.complete || popupImg.naturalWidth === 0) return;
 
-                lupa.style.backgroundImage = `url("${popupImg.src
+                lupa.style.backgroundImage = `url("${popupImg.src}")`;
+
+                const rect = popupImg.getBoundingClientRect();
+                const bgW = rect.width * ZOOM;
+                const bgH = rect.height * ZOOM;
+                lupa.style.backgroundSize = `${bgW}px ${bgH}px`;
+
+                lupa.classList.add('activa');
+                popupImg.classList.add('lupa-activa');
+                mover(clientX, clientY);
+            }
+
+            function mover(clientX, clientY) {
+                if (!lupa.classList.contains('activa')) return;
+
+                const rect = popupImg.getBoundingClientRect();
+                const relX = (clientX - rect.left) / rect.width;
+                const relY = (clientY - rect.top) / rect.height;
+
+                let lx = clientX - LUPA_RADIO;
