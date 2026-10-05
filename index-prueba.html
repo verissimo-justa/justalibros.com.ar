@@ -537,7 +537,7 @@
         // PARSER CSV
         // ============================================================
         function interpretarCSV(texto) {
-          const limpio = texto.replace(/^\uFEFF/, '').trim();
+            const limpio = texto.replace(/^\uFEFF/, '').replace(/\r/g, '').trim();
           if (!limpio) return [];
         
           const parsed = Papa.parse(limpio, {
