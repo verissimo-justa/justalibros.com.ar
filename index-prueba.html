@@ -537,43 +537,40 @@
         // PARSER CSV
         // ============================================================
         function interpretarCSV(texto) {
-            const limpio = texto.replace(/^\uFEFF/, '').trim();
-            if (!limpio) return [];
-
-            // Los encabezados se normalizan sin tildes, espacios ni guiones bajos,
-            // así "autor_n", "Autor N" y "autor n" terminan siendo "autorn".
-            const parsed = Papa.parse(limpio, {
-                header: true,
-                skipEmptyLines: true,
-                delimiter: '\t',
-                transformHeader: h => normalizar(h).replace(/[\s_]+/g, '')
-            });
-
-            const libros = parsed.data
-                .map(r => ({
-                    id:         (r.id || '').toString().trim(),
-                    titulo:     (r.titulo || '').toString().trim(),
-                    autorN:     (r.autorn || '').toString().trim(),
-                    autorA:     (r.autora || '').toString().trim(),
-                    editorial:  (r.editorial || '').toString().trim(),
-                    anio:       (r.anio || r.ano || '').toString().trim(),
-                    categoria1: (r.categoria1 || r.categoria || '').toString().trim(),
-                    categoria2: (r.categoria2 || r.subcategoria || '').toString().trim(),
-                    estado:     (r.estado || '').toString().trim(),
-                    precio:     (r.precio || '').toString().trim(),
-                    whatsapp:   (r.whatsapp || '').toString().trim()
-                }))
-                .map(l => ({
-                    ...l,
-                    autor: [l.autorN, l.autorA].filter(Boolean).join(' ')
-                }))
-                .filter(l => l.titulo && l.id);
-
-            if (libros.length === 0) {
-                // Ayuda para diagnosticar: muestra qué columnas llegaron realmente.
-                console.warn('Ninguna fila tiene "id" y "titulo". Columnas detectadas:', parsed.meta.fields);
-            }
-            return libros;
+          const limpio = texto.replace(/^\uFEFF/, '').trim();
+          if (!limpio) return [];
+        
+          const parsed = Papa.parse(limpio, {
+            header: true,
+            skipEmptyLines: true,
+            delimiter: '\t',
+            transformHeader: h => normalizar(h).replace(/\s+/g, '')
+          });
+        
+          return parsed.data
+            .map(r => ({
+              id:              (r.id || '').toString().trim(),
+              titulo:          (r.titulo || r.título || '').toString().trim(),
+              autorN:          (r.autorn || '').toString().trim(),
+              autorA:          (r.autora || '').toString().trim(),
+              editorial:       (r.editorial || '').toString().trim(),
+              anio:            (r.anio || r['año'] || r.ano || '').toString().trim(),
+              categoria1:      (r.categoria1 || r.categoria || '').toString().trim(),
+              categoria2:      (r.categoria2 || r.subcategoria || '').toString().trim(),
+              estado:          (r.estado || '').toString().trim(),
+              precio:          (r.precio || '').toString().trim(),
+              whatsapp:        (r.whatsapp || '').toString().trim(),
+              disponibilidad:  (r.disponibilidad || '').toString().trim()
+            }))
+            .map(l => ({
+              ...l,
+              autor: [l.autorN, l.autorA].filter(Boolean).join(' ')
+            }))
+            .filter(l => 
+              l.titulo && 
+              l.id && 
+              normalizar(l.disponibilidad) !== 'vendido'
+            );
         }
 
         // ============================================================
