@@ -512,16 +512,16 @@
                     throw new Error('No se cargó la librería PapaParse (¿sin conexión o CDN bloqueada?)');
                 }
 
-        const respuesta = await fetch(URL_SHEETS_TSV);
-        if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+                const respuesta = await fetch(URL_SHEETS_TSV);
+                if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
 
-        const texto = await respuesta.text();
-        librosData = interpretarCSV(texto);
+                const texto = await respuesta.text();
+                librosData = interpretarCSV(texto);
 
-        if (librosData.length === 0) {
-            contador.innerText = 'Catálogo vacío o formato no reconocido.';
-            return;
-        }
+                if (librosData.length === 0) {
+                    contador.innerText = 'Catálogo vacío o formato no reconocido.';
+                    return;
+                }
 
                 popularFiltros(librosData);
                 filtrarCatalogo();
