@@ -545,6 +545,7 @@
             const parsed = Papa.parse(limpio, {
                 header: true,
                 skipEmptyLines: true,
+                delimiter: '\t',
                 transformHeader: h => normalizar(h).replace(/[\s_]+/g, '')
             });
 
