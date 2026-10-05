@@ -428,7 +428,7 @@
         // ============================================================
         // CONFIGURACIÓN
         // ============================================================
-        const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?output=csv';
+        const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?output=tsv';
         const ORDEN_ESTADOS = ['como nuevo', 'muy bueno', 'bueno', 'regular'];
 
         // Estado global
@@ -512,16 +512,16 @@
                     throw new Error('No se cargó la librería PapaParse (¿sin conexión o CDN bloqueada?)');
                 }
 
-                const respuesta = await fetch(URL_SHEETS_CSV);
-                if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+        const respuesta = await fetch(URL_SHEETS_TSV);
+        if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
 
-                const textoCsv = await respuesta.text();
-                librosData = interpretarCSV(textoCsv);
+        const texto = await respuesta.text();
+        librosData = interpretarCSV(texto);
 
-                if (librosData.length === 0) {
-                    contador.innerText = 'Catálogo vacío o formato no reconocido.';
-                    return;
-                }
+        if (librosData.length === 0) {
+            contador.innerText = 'Catálogo vacío o formato no reconocido.';
+            return;
+        }
 
                 popularFiltros(librosData);
                 filtrarCatalogo();
