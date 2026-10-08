@@ -465,8 +465,7 @@
             .toLowerCase()
             .trim();
 
-        // Escapa HTML: los datos vienen de una planilla y se insertan con innerHTML.
-        // Sin esto, un título con comillas o "<" rompe la tarjeta (o inyecta código).
+        // Escapa HTML para evitar inyección en innerHTML
         const esc = (txt) => (txt ?? '')
             .toString()
             .replace(/&/g, '&amp;')
@@ -875,6 +874,7 @@
                 }
             }, 200);
         }
+        
         // ============================================================
         // LUPA CIRCULAR SOBRE LA IMAGEN AMPLIADA
         // Soporta mouse (desktop) y touch (mobile)
