@@ -23,31 +23,28 @@
            VARIABLES GLOBALES
            ============================================================ */
         :root {
-            /* Tipografía */
             --fuente-principal: 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-            /* Paleta — azul pastel sobrio */
-            --color-fondo:          #f4f7fb;   /* fondo general, azul muy claro */
-            --color-superficie:     #ffffff;   /* tarjetas, panel, modal */
-            --color-superficie-alt: #f8fafd;   /* fondos secundarios (footer tarjeta) */
-            --color-portada-fondo:  #e8eef6;   /* fondo detrás de las tapas */
+            --color-fondo:              #f4f7fb;
+            --color-superficie:         #ffffff;
+            --color-superficie-alt:     #f8fafd;
+            --color-portada-fondo:      #e8eef6;
 
-            --color-texto:          #1a1f2b;   /* texto principal (azul muy oscuro) */
-            --color-texto-suave:    #6a7480;   /* texto secundario */
-            --color-texto-tenue:    #9ba3af;   /* detalles, microtexto */
-            --color-texto-placeholder: #8a94a0;
+            --color-texto:              #1a1f2b;
+            --color-texto-suave:        #6a7480;
+            --color-texto-tenue:        #9ba3af;
+            --color-texto-placeholder:  #8a94a0;
 
-            --color-borde:          #e2e8f0;   /* bordes suaves */
-            --color-borde-input:    #d5dde8;   /* bordes de inputs */
-            --color-borde-focus:    #7d93b3;   /* borde al enfocar */
+            --color-borde:              #e2e8f0;
+            --color-borde-input:        #d5dde8;
+            --color-borde-focus:        #7d93b3;
 
-            --color-primario:       #1a1f2b;   /* negro-azulado para botones */
-            --color-primario-hover: #2b3444;
+            --color-primario:           #1a1f2b;
+            --color-primario-hover:     #2b3444;
 
-            /* Fallback del placeholder de portada */
-            --color-portada-accento: #8a9bb5;  /* barra vertical del fallback */
-            --color-portada-grad-1:  #f4f7fb;
-            --color-portada-grad-2:  #dde6f0;
+            --color-portada-accento:    #8a9bb5;
+            --color-portada-grad-1:     #f4f7fb;
+            --color-portada-grad-2:     #dde6f0;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -180,13 +177,41 @@
             left: 0;
             z-index: 1;
         }
-        .fallback-titulo { font-size: 1.1rem; font-weight: 700; color: var(--color-texto); line-height: 1.3; }
-        .fallback-autor { font-size: 0.9rem; color: var(--color-portada-accento); font-weight: 500; }
+        .fallback-titulo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-texto);
+            line-height: 1.3;
+        }
+        .fallback-autor {
+            font-size: 0.9rem;
+            color: var(--color-portada-accento);
+            font-weight: 500;
+        }
 
-        .info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
-        .info h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
-        .info .autor { font-size: 0.95rem; color: var(--color-texto-suave); margin-bottom: 8px; }
-        .info .detalles { font-size: 0.8rem; color: var(--color-texto-tenue); margin-bottom: auto; line-height: 1.4; }
+        .info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .info h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .info .autor {
+            font-size: 0.95rem;
+            color: var(--color-texto-suave);
+            margin-bottom: 8px;
+        }
+        .info .detalles {
+            font-size: 0.8rem;
+            color: var(--color-texto-tenue);
+            margin-bottom: auto;
+            line-height: 1.4;
+        }
 
         .footer-tarjeta {
             padding: 15px;
@@ -317,9 +342,7 @@
             display: block;
         }
 
-        /* ---------- Lupa sobre la imagen ampliada ----------
-           El tamaño real (ancho/alto) lo fija el JS, así CSS y JS
-           nunca quedan desincronizados. */
+        /* ---------- Lupa sobre la imagen ampliada ---------- */
         #img-popup-src {
             cursor: crosshair;
         }
@@ -346,8 +369,6 @@
 
         /* ============================================================
            RESPONSIVE
-           (va al final a propósito: si estuviera antes de las reglas
-           base de .precio y .btn-comprar, estas lo pisarían)
            ============================================================ */
         @media (max-width: 700px) {
             header { padding-left: 6px; }
@@ -368,7 +389,7 @@
 </head>
 <body>
     <header>
-        <h1>justa. <span class="tagline">libros que buscan relecturas</span></h1>
+        <h1>justa<span class="punto">.</span> <span class="tagline">libros que buscan relecturas</span></h1>
     </header>
 
     <div class="panel-control">
@@ -535,42 +556,45 @@
 
         // ============================================================
         // PARSER CSV
+        // NOTA: transformHeader quita espacios Y guiones bajos, así
+        // "autor_n" -> "autorn" y "ID_Tapa" -> "idtapa". Sin esto, los
+        // campos con guión bajo no se leían (bug del autor vacío).
         // ============================================================
         function interpretarCSV(texto) {
             const limpio = texto.replace(/^\uFEFF/, '').replace(/\r/g, '').trim();
-          if (!limpio) return [];
-        
-          const parsed = Papa.parse(limpio, {
-            header: true,
-            skipEmptyLines: true,
-            delimiter: '\t',
-            transformHeader: h => normalizar(h).replace(/\s+/g, '')
-          });
-        
-          return parsed.data
-            .map(r => ({
-              id:              (r.id || '').toString().trim(),
-              titulo:          (r.titulo || r.título || '').toString().trim(),
-              autorN:          (r.autorn || '').toString().trim(),
-              autorA:          (r.autora || '').toString().trim(),
-              editorial:       (r.editorial || '').toString().trim(),
-              anio:            (r.anio || r['año'] || r.ano || '').toString().trim(),
-              categoria1:      (r.categoria1 || r.categoria || '').toString().trim(),
-              categoria2:      (r.categoria2 || r.subcategoria || '').toString().trim(),
-              estado:          (r.estado || '').toString().trim(),
-              precio:          (r.precio || '').toString().trim(),
-              whatsapp:        (r.whatsapp || '').toString().trim(),
-              disponibilidad:  (r.disponibilidad || '').toString().trim()
-            }))
-            .map(l => ({
-              ...l,
-              autor: [l.autorN, l.autorA].filter(Boolean).join(' ')
-            }))
-            .filter(l => 
-              l.titulo && 
-              l.id && 
-              normalizar(l.disponibilidad) !== 'vendido'
-            );
+            if (!limpio) return [];
+
+            const parsed = Papa.parse(limpio, {
+                header: true,
+                skipEmptyLines: true,
+                delimiter: '\t',
+                transformHeader: h => normalizar(h).replace(/[\s_]+/g, '')
+            });
+
+            return parsed.data
+                .map(r => ({
+                    id:             (r.id || '').toString().trim(),
+                    titulo:         (r.titulo || '').toString().trim(),
+                    autorN:         (r.autorn || '').toString().trim(),
+                    autorA:         (r.autora || '').toString().trim(),
+                    editorial:      (r.editorial || '').toString().trim(),
+                    anio:           (r.anio || '').toString().trim(),
+                    categoria1:     (r.categoria1 || r.categoria || '').toString().trim(),
+                    categoria2:     (r.categoria2 || r.subcategoria || '').toString().trim(),
+                    estado:         (r.estado || '').toString().trim(),
+                    precio:         (r.precio || '').toString().trim(),
+                    whatsapp:       (r.whatsapp || '').toString().trim(),
+                    disponibilidad: (r.disponibilidad || '').toString().trim()
+                }))
+                .map(l => ({
+                    ...l,
+                    autor: [l.autorN, l.autorA].filter(Boolean).join(' ')
+                }))
+                .filter(l =>
+                    l.titulo &&
+                    l.id &&
+                    normalizar(l.disponibilidad) !== 'vendido'
+                );
         }
 
         // ============================================================
@@ -715,7 +739,7 @@
             contra.src = `./img/${idSeguro}-contratapa.jpg`;
 
             document.getElementById('modal-libro').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // evita que scrollee la grilla de fondo
+            document.body.style.overflow = 'hidden';
         }
 
         function cerrarModal() {
@@ -786,7 +810,6 @@
                     break;
 
                 case 'precio-desc':
-                    // Los libros sin precio (Infinity) quedan al final en ambos sentidos.
                     copia.sort((a, b) => {
                         const pa = numeroPrecio(a.precio), pb = numeroPrecio(b.precio);
                         if (pa === Infinity && pb === Infinity) return 0;
@@ -809,7 +832,6 @@
                     break;
 
                 case 'anio-desc':
-                    // Los libros sin año quedan al final en ambos sentidos.
                     copia.sort((a, b) => {
                         const aa = numeroAnio(a.anio), ab = numeroAnio(b.anio);
                         if (aa === Infinity && ab === Infinity) return 0;
@@ -845,8 +867,6 @@
             const overlay = document.getElementById('img-popup');
             const img = document.getElementById('img-popup-src');
             overlay.classList.remove('activo');
-            // Ocultar la lupa explícitamente: al cerrar con Escape el mouseleave
-            // no se dispara y la lupa quedaba flotando sobre la página.
             if (window.desactivarLupa) window.desactivarLupa();
             setTimeout(() => {
                 if (!overlay.classList.contains('activo')) {
@@ -856,134 +876,4 @@
             }, 200);
         }
 
-        // ============================================================
-        // LUPA CIRCULAR SOBRE LA IMAGEN AMPLIADA
-        // Soporta mouse (desktop) y touch (mobile)
-        // ============================================================
-        (() => {
-            const lupa = document.getElementById('lupa-circular');
-            const popupImg = document.getElementById('img-popup-src');
-
-            const ZOOM = 1.9;
-            let lupaSize = 320;
-            let lupaRadio = lupaSize / 2;
-
-            function activar(clientX, clientY) {
-                if (!popupImg.src || popupImg.src.startsWith('data:')) return;
-                if (!popupImg.complete || popupImg.naturalWidth === 0) return;
-
-                // El tamaño se fija acá (y no en el CSS) para que coincida
-                // siempre con las cuentas de posición. En pantallas chicas se achica.
-                lupaSize = Math.min(320, window.innerWidth - 20);
-                lupaRadio = lupaSize / 2;
-                lupa.style.width = lupaSize + 'px';
-                lupa.style.height = lupaSize + 'px';
-
-                lupa.style.backgroundImage = `url("${popupImg.src}")`;
-
-                const rect = popupImg.getBoundingClientRect();
-                lupa.style.backgroundSize = `${rect.width * ZOOM}px ${rect.height * ZOOM}px`;
-
-                lupa.classList.add('activa');
-                popupImg.classList.add('lupa-activa');
-                mover(clientX, clientY);
-            }
-
-            function mover(clientX, clientY) {
-                if (!lupa.classList.contains('activa')) return;
-
-                const rect = popupImg.getBoundingClientRect();
-                const relX = (clientX - rect.left) / rect.width;
-                const relY = (clientY - rect.top) / rect.height;
-
-                let lx = clientX - lupaRadio;
-                let ly = clientY - lupaRadio;
-
-                if (lx < 0) lx = 0;
-                if (ly < 0) ly = 0;
-                if (lx + lupaSize > window.innerWidth) lx = window.innerWidth - lupaSize;
-                if (ly + lupaSize > window.innerHeight) ly = window.innerHeight - lupaSize;
-
-                lupa.style.left = lx + 'px';
-                lupa.style.top = ly + 'px';
-
-                const bgW = rect.width * ZOOM;
-                const bgH = rect.height * ZOOM;
-                // El punto bajo el cursor debe quedar en el centro de la lupa
-                // (aunque la lupa se haya corrido por tocar un borde de la pantalla).
-                const bgX = -(relX * bgW - (clientX - lx));
-                const bgY = -(relY * bgH - (clientY - ly));
-                lupa.style.backgroundPosition = `${bgX}px ${bgY}px`;
-            }
-
-            function desactivar() {
-                lupa.classList.remove('activa');
-                popupImg.classList.remove('lupa-activa');
-            }
-
-            // Se expone para poder apagar la lupa al cerrar el pop-up
-            window.desactivarLupa = desactivar;
-
-            // ---------- Mouse (desktop) ----------
-            popupImg.addEventListener('mouseenter', (e) => activar(e.clientX, e.clientY));
-            popupImg.addEventListener('mousemove',  (e) => mover(e.clientX, e.clientY));
-            popupImg.addEventListener('mouseleave', desactivar);
-
-            // ---------- Touch (mobile) ----------
-            popupImg.addEventListener('touchstart', (e) => {
-                if (e.touches.length !== 1) return;
-                e.preventDefault(); // evita el zoom nativo del navegador
-                const t = e.touches[0];
-                activar(t.clientX, t.clientY);
-            }, { passive: false });
-
-            popupImg.addEventListener('touchmove', (e) => {
-                if (e.touches.length !== 1) return;
-                e.preventDefault();
-                const t = e.touches[0];
-                mover(t.clientX, t.clientY);
-            }, { passive: false });
-
-            popupImg.addEventListener('touchend', (e) => {
-                if (e.touches.length === 0) desactivar();
-            });
-
-            popupImg.addEventListener('touchcancel', desactivar);
-        })();
-
-        // ============================================================
-        // EVENTOS
-        // ============================================================
-        ['buscador', 'filtro-categoria', 'filtro-estado', 'ordenar-por'].forEach(id => {
-            const el = document.getElementById(id);
-            const evento = id === 'buscador' ? 'input' : 'change';
-            el.addEventListener(evento, filtrarCatalogo);
-        });
-
-        // Escape: primero cierra la imagen ampliada; si no hay, cierra la ficha.
-        document.addEventListener('keydown', (e) => {
-            if (e.key !== 'Escape') return;
-            if (document.getElementById('img-popup').classList.contains('activo')) {
-                cerrarPopupImagen();
-            } else {
-                cerrarModal();
-            }
-        });
-
-        ['modal-tapa', 'modal-contratapa'].forEach(id => {
-            const img = document.getElementById(id);
-            img.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (img.src && !img.src.startsWith('data:')) {
-                    abrirPopupImagen(img.src, img.alt);
-                }
-            });
-        });
-
-        // ============================================================
-        // INICIO
-        // ============================================================
-        window.addEventListener('DOMContentLoaded', cargarCatalogo);
-    </script>
-</body>
-</html>
+       
