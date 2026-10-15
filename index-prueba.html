@@ -103,14 +103,50 @@
         }
         
         /* Ícono de reciclado */
-        header h1 .icono-reciclado {
-            width: 1.1em;
-            height: 1.1em;
-            align-self: center;
-            flex-shrink: 0;
-            opacity: 0.7;   /* ← gris al 70%, igual que "relecturas" */
+        /* ---------- Header ---------- */
+        header {
+            max-width: 1200px;
+            margin: 40px auto 30px;
+            text-align: left;
         }
         
+        header h1 {
+            font-size: 3rem;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+            color: var(--color-texto);
+            display: flex;
+            align-items: center;      /* ← cambia de baseline a center */
+            flex-wrap: wrap;
+            gap: 0.3em;               /* gap general más chico */
+            font-weight: 400;
+        }
+        
+        /* "justa" */
+        header h1 .marca {
+            font-weight: 400;
+            letter-spacing: -0.8px;
+        }
+        
+        /* "libros" */
+        header h1 .tagline {
+            font-weight: 200;
+            letter-spacing: -0.5px;
+            color: var(--color-texto);
+        }
+        
+        /* Ícono de reciclado */
+        header h1 .icono-reciclado {
+            width: 0.75em;             /* ← más chico */
+            height: 0.75em;
+            flex-shrink: 0;
+            opacity: 0.7;
+            /* margen extra alrededor del ícono */
+            margin-left: 0.25em;
+            margin-right: 0.25em;
+        }
+        
+        /* "relecturas" */
         header h1 .fila-2 {
             font-weight: 200;
             letter-spacing: -0.5px;
