@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>justa. libros que buscan relecturas</title>
 
-    <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
     <link rel="apple-touch-icon" href="./favicon.png">
 
-    <!-- Tipografía -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
-    <!-- Librerías -->
     <script defer src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
     <style>
@@ -63,7 +60,6 @@
             text-align: left;
         }
         header h1 {
-            font-family: var(--fuente-principal);
             font-size: 3rem;
             font-weight: 500;
             letter-spacing: -0.5px;
@@ -605,7 +601,7 @@
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
                             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
                         </svg>
-                        <a href="https://instagram.com/justalibros" target="_blank" rel="noopener">@justa.libros</a>
+                        <a href="https://instagram.com/justa.libros" target="_blank" rel="noopener">@justa.libros</a>
                     </li>
                     <li>
                         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
@@ -678,7 +674,6 @@
             .toLowerCase()
             .trim();
 
-        // Escapa HTML para evitar inyección en innerHTML
         const esc = (txt) => (txt ?? '')
             .toString()
             .replace(/&/g, '&amp;')
@@ -687,7 +682,6 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
 
-        // Devuelve el título sin artículos iniciales (el, la, los, las, un, una...)
         const tituloOrdenable = (titulo) => {
             const t = normalizar(titulo);
             return t.replace(/^(el|la|los|las|un|una|unos|unas|uno)\s+/i, '').trim();
@@ -714,7 +708,6 @@
             return isNaN(n) ? -Infinity : n;
         };
 
-        // Comparador seguro: Infinity - Infinity da NaN y deja el orden indefinido.
         const cmp = (a, b) => (a === b ? 0 : (a < b ? -1 : 1));
 
         const placeholderSVG = (texto) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
@@ -724,7 +717,6 @@
             </svg>`
         );
 
-        // Acepta un link completo (https://wa.me/...) o solo el número de teléfono.
         function enlaceCompra(libro) {
             const w = (libro.whatsapp || '').trim();
             if (!w) return '';
@@ -768,9 +760,6 @@
 
         // ============================================================
         // PARSER CSV
-        // NOTA: transformHeader quita espacios Y guiones bajos, así
-        // "autor_n" -> "autorn" y "ID_Tapa" -> "idtapa". Sin esto, los
-        // campos con guión bajo no se leían (bug del autor vacío).
         // ============================================================
         function interpretarCSV(texto) {
             const limpio = texto.replace(/^\uFEFF/, '').replace(/\r/g, '').trim();
@@ -804,10 +793,4 @@
                 }))
                 .filter(l =>
                     l.titulo &&
-                    l.id &&
-                    normalizar(l.disponibilidad) !== 'vendido'
-                );
-        }
-
-        // ============================================================
-        // FILTROS DINÁMICOS
+                    l.id
