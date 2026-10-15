@@ -563,13 +563,19 @@
             font-weight: 500;
             letter-spacing: -0.5px;
             color: var(--color-texto);
-            margin-bottom: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
-        .footer-logo .punto { font-weight: 700; }
-        .footer-tagline {
-            font-weight: 300;
-            font-size: 1rem;
-            color: var(--color-texto-suave);
+        .footer-logo .fila-1 {
+            display: flex;
+            align-items: baseline;
+            gap: 0.3em;
+        }
+        .footer-logo .marca { font-weight: 600; letter-spacing: -0.6px; }
+        .footer-logo .tagline-f { font-weight: 300; }
+        .footer-logo .fila-2 { font-weight: 300; }
+        .footer-logo .fila-2 strong { font-weight: 500; }
         }
         .footer-contacto { flex: 1; min-width: 240px; }
         .footer-titulo {
@@ -685,11 +691,10 @@
            ============================================================ */
         @media (max-width: 700px) {
             header { padding-left: 6px; }
-            header h1 { font-size: 1.6rem; }
-            header h1 .tagline {
-                display: block;
-                margin-top: 4px;
-                font-size: 1.3rem;
+            header h1 { font-size: 1.8rem; gap: 2px; }
+            header h1 .tagline,
+            header h1 .fila-2 {
+                font-size: 1.5rem;
             }
             .precio { font-size: 1.25rem; }
             .btn-comprar {
@@ -798,8 +803,13 @@
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-marca">
-                <div class="footer-logo">justa<span class="punto">.</span></div>
-                <p class="footer-tagline">libros que buscan relecturas</p>
+                <div class="footer-logo">
+                    <span class="fila-1">
+                        <span class="marca">justa</span>
+                        <span class="tagline-f">libros</span>
+                    </span>
+                    <span class="fila-2"><strong>re</strong>lecturas</span>
+                </div>
             </div>
             <div class="footer-contacto">
                 <h3 class="footer-titulo">Contacto</h3>
