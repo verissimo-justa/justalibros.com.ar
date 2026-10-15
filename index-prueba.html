@@ -79,11 +79,6 @@
         }
 
         /* ---------- Header ---------- */
-        header {
-            max-width: 1200px;
-            margin: 40px auto 20px;
-            text-align: left;
-        }
         header h1 {
             font-size: 3rem;
             letter-spacing: -0.5px;
@@ -92,33 +87,30 @@
             display: flex;
             align-items: baseline;
             flex-wrap: wrap;
-            gap: 0.35em;
+            gap: 0.4em;
             font-weight: 400;
         }
         
-        /* "justa" */
         header h1 .marca {
             font-weight: 400;
             letter-spacing: -0.8px;
         }
         
-        /* "libros" */
         header h1 .tagline {
             font-weight: 200;
             letter-spacing: -0.5px;
             color: var(--color-texto);
         }
         
-        /* Ícono de reciclado entre "libros" y "relecturas" */
+        /* Ícono de reciclado */
         header h1 .icono-reciclado {
-            width: 0.7em;
-            height: 0.7em;
-            fill: rgba(26, 31, 43, 0.7);
+            width: 1.1em;
+            height: 1.1em;
             align-self: center;
             flex-shrink: 0;
+            opacity: 0.7;   /* ← gris al 70%, igual que "relecturas" */
         }
         
-        /* "relecturas" */
         header h1 .fila-2 {
             font-weight: 200;
             letter-spacing: -0.5px;
@@ -691,11 +683,11 @@
             header { padding-left: 6px; }
             header h1 {
                 font-size: 1.8rem;
-                gap: 0.3em;
+                gap: 0.35em;
             }
             header h1 .icono-reciclado {
-                width: 0.65em;
-                height: 0.65em;
+                width: 1em;
+                height: 1em;
             }
             .precio { font-size: 1.25rem; }
             .btn-comprar {
@@ -751,22 +743,7 @@
         <h1>
             <span class="marca">justa</span>
             <span class="tagline">libros</span>
-            <svg class="icono-reciclado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                 fill="none" stroke="currentColor" stroke-width="1.8"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <!-- Flecha superior -->
-                <path d="M9 4 L12 4 L12 1.5"/>
-                <path d="M12 4 L12 9"/>
-                <path d="M9 4 L6.5 6.5"/>
-                <!-- Flecha inferior derecha -->
-                <path d="M18.5 12.5 L17 15.1 L19.2 16.4"/>
-                <path d="M17 15.1 L13 12.8"/>
-                <path d="M17 15.1 L16.2 18"/>
-                <!-- Flecha inferior izquierda -->
-                <path d="M4.8 18.3 L6.3 15.7 L4.1 14.4"/>
-                <path d="M6.3 15.7 L10.3 18"/>
-                <path d="M6.3 15.7 L7.1 12.8"/>
-            </svg>
+            <img class="icono-reciclado" src="./img/reciclado.svg" alt="" aria-hidden="true">
             <span class="fila-2"><strong>re</strong>lecturas</span>
         </h1>
     </header>
