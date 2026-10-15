@@ -86,7 +86,6 @@
         }
         header h1 {
             font-size: 3rem;
-            font-weight: 500;
             letter-spacing: -0.5px;
             line-height: 1.15;
             color: var(--color-texto);
@@ -94,13 +93,14 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 4px;
+            font-weight: 400; /* base para todas las variantes */
         }
         
         /* "justa libros" en la primera línea */
         header h1 .fila-1 {
             display: flex;
             align-items: baseline;
-            gap: 0.25em;
+            gap: 0.35em;
         }
         
         /* "justa" */
@@ -109,25 +109,22 @@
             letter-spacing: -0.8px;
         }
         
-        /* "libros" */
+        /* "libros" — mismo tamaño, más liviano */
         header h1 .tagline {
             font-weight: 200;
-            font-size: 2.6rem;
             letter-spacing: -0.5px;
             color: var(--color-texto);
         }
         
-        /* "relecturas" */
+        /* "relecturas" — gris y con "re" un poco más gruesa */
         header h1 .fila-2 {
-            font-weight: 300;
-            font-size: 2.6rem;
+            font-weight: 200;
             letter-spacing: -0.5px;
-            color: var(--color-texto);
+            color: rgba(26, 31, 43, 0.7); /* gris al 70% del color de texto */
         }
         
-        /* "re" un poco más gruesa que "lecturas" */
         header h1 .fila-2 strong {
-            font-weight: 500;
+            font-weight: 400; /* "re" más gruesa que "lecturas", igual que "justa" */
         }
 
         /* ---------- Panel de control ---------- */
@@ -694,7 +691,6 @@
             header h1 { font-size: 1.8rem; gap: 2px; }
             header h1 .tagline,
             header h1 .fila-2 {
-                font-size: 1.5rem;
             }
             .precio { font-size: 1.25rem; }
             .btn-comprar {
