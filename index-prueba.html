@@ -7,7 +7,7 @@
 
     <!-- Open Graph (F6) -->
     <meta property="og:title" content="justa libros. relecturas">
-    <meta property="og:description" content="Catálogo de libros de segunda mano. Encontrá tu próxima relectura.">
+    <meta property="og:description" content="Libros de segunda mano. Encontrá tu próxima relectura.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://justalibros.com.ar/">
     <meta property="og:image" content="https://justalibros.com.ar/og-image.jpg">
@@ -90,12 +90,44 @@
             letter-spacing: -0.5px;
             line-height: 1.15;
             color: var(--color-texto);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
         }
-        header h1 .punto { font-weight: 700; }
+        
+        /* "justa libros" en la primera línea */
+        header h1 .fila-1 {
+            display: flex;
+            align-items: baseline;
+            gap: 0.35em;
+        }
+        
+        /* "justa" */
+        header h1 .marca {
+            font-weight: 600;
+            letter-spacing: -0.8px;
+        }
+        
+        /* "libros" */
         header h1 .tagline {
-            font-weight: 200;
-            font-size: 2.7rem;
+            font-weight: 300;
+            font-size: 2.6rem;
+            letter-spacing: -0.5px;
             color: var(--color-texto);
+        }
+        
+        /* "relecturas" */
+        header h1 .fila-2 {
+            font-weight: 300;
+            font-size: 2.6rem;
+            letter-spacing: -0.5px;
+            color: var(--color-texto);
+        }
+        
+        /* "re" un poco más gruesa que "lecturas" */
+        header h1 .fila-2 strong {
+            font-weight: 500;
         }
 
         /* ---------- Panel de control ---------- */
@@ -709,10 +741,15 @@
     <!-- Skip link (E7) -->
     <a href="#grilla-libros" class="skip-link">Saltar al catálogo</a>
 
-    <header>
-        <h1>justa<span class="punto">.</span> <span class="tagline">libros.</span></h1>
-        <span class="tagline">relecturas</span></h1>
-    </header>
+<header>
+    <h1>
+        <span class="fila-1">
+            <span class="marca">justa</span>
+            <span class="tagline">libros</span>
+        </span>
+        <span class="fila-2"><strong>re</strong>lecturas</span>
+    </h1>
+</header>
 
     <div class="panel-control">
         <div class="contador-libros" id="contador" aria-live="polite" aria-atomic="true">
