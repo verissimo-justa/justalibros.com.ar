@@ -90,17 +90,10 @@
             line-height: 1.15;
             color: var(--color-texto);
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 4px;
-            font-weight: 400; /* base para todas las variantes */
-        }
-        
-        /* "justa libros" en la primera línea */
-        header h1 .fila-1 {
-            display: flex;
             align-items: baseline;
+            flex-wrap: wrap;
             gap: 0.35em;
+            font-weight: 400;
         }
         
         /* "justa" */
@@ -109,22 +102,30 @@
             letter-spacing: -0.8px;
         }
         
-        /* "libros" — mismo tamaño, más liviano */
+        /* "libros" */
         header h1 .tagline {
             font-weight: 200;
             letter-spacing: -0.5px;
             color: var(--color-texto);
         }
         
-        /* "relecturas" — gris y con "re" un poco más gruesa */
+        /* Ícono de reciclado entre "libros" y "relecturas" */
+        header h1 .icono-reciclado {
+            width: 0.7em;
+            height: 0.7em;
+            fill: rgba(26, 31, 43, 0.7);
+            align-self: center;
+            flex-shrink: 0;
+        }
+        
+        /* "relecturas" */
         header h1 .fila-2 {
             font-weight: 200;
             letter-spacing: -0.5px;
-            color: rgba(26, 31, 43, 0.7); /* gris al 70% del color de texto */
+            color: rgba(26, 31, 43, 0.7);
         }
-        
         header h1 .fila-2 strong {
-            font-weight: 400; /* "re" más gruesa que "lecturas", igual que "justa" */
+            font-weight: 400;
         }
 
         /* ---------- Panel de control ---------- */
@@ -688,9 +689,13 @@
            ============================================================ */
         @media (max-width: 700px) {
             header { padding-left: 6px; }
-            header h1 { font-size: 1.8rem; gap: 2px; }
-            header h1 .tagline,
-            header h1 .fila-2 {
+            header h1 {
+                font-size: 1.8rem;
+                gap: 0.3em;
+            }
+            header h1 .icono-reciclado {
+                width: 0.65em;
+                height: 0.65em;
             }
             .precio { font-size: 1.25rem; }
             .btn-comprar {
@@ -742,15 +747,16 @@
     <!-- Skip link (E7) -->
     <a href="#grilla-libros" class="skip-link">Saltar al catálogo</a>
 
-<header>
-    <h1>
-        <span class="fila-1">
+    <header>
+        <h1>
             <span class="marca">justa</span>
             <span class="tagline">libros</span>
-        </span>
-        <span class="fila-2"><strong>re</strong>lecturas</span>
-    </h1>
-</header>
+            <svg class="icono-reciclado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M16.08 10.08L14.5 8.5L18.5 4.5L22.5 8.5L20.92 10.08L19.5 8.66V13C19.5 15.76 17.26 18 14.5 18H9V16H14.5C16.16 16 17.5 14.66 17.5 13V8.66L16.08 10.08ZM4.5 19.5L8.5 15.5L10.08 17.08L8.66 18.5H13V20.5H8.5L10.08 22.08L8.5 23.5L4.5 19.5ZM13 3.5V5.5H7.5C5.84 5.5 4.5 6.84 4.5 8.5V12.84L5.92 11.42L7.5 13L3.5 17L-0.5 13L1.08 11.42L2.5 12.84V8.5C2.5 5.74 4.74 3.5 7.5 3.5H13Z"/>
+            </svg>
+            <span class="fila-2"><strong>re</strong>lecturas</span>
+        </h1>
+    </header>
 
     <div class="panel-control">
         <div class="contador-libros" id="contador" aria-live="polite" aria-atomic="true">
