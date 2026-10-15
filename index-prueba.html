@@ -486,6 +486,70 @@
             text-align: center;
         }
 
+        /* ---------- Skeleton de carga ---------- */
+        .skeleton-tarjeta {
+            background: var(--color-superficie);
+            border-radius: 12px;
+            border: 1px solid var(--color-borde);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .skeleton-portada {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            background: linear-gradient(
+                90deg,
+                var(--color-portada-grad-1) 25%,
+                var(--color-portada-grad-2) 50%,
+                var(--color-portada-grad-1) 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite linear;
+        }
+        .skeleton-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .skeleton-linea {
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(
+                90deg,
+                var(--color-portada-grad-1) 25%,
+                var(--color-portada-grad-2) 50%,
+                var(--color-portada-grad-1) 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite linear;
+        }
+        .skeleton-linea.corta   { width: 60%; }
+        .skeleton-linea.media   { width: 80%; }
+        .skeleton-linea.precio  { width: 35%; height: 16px; margin-top: 6px; }
+
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ---------- Spinner junto al contador ---------- */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid var(--color-borde-input);
+            border-top-color: var(--color-borde-focus);
+            border-radius: 50%;
+            animation: girar 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes girar {
+            to { transform: rotate(360deg); }
+        }
+
         /* ============================================================
            RESPONSIVE
            ============================================================ */
@@ -664,6 +728,9 @@
         let paginaActual = 1;
         let porPagina = 25;
 
+        // Semilla para el orden aleatorio (se regenera al elegir "aleatorio" o al recargar)
+        let semillaAleatoria = Math.random();
+
         // ============================================================
         // UTILIDADES
         // ============================================================
@@ -728,28 +795,57 @@
         }
 
         // ============================================================
+        // SKELETON DE CARGA
+        // ============================================================
+        function mostrarSkeletons(cantidad = 8) {
+            const grilla = document.getElementById('grilla-libros');
+            grilla.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+            for (let i = 0; i < cantidad; i++) {
+                const sk = document.createElement('div');
+                sk.className = 'skeleton-tarjeta';
+                sk.innerHTML = `
+                    <div class="skeleton-portada"></div>
+                    <div class="skeleton-info">
+                        <div class="skeleton-linea media"></div>
+                        <div class="skeleton-linea corta"></div>
+                        <div class="skeleton-linea precio"></div>
+                    </div>
+                `;
+                fragment.appendChild(sk);
+            }
+            grilla.appendChild(fragment);
+        }
+
+        // ============================================================
         // CARGA DEL CATÁLOGO
         // ============================================================
         async function cargarCatalogo() {
             const contador = document.getElementById('contador');
+            contador.innerHTML = '<span class="spinner"></span>Cargando estantes...';
+            mostrarSkeletons(8);
+
             try {
                 if (typeof Papa === 'undefined') {
                     throw new Error('No se cargó la librería PapaParse (¿sin conexión o CDN bloqueada?)');
                 }
 
-                const respuesta = await fetch(URL_SHEETS_TSV);
+                const respuesta = await fetch(URL_SHEETS_TSV, { cache: 'no-store' });
                 if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
 
                 const texto = await respuesta.text();
                 librosData = interpretarCSV(texto);
 
                 if (librosData.length === 0) {
+                    document.getElementById('grilla-libros').innerHTML = '';
                     contador.innerText = 'Catálogo vacío o formato no reconocido.';
                     return;
                 }
 
+                semillaAleatoria = Math.random();
                 popularFiltros(librosData);
                 filtrarCatalogo();
+
             } catch (error) {
                 console.error('Error en la carga:', error);
                 contador.innerText = 'Error al conectar con el archivo de libros.';
@@ -805,37 +901,49 @@
             const selCat = document.getElementById('filtro-categoria');
             const selEst = document.getElementById('filtro-estado');
 
-            // Categorías
-            const categoriasSet = new Set();
+            // --- Categorías ---
+            // mapa: clave normalizada -> etiqueta visible (la primera que aparece)
+            const categoriasMap = new Map();
             libros.forEach(l => {
-                if (l.categoria1) categoriasSet.add(l.categoria1);
-                if (l.categoria2) categoriasSet.add(l.categoria2);
+                [l.categoria1, l.categoria2].forEach(c => {
+                    if (!c) return;
+                    const key = normalizar(c);
+                    if (key && !categoriasMap.has(key)) {
+                        categoriasMap.set(key, c);
+                    }
+                });
             });
-            [...categoriasSet].sort((a, b) => a.localeCompare(b, 'es')).forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c;
-                opt.textContent = c;
-                selCat.appendChild(opt);
-            });
+            [...categoriasMap.entries()]
+                .sort((a, b) => a[1].localeCompare(b[1], 'es'))
+                .forEach(([key, etiqueta]) => {
+                    const opt = document.createElement('option');
+                    opt.value = key;                 // guardamos la clave normalizada
+                    opt.textContent = etiqueta;      // mostramos la etiqueta original
+                    selCat.appendChild(opt);
+                });
 
-            // Estados (orden personalizado)
-            const estadosSet = new Set();
+            // --- Estados (orden personalizado) ---
+            const estadosMap = new Map();
             libros.forEach(l => {
-                if (l.estado) estadosSet.add(l.estado);
+                if (!l.estado) return;
+                const key = normalizar(l.estado);
+                if (key && !estadosMap.has(key)) {
+                    estadosMap.set(key, l.estado);
+                }
             });
-            [...estadosSet]
+            [...estadosMap.entries()]
                 .sort((a, b) => {
-                    const ia = ORDEN_ESTADOS.indexOf(normalizar(a));
-                    const ib = ORDEN_ESTADOS.indexOf(normalizar(b));
-                    if (ia === -1 && ib === -1) return a.localeCompare(b, 'es');
+                    const ia = ORDEN_ESTADOS.indexOf(a[0]);
+                    const ib = ORDEN_ESTADOS.indexOf(b[0]);
+                    if (ia === -1 && ib === -1) return a[1].localeCompare(b[1], 'es');
                     if (ia === -1) return 1;
                     if (ib === -1) return -1;
                     return ia - ib;
                 })
-                .forEach(e => {
+                .forEach(([key, etiqueta]) => {
                     const opt = document.createElement('option');
-                    opt.value = e;
-                    opt.textContent = e;
+                    opt.value = key;
+                    opt.textContent = etiqueta;
                     selEst.appendChild(opt);
                 });
         }
@@ -848,15 +956,31 @@
             const contador = document.getElementById('contador');
             grilla.innerHTML = '';
 
+            const totalCatalogo = librosData.length;
+            const totalFiltrado = librosFiltrados.length;
+
+            const hayFiltros =
+                !!document.getElementById('buscador').value.trim() ||
+                !!document.getElementById('filtro-categoria').value ||
+                !!document.getElementById('filtro-estado').value;
+
             if (libros.length === 0) {
                 grilla.innerHTML = `<div class="no-resultados">FICHA NO ENCONTRADA. Probá con otra búsqueda o filtros.</div>`;
-                contador.innerText = '0 libros encontrados';
+                contador.innerText = hayFiltros
+                    ? `0 resultados de ${totalCatalogo} libros en el catálogo`
+                    : '0 libros disponibles';
                 return;
             }
 
-            contador.innerText = librosFiltrados.length === 1
-                ? '1 libro de segunda mano disponible en este momento'
-                : `${librosFiltrados.length} libros de segunda mano disponibles en este momento`;
+            if (hayFiltros) {
+                contador.innerText = totalFiltrado === 1
+                    ? `1 resultado de ${totalCatalogo} libros en el catálogo`
+                    : `${totalFiltrado} resultados de ${totalCatalogo} libros en el catálogo`;
+            } else {
+                contador.innerText = totalCatalogo === 1
+                    ? '1 libro de segunda mano disponible en este momento'
+                    : `${totalCatalogo} libros de segunda mano disponibles en este momento`;
+            }
 
             const fragment = document.createDocumentFragment();
 
@@ -953,8 +1077,8 @@
         // ============================================================
         function filtrarCatalogo() {
             const busqueda        = normalizar(document.getElementById('buscador').value);
-            const catSeleccionada = document.getElementById('filtro-categoria').value;
-            const estSeleccionado = document.getElementById('filtro-estado').value;
+            const catSeleccionada = document.getElementById('filtro-categoria').value; // ya normalizada
+            const estSeleccionado = document.getElementById('filtro-estado').value;    // ya normalizada
             const criterio        = document.getElementById('ordenar-por').value;
 
             const filtrados = librosData.filter(libro => {
@@ -968,10 +1092,11 @@
                     editorial.includes(busqueda);
 
                 const coincideCategoria = !catSeleccionada ||
-                    libro.categoria1 === catSeleccionada ||
-                    libro.categoria2 === catSeleccionada;
+                    normalizar(libro.categoria1) === catSeleccionada ||
+                    normalizar(libro.categoria2) === catSeleccionada;
 
-                const coincideEstado = !estSeleccionado || libro.estado === estSeleccionado;
+                const coincideEstado = !estSeleccionado ||
+                    normalizar(libro.estado) === estSeleccionado;
 
                 return coincideTexto && coincideCategoria && coincideEstado;
             });
@@ -1082,6 +1207,19 @@
         // ============================================================
         // ORDENAMIENTO
         // ============================================================
+
+        // PRNG determinístico (Mulberry32) — dado un número devuelve siempre la misma secuencia
+        function crearRandom(seed) {
+            let a = seed >>> 0;
+            return function () {
+                a |= 0;
+                a = (a + 0x6D2B79F5) | 0;
+                let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
         function aplicarOrden(libros, criterio) {
             const copia = [...libros];
 
@@ -1141,12 +1279,14 @@
                     });
                     break;
 
-                case 'aleatorio':
+                case 'aleatorio': {
+                    const rnd = crearRandom(semillaAleatoria);
                     for (let i = copia.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
+                        const j = Math.floor(rnd() * (i + 1));
                         [copia[i], copia[j]] = [copia[j], copia[i]];
                     }
                     break;
+                }
             }
 
             return copia;
@@ -1266,10 +1406,18 @@
         // ============================================================
         // EVENTOS
         // ============================================================
-        ['buscador', 'filtro-categoria', 'filtro-estado', 'ordenar-por'].forEach(id => {
+        ['buscador', 'filtro-categoria', 'filtro-estado'].forEach(id => {
             const el = document.getElementById(id);
             const evento = id === 'buscador' ? 'input' : 'change';
             el.addEventListener(evento, filtrarCatalogo);
+        });
+
+        // Selector de orden (maneja la semilla del aleatorio)
+        document.getElementById('ordenar-por').addEventListener('change', (e) => {
+            if (e.target.value === 'aleatorio') {
+                semillaAleatoria = Math.random();
+            }
+            filtrarCatalogo();
         });
 
         document.addEventListener('keydown', (e) => {
@@ -1320,4 +1468,4 @@
         window.addEventListener('DOMContentLoaded', cargarCatalogo);
     </script>
 </body>
-</html>
+</html>  
