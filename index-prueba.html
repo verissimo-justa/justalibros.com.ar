@@ -564,10 +564,11 @@
             letter-spacing: -0.5px;
             color: var(--color-texto);
             display: flex;
-            flex-direction: row;        /* ← ahora en una línea */
+            flex-direction: row;
             align-items: center;
-            flex-wrap: wrap;            /* si no entra en pantallas chicas, baja a 2 líneas */
+            flex-wrap: wrap;
             gap: 0.3em;
+            justify-content: flex-start;   /* ← alinea a la izquierda */
         }
         
         .footer-logo .fila-1 {
@@ -779,7 +780,7 @@
                 align-items: center;
                 flex-wrap: nowrap;
                 width: 100%;
-                justify-content: space-around;
+                justify-content: flex-start;   /* en lugar de space-around */
                 gap: 0.2em;
             }
             .footer-logo .fila-1 {
@@ -815,7 +816,7 @@
         <h1>
             <span class="marca">justa</span>
             <span class="tagline">libros</span>
-            <img class="icono-reciclado" src="./img/recicle.svg" alt="" aria-hidden="true">
+            <img class="icono-reciclado" src="./img/reciclalib.svg" alt="" aria-hidden="true">
             <span class="fila-2"><strong>re</strong>lecturas</span>
         </h1>
     </header>
@@ -872,7 +873,7 @@
                         <span class="marca">justa</span>
                         <span class="tagline-f">libros</span>
                     </span>
-                    <img class="icono-reciclado" src="./img/recicle.svg" alt="" aria-hidden="true">
+                    <img class="icono-reciclado" src="./img/reciclalib.svg" alt="" aria-hidden="true">
                     <span class="fila-2"><strong>re</strong>lecturas</span>
                 </div>
             </div>
