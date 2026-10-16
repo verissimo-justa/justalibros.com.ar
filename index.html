@@ -143,7 +143,65 @@
             font-weight: 300;
             color: var(--azul-600);
         }
-
+                /* ---------- Botón carrito en el header ---------- */
+        header {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        header h1 {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .btn-carrito-header {
+            position: relative;
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--color-borde);
+            background: var(--color-superficie);
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        }
+        .btn-carrito-header:hover {
+            background: var(--color-portada-fondo);
+            border-color: var(--color-borde-focus);
+        }
+        .btn-carrito-header:focus-visible {
+            outline: 3px solid var(--color-borde-focus);
+            outline-offset: 2px;
+        }
+        .btn-carrito-header__icono {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+        .btn-carrito-header__contador {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: var(--color-primario);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 20px;
+            text-align: center;
+            box-sizing: border-box;
+            box-shadow: 0 0 0 2px var(--color-superficie);
+        }
         /* ---------- Panel de control ---------- */
         .panel-control {
             max-width: 1200px;
@@ -891,7 +949,32 @@
                 min-width: 0;
             }
         }
-
+                /* ---------- Carrito flotante en mobile ---------- */
+        .btn-carrito-header {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 91;
+            width: 52px;
+            height: 52px;
+            background: var(--color-primario);
+            border-color: var(--color-primario);
+            box-shadow: 0 4px 12px rgba(0, 31, 59, 0.35);
+        }
+        .btn-carrito-header__icono {
+            filter: brightness(0) invert(1);
+            width: 24px;
+            height: 24px;
+        }
+        .btn-carrito-header__contador {
+            box-shadow: 0 0 0 2px var(--color-primario);
+            top: -4px;
+            right: -4px;
+        }
+        /* En mobile, el header vuelve al layout de una sola línea */
+        header {
+            display: block;
+        }
         /* ============================================================
            PREFERS-REDUCED-MOTION (E5)
            ============================================================ */
@@ -919,6 +1002,12 @@
             <img class="icono-reciclado" src="./img/reciclalib.svg" alt="" aria-hidden="true">
             <span class="fila-2"><strong>re</strong>lecturas</span>
         </h1>
+    
+        <button type="button" class="btn-carrito-header" id="btn-carrito-header"
+                aria-label="Abrir carrito" title="Abrir carrito">
+            <img class="btn-carrito-header__icono" src="./img/carrito.svg" alt="" aria-hidden="true">
+            <span class="btn-carrito-header__contador" id="carrito-contador" hidden>0</span>
+        </button>
     </header>
 
     <div class="panel-control">
@@ -1256,9 +1345,19 @@
             document.querySelectorAll('.btn-agregar-carrito').forEach(actualizarBotonCarrito);
         }
 
-        // Placeholder (se completa en el Bloque 3, cuando agreguemos el ícono del header)
+        // ------------------------------------------------------------
+        // Actualizar el contador del carrito en el header
+        // ------------------------------------------------------------
         function actualizarContadorHeader() {
-            // Bloque 3
+            const contador = document.getElementById('carrito-contador');
+            if (!contador) return;
+            const total = cantidadCarrito();
+            contador.textContent = total;
+            if (total > 0) {
+                contador.hidden = false;
+            } else {
+                contador.hidden = true;
+            }
         }
 
         // ------------------------------------------------------------
@@ -1325,6 +1424,7 @@
                 semillaAleatoria = Math.random();
                 popularFiltros(librosData);
                 filtrarCatalogo();
+                actualizarContadorHeader();
 
                 // Título dinámico con la cantidad
                 document.title = `justa libros · ${librosData.length} disponibles`;
@@ -1349,7 +1449,7 @@
                     document.getElementById('filtro-categoria').value = catBuscada;
                     filtrarCatalogo();
                 }
-
+            
             } catch (error) {
                 console.error('Error en la carga:', error);
                 contador.innerText = 'Error al conectar con el archivo de libros.';
@@ -2157,6 +2257,12 @@
             porPagina = parseInt(e.target.value, 10);
             paginaActual = 1;
             renderizarPaginaActual();
+        });
+
+        // Botón del carrito en el header (se completa en el Bloque 4)
+        document.getElementById('btn-carrito-header').addEventListener('click', () => {
+            // Bloque 4: acá abriremos el modal del carrito
+            console.log('Click en carrito. Falta implementar el modal (Bloque 4).');
         });
 
         // Botón "volver arriba"
