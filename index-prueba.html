@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>justa libros. relecturas</title>
+    <title>justa libros · relecturas</title>
 
     <!-- Open Graph (F6) -->
-    <meta property="og:title" content="justa libros. relecturas">
+    <meta property="og:title" content="justa libros · relecturas">
     <meta property="og:description" content="Libros de segunda mano. Encontrá tu próxima relectura.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://justalibros.com.ar/">
@@ -30,35 +30,46 @@
         :root {
             --fuente-principal: 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-          /* Fondos */
-            --color-fondo:              #F3F7FA;
+            /* ---------- Paleta de marca ---------- */
+            --azul-900: #001121;
+            --azul-800: #001F3B;
+            --azul-700: #002D55;
+            --azul-600: #003B6F;
+            --azul-500: #4C7BB3;
+            --azul-400: #97B7D7;
+            --azul-300: #E3EDF7;
+            --azul-100: #F3F7FA;
+
+            /* ---------- Fondos ---------- */
+            --color-fondo:              var(--azul-100);
             --color-superficie:         #FFFFFF;
-            --color-superficie-alt:     #F3F7FA;
-            --color-portada-fondo:      #E3EDF7;
-        
-            /* Textos */
-            --color-texto:              #001121;
-            --color-texto-suave:        #4C7BB3;
-            --color-texto-tenue:        #97B7D7;
-            --color-texto-placeholder:  #97B7D7;
-        
-            /* Bordes */
-            --color-borde:              #E3EDF7;
-            --color-borde-input:        #E3EDF7;
-            --color-borde-focus:        #4C7BB3;
-        
-            /* Primarios */
-            --color-primario:           #001F3B;
-            --color-primario-hover:     #003B6F;
-        
-            /* Portadas (fallback y gradientes) */
-            --color-portada-accento:    #4C7BB3;
-            --color-portada-grad-1:     #F3F7FA;
-            --color-portada-grad-2:     #E3EDF7;
-        
-            /* Colores específicos de libros */
-            --color-titulo-libro:       #002D55;
-            --color-autor-libro:        #4C7BB3;
+            --color-superficie-alt:     var(--azul-100);
+            --color-portada-fondo:      var(--azul-300);
+
+            /* ---------- Textos ---------- */
+            --color-texto:              var(--azul-900);
+            --color-texto-suave:        var(--azul-600);
+            --color-texto-tenue:        var(--azul-500);
+            --color-texto-placeholder:  var(--azul-500);
+
+            /* ---------- Bordes ---------- */
+            --color-borde:              var(--azul-300);
+            --color-borde-input:        var(--azul-300);
+            --color-borde-focus:        var(--azul-500);
+
+            /* ---------- Primarios ---------- */
+            --color-primario:           var(--azul-800);
+            --color-primario-hover:     var(--azul-600);
+
+            /* ---------- Portadas (fallback y gradientes) ---------- */
+            --color-portada-accento:    var(--azul-500);
+            --color-portada-grad-1:     var(--azul-100);
+            --color-portada-grad-2:     var(--azul-300);
+
+            /* ---------- Colores específicos de libros ---------- */
+            --color-titulo-libro:       var(--azul-700);
+            --color-autor-libro:        var(--azul-600);
+            --color-link-hover:         var(--azul-400);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -107,12 +118,12 @@
         header h1 .marca {
             font-weight: 400;
             letter-spacing: -0.8px;
-            color: #003B6F;
+            color: var(--azul-600);
         }
         header h1 .tagline {
             font-weight: 200;
             letter-spacing: -0.5px;
-            color: #003B6F;
+            color: var(--azul-600);
         }
         header h1 .icono-reciclado {
             width: 0.75em;
@@ -123,15 +134,15 @@
             margin-right: 0.25em;
             transform: translateY(0.10em);
         }
-    header h1 .fila-2 {
-        font-weight: 200;
-        letter-spacing: -0.5px;
-        color: #003B6F;
-    }
-    header h1 .fila-2 strong {
-        font-weight: 300;
-        color: #003B6F;
-    }
+        header h1 .fila-2 {
+            font-weight: 200;
+            letter-spacing: -0.5px;
+            color: var(--azul-600);
+        }
+        header h1 .fila-2 strong {
+            font-weight: 300;
+            color: var(--azul-600);
+        }
 
         /* ---------- Panel de control ---------- */
         .panel-control {
@@ -230,7 +241,7 @@
         .tarjeta:hover,
         .tarjeta:focus-visible {
             transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(26, 31, 43, 0.05);
+            box-shadow: 0 10px 20px rgba(0, 31, 59, 0.05);
             outline: none;
         }
         .tarjeta:focus-visible {
@@ -274,29 +285,31 @@
 
         .info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
         .info h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; line-height: 1.3; color: var(--color-titulo-libro); }
+        .info .autor { font-size: 0.95rem; color: var(--color-autor-libro); margin-bottom: 8px; }
+        .info .detalles {
+            font-size: 0.85rem;
+            color: var(--color-autor-libro);
+            margin-top: 0.6em;
+            margin-bottom: auto;
+            line-height: 1.4;
+        }
+
+        /* Links dentro de autor y categoría */
         .info .autor a,
-        .modal-info .autor a {
-            color: inherit;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .info .autor a:hover,
-        .modal-info .autor a:hover {
-            color: #97B7D7;
-            text-decoration: none;
-        }
+        .modal-info .autor a,
         .info .detalles a.categoria-link,
         .modal-detalles a.categoria-link {
             color: inherit;
             text-decoration: none;
             transition: color 0.2s;
         }
+        .info .autor a:hover,
+        .modal-info .autor a:hover,
         .info .detalles a.categoria-link:hover,
         .modal-detalles a.categoria-link:hover {
-            color: #97B7D7;
+            color: var(--color-link-hover);
             text-decoration: none;
         }
-        .info .detalles { font-size: 0.85rem; color: var(--color-autor-libro); margin-top: 0.6em; margin-bottom: auto; line-height: 1.4; }
 
         .footer-tarjeta {
             padding: 15px;
@@ -330,7 +343,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(26, 31, 43, 0.55);
+            background: rgba(0, 17, 33, 0.55);
             backdrop-filter: blur(4px);
             z-index: 100;
             justify-content: center;
@@ -346,7 +359,7 @@
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
-            box-shadow: 0 20px 40px rgba(26, 31, 43, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 17, 33, 0.15);
             display: flex;
             gap: 25px;
             flex-wrap: wrap;
@@ -422,7 +435,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
-            background: rgba(26, 31, 43, 0.85);
+            background: rgba(0, 17, 33, 0.85);
             backdrop-filter: blur(6px);
             z-index: 99999;
             justify-content: center;
@@ -437,7 +450,7 @@
             width: auto; height: auto;
             object-fit: contain;
             border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(26, 31, 43, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 17, 33, 0.4);
             cursor: default;
             background: transparent;
             display: block;
@@ -451,8 +464,8 @@
             border-radius: 50%;
             border: 2px solid rgba(255, 255, 255, 0.85);
             box-shadow:
-                0 0 0 2px rgba(26, 31, 43, 0.25),
-                0 12px 30px rgba(26, 31, 43, 0.45);
+                0 0 0 2px rgba(0, 17, 33, 0.25),
+                0 12px 30px rgba(0, 17, 33, 0.45);
             background-repeat: no-repeat;
             background-origin: border-box;
             pointer-events: none;
@@ -542,7 +555,7 @@
             bottom: 30px; left: 30px;
             width: 48px; height: 48px;
             border-radius: 50%;
-            background: rgba(26, 31, 43, 0.55);
+            background: rgba(0, 31, 59, 0.55);
             color: #ffffff;
             border: none;
             font-size: 1.4rem;
@@ -560,7 +573,7 @@
         }
         .btn-volver-arriba.visible { opacity: 1; visibility: visible; }
         .btn-volver-arriba:hover {
-            background: rgba(26, 31, 43, 0.85);
+            background: rgba(0, 31, 59, 0.85);
             transform: translateY(-3px);
         }
 
@@ -574,7 +587,7 @@
             font-size: 0.9rem;
             line-height: 1.6;
         }
-        
+
         .footer-inner {
             display: flex;
             justify-content: space-between;
@@ -583,14 +596,14 @@
             margin-bottom: 30px;
             align-items: flex-start;
         }
-        
+
         .footer-marca,
         .footer-contacto {
-            flex: 1 1 300px;       /* ← desktop: crecen y se reparten el ancho */
+            flex: 1 1 300px;
             min-width: 240px;
             max-width: 50%;
         }
-                
+
         /* Logo del footer */
         .footer-logo {
             font-size: 1.5rem;
@@ -604,24 +617,20 @@
             gap: 0.25em;
             justify-content: flex-start;
         }
-        
         .footer-logo .fila-1 {
             display: flex;
             align-items: baseline;
             gap: 0.3em;
         }
-        
         .footer-logo .marca {
             font-weight: 400;
             letter-spacing: -0.6px;
-            color: #003B6F;
+            color: var(--azul-600);
         }
-        
         .footer-logo .tagline-f {
             font-weight: 200;
-            color: #003B6F;
+            color: var(--azul-600);
         }
-        
         .footer-logo .icono-reciclado {
             width: 0.75em;
             height: 0.75em;
@@ -631,24 +640,16 @@
             margin-right: 0.15em;
             transform: translateY(0.10em);
         }
-        
         .footer-logo .fila-2 {
             font-weight: 200;
-            color: #003B6F;
+            color: var(--azul-600);
         }
-        
         .footer-logo .fila-2 strong {
             font-weight: 300;
-            color: #003B6F;
+            color: var(--azul-600);
         }
-        
+
         /* Contacto */
-        .footer-contacto {
-            flex: 1 1 300px;
-            min-width: 240px;
-            max-width: 50%;
-        }
-        
         .footer-titulo {
             font-size: 0.85rem;
             font-weight: 400;
@@ -657,20 +658,17 @@
             letter-spacing: 0.5px;
             margin-bottom: 12px;
         }
-        
         .footer-lista {
             list-style: none;
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-        
         .footer-lista li {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
         .footer-lista svg {
             width: 16px;
             height: 16px;
@@ -679,17 +677,14 @@
             fill: none;
             flex-shrink: 0;
         }
-        
         .footer-lista a {
             color: var(--color-texto-suave);
             text-decoration: none;
             transition: color 0.2s;
         }
-        
         .footer-lista a:hover {
             color: var(--color-texto);
         }
-        
         .footer-copy {
             padding-top: 20px;
             border-top: 1px solid var(--color-borde);
@@ -697,6 +692,7 @@
             color: var(--color-texto-tenue);
             text-align: center;
         }
+
         /* ---------- Skeleton de carga ---------- */
         .skeleton-tarjeta {
             background: var(--color-superficie);
@@ -790,7 +786,7 @@
                 padding: 10px 16px;
             }
             .modal-contenido { padding: 22px; }
-        
+
             .paginacion {
                 justify-content: center;
                 text-align: center;
@@ -812,7 +808,7 @@
                 height: 44px;
                 font-size: 1.2rem;
             }
-        
+
             .footer-logo {
                 font-size: 1.2rem;
                 flex-direction: row;
@@ -829,7 +825,7 @@
                 margin-left: 0.1em;
                 margin-right: 0.1em;
             }
-        
+
             .footer-marca,
             .footer-contacto {
                 flex: 0 0 auto;
@@ -855,6 +851,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Skip link (E7) -->
     <a href="#grilla-libros" class="skip-link">Saltar al catálogo</a>
@@ -870,10 +867,10 @@
 
     <div class="panel-control">
         <div class="contador-libros" id="contador" aria-live="polite" aria-atomic="true">
-        <span id="contador-texto">Cargando estantes...</span>
-        <button type="button" class="btn-limpiar" id="btn-limpiar"
-            style="display:none;" onclick="limpiarFiltros()">Limpiar filtros</button>
-    </div>
+            <span id="contador-texto">Cargando estantes...</span>
+            <button type="button" class="btn-limpiar" id="btn-limpiar"
+                style="display:none;" onclick="limpiarFiltros()">Limpiar filtros</button>
+        </div>
         <input type="text" id="buscador" placeholder="Buscar por título, autor o editorial..." aria-label="Buscar libros">
         <select id="filtro-categoria" aria-label="Filtrar por categoría">
             <option value="">Todas las categorías</option>
@@ -962,6 +959,7 @@
             © <span id="anio-copyright"></span> JUSTA · Todos los derechos reservados
         </div>
     </footer>
+
     <!-- Botón volver arriba -->
     <button type="button" class="btn-volver-arriba" id="btn-volver-arriba"
             aria-label="Volver arriba" title="Volver arriba">↑</button>
@@ -1000,6 +998,7 @@
 
     <!-- Lupa circular -->
     <div class="lupa-circular" id="lupa-circular"></div>
+
     <script>
         // ============================================================
         // CONFIGURACIÓN
@@ -1009,16 +1008,10 @@
 
         // Estado global
         let librosData = [];
-
-        // Estado de paginación
         let librosFiltrados = [];
         let paginaActual = 1;
         let porPagina = 25;
-
-        // Semilla para el orden aleatorio (se regenera al elegir "aleatorio" o al recargar)
         let semillaAleatoria = Math.random();
-
-        // Foco anterior al abrir el modal (E2)
         let elementoFocoAnterior = null;
 
         // ============================================================
@@ -1031,7 +1024,7 @@
             .toLowerCase()
             .trim();
 
-        const esc = (txt) => (txt ?? '')
+	const esc = (txt) => (txt ?? '')
             .toString()
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -1039,40 +1032,43 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
 
-        const tituloOrdenable = (titulo) => {
+	const tituloOrdenable = (titulo) => {
             const t = normalizar(titulo);
             return t.replace(/^(el|la|los|las|un|una|unos|unas|uno)\s+/i, '').trim();
-        };
+            };
 
-        const formatearPrecio = (precio) => {
+	const formatearPrecio = (precio) => {
             if (!precio) return '-';
             const num = parseInt(precio.toString().replace(/[^0-9]/g, ''), 10);
             return isNaN(num) ? precio : '$' + num.toLocaleString('es-AR');
-        };
+            };
 
-        const numeroPrecio = (p) => {
-            const n = parseInt((p || '').toString().replace(/[^0-9]/g, ''), 10);
-            return isNaN(n) ? Infinity : n;
-        };
+	const numeroDe = (valor, defaultVal = Infinity) => {
+            const n = parseInt((valor || '').toString().replace(/[^0-9]/g, ''), 10);
+            return isNaN(n) ? defaultVal : n;
+            };
 
-        const numeroAnio = (a) => {
-            const n = parseInt((a || '').toString().replace(/[^0-9]/g, ''), 10);
-            return isNaN(n) ? Infinity : n;
-        };
+	const numeroPrecio = (p) => numeroDe(p);
+	const numeroAnio   = (a) => numeroDe(a);
+	const numeroId     = (id) => numeroDe(id, -Infinity);
 
-        const numeroId = (id) => {
-            const n = parseInt((id || '').toString().replace(/[^0-9]/g, ''), 10);
-            return isNaN(n) ? -Infinity : n;
-        };
+	const cmp = (a, b) => (a === b ? 0 : (a < b ? -1 : 1));
 
-        const cmp = (a, b) => (a === b ? 0 : (a < b ? -1 : 1));
-
-        const placeholderSVG = (texto) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+	const placeholderSVG = (texto) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
             `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="210">
-                <rect width="100%" height="100%" fill="#e8eef6"/>
-                <text x="50%" y="50%" font-family="sans-serif" font-size="14" fill="#8a9bb5" text-anchor="middle">${esc(texto)}</text>
+            <rect width="100%" height="100%" fill="#e8eef6"/>
+            <text x="50%" y="50%" font-family="sans-serif" font-size="14" fill="#8a9bb5" text-anchor="middle">${esc(texto)}</text>
             </svg>`
-        );
+);
+
+	// Debounce: retrasa la ejecución hasta que pasen `delay` ms sin llamadas
+	function debounce(fn, delay = 200) {
+            let timerId;
+            return (...args) => {
+            clearTimeout(timerId);
+            timerId = setTimeout(() => fn(...args), delay);
+            };
+}
 
         function enlaceCompra(libro) {
             const w = (libro.whatsapp || '').trim();
@@ -1107,66 +1103,63 @@
             grilla.appendChild(fragment);
         }
 
-    // ============================================================
-    // CARGA DEL CATÁLOGO
-    // ============================================================
-    async function cargarCatalogo() {
-        const contador = document.getElementById('contador-texto');
-        contador.innerHTML = '<span class="spinner"></span>Cargando estantes...';
-        mostrarSkeletons(8);
-    
-        try {
-            if (typeof Papa === 'undefined') {
-                throw new Error('No se cargó la librería PapaParse (¿sin conexión o CDN bloqueada?)');
-            }
-    
-            const respuesta = await fetch(URL_SHEETS_TSV, { cache: 'no-store' });
-            if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
-    
-            const texto = await respuesta.text();
-            librosData = interpretarCSV(texto);
-    
-            if (librosData.length === 0) {
-                document.getElementById('grilla-libros').innerHTML = '';
-                contador.innerText = 'Catálogo vacío o formato no reconocido.';
-                return;
-            }
-    
-            semillaAleatoria = Math.random();
-            popularFiltros(librosData);
-            filtrarCatalogo();
-    
-            // F7: título dinámico con la cantidad
-            document.title = `justa. ${librosData.length} libros que buscan relecturas`;
-    
-            const params = new URLSearchParams(location.search);
-    
-            // F1: si hay ?id=XXX en la URL, abrir esa ficha automáticamente
-            const idBuscado = params.get('id');
-            if (idBuscado) {
-                const libro = librosData.find(l => l.id === idBuscado);
-                if (libro) abrirModal(libro);
-            }
-    
-            // F: si hay ?autor=XXX en la URL, filtrar por ese autor
-            const autorBuscado = params.get('autor');
-            if (autorBuscado) {
-                document.getElementById('buscador').value = autorBuscado;
+        // ============================================================
+        // CARGA DEL CATÁLOGO
+        // ============================================================
+        async function cargarCatalogo() {
+            const contador = document.getElementById('contador-texto');
+            contador.innerHTML = '<span class="spinner"></span>Cargando estantes...';
+            mostrarSkeletons(8);
+
+            try {
+                if (typeof Papa === 'undefined') {
+                    throw new Error('No se cargó la librería PapaParse (¿sin conexión o CDN bloqueada?)');
+                }
+
+                const respuesta = await fetch(URL_SHEETS_TSV, { cache: 'no-store' });
+                if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
+
+                const texto = await respuesta.text();
+                librosData = interpretarCSV(texto);
+
+                if (librosData.length === 0) {
+                    document.getElementById('grilla-libros').innerHTML = '';
+                    contador.innerText = 'Catálogo vacío o formato no reconocido.';
+                    return;
+                }
+
+                semillaAleatoria = Math.random();
+                popularFiltros(librosData);
                 filtrarCatalogo();
+
+                // Título dinámico con la cantidad
+                document.title = `justa libros · ${librosData.length} disponibles`;
+
+                // Params de la URL: priorizamos id > autor > categoría
+                const params = new URLSearchParams(location.search);
+                const idBuscado = params.get('id');
+                const autorBuscado = params.get('autor');
+                const catBuscada = params.get('categoria');
+
+                if (idBuscado) {
+                    const libro = librosData.find(l => l.id === idBuscado);
+                    if (libro) abrirModal(libro);
+                } else if (autorBuscado) {
+                    document.getElementById('buscador').value = autorBuscado;
+                    filtrarCatalogo();
+                } else if (catBuscada) {
+                    document.getElementById('filtro-categoria').value = catBuscada;
+                    filtrarCatalogo();
+                }
+
+            } catch (error) {
+                console.error('Error en la carga:', error);
+                contador.innerText = 'Error al conectar con el archivo de libros.';
+                document.getElementById('grilla-libros').innerHTML =
+                    `<div class="no-resultados">No se pudo cargar el catálogo. Recargá la página o intentá más tarde.</div>`;
             }
-            // F: si hay ?categoria=XXX en la URL, filtrar por esa categoría
-        const catBuscada = params.get('categoria');
-        if (catBuscada) {
-            document.getElementById('filtro-categoria').value = catBuscada;
-            filtrarCatalogo();
         }
-        } catch (error) {
-            console.error('Error en la carga:', error);
-            contador.innerText = 'Error al conectar con el archivo de libros.';
-            document.getElementById('grilla-libros').innerHTML =
-                `<div class="no-resultados">No se pudo cargar el catálogo. Recargá la página o intentá más tarde.</div>`;
-        }
-    }
+
         // ============================================================
         // PARSER CSV
         // ============================================================
@@ -1276,11 +1269,9 @@
                 !!document.getElementById('filtro-categoria').value ||
                 !!document.getElementById('filtro-estado').value;
 
-            // F3: mostrar / ocultar botón limpiar
             actualizarBotonLimpiar(hayFiltros);
 
             if (libros.length === 0) {
-                // F5: estado vacío amable
                 grilla.innerHTML = `
                     <div class="no-resultados">
                         <p>No encontramos libros con esos filtros.</p>
@@ -1319,29 +1310,33 @@
                     }
                 };
 
+                const tituloEsc = esc(libro.titulo);
+                const autorEsc = esc(libro.autor);
+                const editorialEsc = esc(libro.editorial) || '-';
+                const estadoEsc = esc(libro.estado) || '-';
+                const catLink = libro.categoria1
+                    ? `<br><strong>Categoría:</strong> <a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria1))}">${esc(libro.categoria1)}</a>`
+                    : '';
+
                 tarjeta.innerHTML = `
                     <div class="portada-contenedor">
                         <div class="portada-fallback">
-                            <div class="fallback-titulo">${esc(libro.titulo)}</div>
-                            <div class="fallback-autor">${esc(libro.autor)}</div>
+                            <div class="fallback-titulo">${tituloEsc}</div>
+                            <div class="fallback-autor">${autorEsc}</div>
                         </div>
-                        <img class="portada-img" src="./img/${encodeURIComponent(libro.id)}-tapa.jpg" alt="${esc(libro.titulo)}" loading="lazy"
+                        <img class="portada-img" src="./img/${encodeURIComponent(libro.id)}-tapa.jpg" alt="${tituloEsc}" loading="lazy"
                              onload="this.previousElementSibling.style.display='none'"
                              onerror="this.style.display='none'">
                     </div>
                     <div class="info">
-                        <h2>${esc(libro.titulo)}</h2>
+                        <h2>${tituloEsc}</h2>
                         <p class="autor">
-                            <a href="#" class="autor-link" data-autor="${esc(libro.autor)}">${esc(libro.autor)}</a>
+                            <a href="#" class="autor-link" data-autor="${autorEsc}">${autorEsc}</a>
                         </p>
-                    <div class="detalles">
-                        <strong>Editorial:</strong> ${esc(libro.editorial) || '-'}<br>
-                        <strong>Estado:</strong> ${esc(libro.estado) || '-'}${
-                            libro.categoria1
-                                ? `<br><strong>Categoría:</strong> <a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria1))}">${esc(libro.categoria1)}</a>`
-                                : ''
-                        }
-                    </div>
+                        <div class="detalles">
+                            <strong>Editorial:</strong> ${editorialEsc}<br>
+                            <strong>Estado:</strong> ${estadoEsc}${catLink}
+                        </div>
                     </div>
                     <div class="footer-tarjeta">
                         <span class="precio">${esc(formatearPrecio(libro.precio))}</span>
@@ -1361,10 +1356,12 @@
             elementoFocoAnterior = document.activeElement;
 
             document.getElementById('modal-titulo').innerText = libro.titulo;
+
             const modalAutor = document.getElementById('modal-autor');
             modalAutor.innerHTML = libro.autor
                 ? `<a href="#" class="autor-link" data-autor="${esc(libro.autor)}">${esc(libro.autor)}</a>`
                 : '';
+
             document.getElementById('modal-precio').innerText = formatearPrecio(libro.precio);
 
             const btn = document.getElementById('modal-btn-comprar');
@@ -1375,11 +1372,11 @@
             const cat1HTML = libro.categoria1
                 ? `<a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria1))}">${esc(libro.categoria1)}</a>`
                 : '-';
-            
+
             const cat2HTML = libro.categoria2
                 ? `<a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria2))}">${esc(libro.categoria2)}</a>`
                 : '-';
-            
+
             document.getElementById('modal-txt-detalles').innerHTML = `
                 <p><strong>Editorial:</strong> ${esc(libro.editorial) || 'No especificada'}</p>
                 <p><strong>Año de edición:</strong> ${esc(libro.anio) || '-'}</p>
@@ -1392,7 +1389,6 @@
             const contra = document.getElementById('modal-contratapa');
             const idSeguro = encodeURIComponent(libro.id);
 
-            // E4: alt descriptivo
             tapa.alt = `Tapa de "${libro.titulo}" de ${libro.autor}`;
             contra.alt = `Contratapa de "${libro.titulo}"`;
 
@@ -1408,13 +1404,11 @@
             tapa.src = `./img/${idSeguro}-tapa.jpg`;
             contra.src = `./img/${idSeguro}-contratapa.jpg`;
 
-            // F1: reflejar el id en la URL
             history.replaceState(null, '', `?id=${encodeURIComponent(libro.id)}`);
 
             document.getElementById('modal-libro').style.display = 'flex';
             document.body.style.overflow = 'hidden';
 
-            // E2: mover foco al botón cerrar
             setTimeout(() => {
                 const cerrar = document.querySelector('#modal-libro .btn-cerrar');
                 if (cerrar) cerrar.focus();
@@ -1422,13 +1416,14 @@
         }
 
         function cerrarModal() {
-            document.getElementById('modal-libro').style.display = 'none';
+            const modal = document.getElementById('modal-libro');
+            if (modal.style.display !== 'flex') return;
+
+            modal.style.display = 'none';
             document.body.style.overflow = '';
 
-            // F1: limpiar la URL
             history.replaceState(null, '', location.pathname);
 
-            // E2: devolver foco al elemento anterior
             if (elementoFocoAnterior && elementoFocoAnterior.focus) {
                 elementoFocoAnterior.focus();
                 elementoFocoAnterior = null;
@@ -1470,66 +1465,57 @@
         }
 
         // ============================================================
-        // LIMPIAR FILTROS (F3 + F5)
+        // APLICAR FILTRO + REFRESCAR (unifica autor, categoría y limpiar)
         // ============================================================
-        function limpiarFiltros() {
-            document.getElementById('buscador').value = '';
-            document.getElementById('filtro-categoria').value = '';
-            document.getElementById('filtro-estado').value = '';
-            document.getElementById('ordenar-por').value = '';
+        function aplicarFiltroYRefrescar({
+            buscador = '',
+            categoria = '',
+            estado = '',
+            orden = '',
+            urlParam = null
+        } = {}) {
+            document.getElementById('buscador').value = buscador;
+            document.getElementById('filtro-categoria').value = categoria;
+            document.getElementById('filtro-estado').value = estado;
+            document.getElementById('ordenar-por').value = orden;
+
+            cerrarModal();
             filtrarCatalogo();
+
+            if (urlParam) {
+                history.replaceState(null, '', urlParam);
+            }
+
+            document.getElementById('grilla-libros')
+                .scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function actualizarBotonLimpiar(hayFiltros) {
-            const btn = document.getElementById('btn-limpiar');
-            if (!btn) return;
-            btn.style.display = hayFiltros ? 'inline-block' : 'none';
-        }
-
-        // ============================================================
-        // LIMPIAR FILTROS (F3 + F5)
-        // ============================================================
-        function limpiarFiltros() {
-            document.getElementById('buscador').value = '';
-            document.getElementById('filtro-categoria').value = '';
-            document.getElementById('filtro-estado').value = '';
-            document.getElementById('ordenar-por').value = '';
-            filtrarCatalogo();
-        }
-        
-        function actualizarBotonLimpiar(hayFiltros) {
-            const btn = document.getElementById('btn-limpiar');
-            if (!btn) return;
-            btn.style.display = hayFiltros ? 'inline-block' : 'none';
-        }
-        
-        // ============================================================
-        // FILTRAR POR AUTOR
-        // ============================================================
         function filtrarPorAutor(autor) {
             if (!autor) return;
-            document.getElementById('buscador').value = autor;
-            document.getElementById('filtro-categoria').value = '';
-            document.getElementById('filtro-estado').value = '';
-            document.getElementById('ordenar-por').value = '';
-            cerrarModal();
-            filtrarCatalogo();
-            history.replaceState(null, '', `?autor=${encodeURIComponent(autor)}`);
-            document.getElementById('grilla-libros').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            aplicarFiltroYRefrescar({
+                buscador: autor,
+                urlParam: `?autor=${encodeURIComponent(autor)}`
+            });
         }
+
         function filtrarPorCategoria(categoriaKey) {
             if (!categoriaKey) return;
-        
-            document.getElementById('buscador').value = '';
-            document.getElementById('filtro-categoria').value = categoriaKey;
-            document.getElementById('filtro-estado').value = '';
-            document.getElementById('ordenar-por').value = '';
-        
-            cerrarModal();
-            filtrarCatalogo();
-            history.replaceState(null, '', `?categoria=${encodeURIComponent(categoriaKey)}`);
-            document.getElementById('grilla-libros').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            aplicarFiltroYRefrescar({
+                categoria: categoriaKey,
+                urlParam: `?categoria=${encodeURIComponent(categoriaKey)}`
+            });
         }
+
+        function limpiarFiltros() {
+            aplicarFiltroYRefrescar();
+        }
+
+        function actualizarBotonLimpiar(hayFiltros) {
+            const btn = document.getElementById('btn-limpiar');
+            if (!btn) return;
+            btn.style.display = hayFiltros ? 'inline-block' : 'none';
+        }
+
         // ============================================================
         // PAGINACIÓN
         // ============================================================
@@ -1635,17 +1621,16 @@
         // ============================================================
         // ORDENAMIENTO
         // ============================================================
-            function crearRandom(seed) {
-                // Normaliza cualquier seed (decimal o entero) a un uint32 válido
-                let a = Math.floor(seed * 4294967296) >>> 0;
-                return function () {
-                    a |= 0;
-                    a = (a + 0x6D2B79F5) | 0;
-                    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-                    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-                    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-                };
-            }
+        function crearRandom(seed) {
+            let a = Math.floor(seed * 4294967296) >>> 0;
+            return function () {
+                a |= 0;
+                a = (a + 0x6D2B79F5) | 0;
+                let t = Math.imul(a ^ (a >>> 15), 1 | a);
+                t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
 
         function aplicarOrden(libros, criterio) {
             const copia = [...libros];
@@ -1832,10 +1817,14 @@
         // ============================================================
         // EVENTOS
         // ============================================================
-        ['buscador', 'filtro-categoria', 'filtro-estado'].forEach(id => {
-            const el = document.getElementById(id);
-            const evento = id === 'buscador' ? 'input' : 'change';
-            el.addEventListener(evento, filtrarCatalogo);
+
+        // Buscador: debounce de 200ms (no filtra en cada tecla)
+        document.getElementById('buscador')
+            .addEventListener('input', debounce(filtrarCatalogo, 200));
+
+        // Selects de categoría y estado: cambio inmediato
+        ['filtro-categoria', 'filtro-estado'].forEach(id => {
+            document.getElementById(id).addEventListener('change', filtrarCatalogo);
         });
 
         // Selector de orden (maneja la semilla del aleatorio)
@@ -1846,9 +1835,8 @@
             filtrarCatalogo();
         });
 
-        // Delegación: filtrar por autor al clickear el nombre
+        // Delegación: filtrar por autor o categoría al clickear sus links
         document.addEventListener('click', (e) => {
-            // Autor
             const linkAutor = e.target.closest('.autor-link');
             if (linkAutor) {
                 e.preventDefault();
@@ -1856,8 +1844,7 @@
                 filtrarPorAutor(linkAutor.dataset.autor);
                 return;
             }
-        
-            // Categoría
+
             const linkCat = e.target.closest('.categoria-link');
             if (linkCat) {
                 e.preventDefault();
@@ -1866,7 +1853,7 @@
                 return;
             }
         });
-        
+
         // Escape: cierra popup de imagen o modal
         document.addEventListener('keydown', (e) => {
             if (e.key !== 'Escape') return;
@@ -1877,7 +1864,7 @@
             }
         });
 
-        // E2: Tab atrapado dentro del modal
+        // Tab atrapado dentro del modal
         document.getElementById('modal-libro').addEventListener('keydown', (e) => {
             if (e.key !== 'Tab') return;
             const modal = e.currentTarget;
@@ -1908,7 +1895,7 @@
             });
         });
 
-        // F1: botón "Copiar link" del modal
+        // Botón "Copiar link" del modal
         document.getElementById('btn-copiar-link').addEventListener('click', async (e) => {
             e.stopPropagation();
             const btn = e.currentTarget;
