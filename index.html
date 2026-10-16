@@ -344,106 +344,56 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        /* ---------- Botón agregar al carrito (dentro de la tarjeta) ---------- */
-        .footer-tarjeta-acciones {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+/* ---------- Botón agregar al carrito (flotante sobre la portada) ---------- */
+.portada-contenedor .btn-agregar-carrito {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: var(--color-primario);   /* #001F3B */
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 2px 6px rgba(0, 31, 59, 0.25);
+}
 
-        .btn-agregar-carrito {
-            background: transparent;
-            border: 1px solid var(--color-borde-input);
-            color: var(--color-texto-suave);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            line-height: 1;
-        }
+.portada-contenedor .btn-agregar-carrito__icono {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
 
-        .btn-agregar-carrito:hover:not(:disabled) {
-            border-color: var(--color-borde-focus);
-            color: var(--color-texto);
-            background: var(--color-portada-fondo);
-        }
+.portada-contenedor .btn-agregar-carrito:hover:not(:disabled) {
+    background: var(--color-primario-hover);   /* #003B6F */
+    transform: scale(1.08);
+    box-shadow: 0 4px 10px rgba(0, 31, 59, 0.35);
+}
 
-        .btn-agregar-carrito:focus-visible {
-            outline: 3px solid var(--color-borde-focus);
-            outline-offset: 2px;
-        }
+.portada-contenedor .btn-agregar-carrito:focus-visible {
+    outline: 3px solid var(--color-borde-focus);
+    outline-offset: 2px;
+}
 
-        .btn-agregar-carrito__icono {
-            font-size: 1rem;
-            font-weight: 700;
-            line-height: 0.8;
-        }
+/* Estado "en el carrito": fondo claro, ícono azul con opacidad */
+.portada-contenedor .btn-agregar-carrito.en-carrito,
+.portada-contenedor .btn-agregar-carrito:disabled {
+    background: var(--color-portada-fondo);   /* #E3EDF7 */
+    cursor: default;
+    box-shadow: none;
+}
 
-        /* Estado "en el carrito" */
-        .btn-agregar-carrito.en-carrito,
-        .btn-agregar-carrito:disabled {
-            background: var(--color-portada-fondo);
-            border-color: var(--color-borde-focus);
-            color: var(--color-texto-suave);
-            cursor: default;
-        }
-
-        .btn-agregar-carrito.en-carrito .btn-agregar-carrito__icono {
-            font-size: 0.85rem;
-        }        
-        .btn-agregar-carrito {
-            background: transparent;
-            border: 1px solid var(--color-borde-input);
-            color: var(--color-texto-suave);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            line-height: 1;
-        }
-        
-        .btn-agregar-carrito:hover:not(:disabled) {
-            border-color: var(--color-borde-focus);
-            color: var(--color-texto);
-            background: var(--color-portada-fondo);
-        }
-        
-        .btn-agregar-carrito:focus-visible {
-            outline: 3px solid var(--color-borde-focus);
-            outline-offset: 2px;
-        }
-        
-        .btn-agregar-carrito__icono {
-            font-size: 1rem;
-            font-weight: 700;
-            line-height: 0.8;
-        }
-        
-        /* Estado "en el carrito" */
-        .btn-agregar-carrito.en-carrito,
-        .btn-agregar-carrito:disabled {
-            background: var(--color-portada-fondo);
-            border-color: var(--color-borde-focus);
-            color: var(--color-texto-suave);
-            cursor: default;
-        }
-        
-        .btn-agregar-carrito.en-carrito .btn-agregar-carrito__icono {
-            font-size: 0.85rem;
-        }
+.portada-contenedor .btn-agregar-carrito.en-carrito .btn-agregar-carrito__icono,
+.portada-contenedor .btn-agregar-carrito:disabled .btn-agregar-carrito__icono {
+    opacity: 0.55;
+}
         /* ---------- Modal ---------- */
         .modal {
             display: none;
@@ -1600,15 +1550,21 @@
                     : '';
 
                 tarjeta.innerHTML = `
-                    <div class="portada-contenedor">
-                        <div class="portada-fallback">
-                            <div class="fallback-titulo">${tituloEsc}</div>
-                            <div class="fallback-autor">${autorEsc}</div>
-                        </div>
-                        <img class="portada-img" src="./img/${encodeURIComponent(libro.id)}-tapa.jpg" alt="${tituloEsc}" loading="lazy"
-                             onload="this.previousElementSibling.style.display='none'"
-                             onerror="this.style.display='none'">
+                <div class="portada-contenedor">
+                    <div class="portada-fallback">
+                        <div class="fallback-titulo">${tituloEsc}</div>
+                        <div class="fallback-autor">${autorEsc}</div>
                     </div>
+                    <img class="portada-img" src="./img/${encodeURIComponent(libro.id)}-tapa.jpg" alt="${tituloEsc}" loading="lazy"
+                         onload="this.previousElementSibling.style.display='none'"
+                         onerror="this.style.display='none'">
+                    <button type="button" class="btn-agregar-carrito"
+                            data-id="${esc(libro.id)}"
+                            aria-label="Agregar al carrito"
+                            title="Agregar al carrito">
+                        <img class="btn-agregar-carrito__icono" src="./img/carrito-claro.svg" alt="" aria-hidden="true">
+                    </button>
+                </div>
                     <div class="info">
                         <h2>${tituloEsc}</h2>
                         <p class="autor">
@@ -1620,17 +1576,9 @@
                         </div>
                     </div>
                     <div class="footer-tarjeta">
-                    <span class="precio">${esc(formatearPrecio(libro.precio))}</span>
-                    <div class="footer-tarjeta-acciones">
+                        <span class="precio">${esc(formatearPrecio(libro.precio))}</span>
                         <span class="btn-comprar">Ver ficha</span>
-                        <button type="button" class="btn-agregar-carrito"
-                                data-id="${esc(libro.id)}"
-                                aria-label="Agregar al carrito">
-                            <span class="btn-agregar-carrito__icono" aria-hidden="true">+</span>
-                            <span class="btn-agregar-carrito__texto">Agregar</span>
-                        </button>
                     </div>
-                </div>
                 `;
                 fragment.appendChild(tarjeta);
             });
