@@ -550,21 +550,16 @@
             gap: 40px;
             flex-wrap: wrap;
             margin-bottom: 30px;
-            align-items: flex-start;   /* ← alinea columnas al tope */
+            align-items: flex-start;
         }
         
-        .footer-marca {
-            flex: 1 1 300px;
-            min-width: 240px;
-            max-width: 50%;            /* ← deja espacio para la otra columna */
-        }
-        
+        .footer-marca,
         .footer-contacto {
-            flex: 1 1 300px;
+            flex: 1 1 300px;       /* ← desktop: crecen y se reparten el ancho */
             min-width: 240px;
-            max-width: 50%;            /* ← simétrico */
+            max-width: 50%;
         }
-        
+                
         /* Logo del footer */
         .footer-logo {
             font-size: 1.5rem;
@@ -617,8 +612,9 @@
         
         /* Contacto */
         .footer-contacto {
-            flex: 1;
+            flex: 1 1 300px;
             min-width: 240px;
+            max-width: 50%;
         }
         
         .footer-titulo {
@@ -740,16 +736,17 @@
            ============================================================ */
         @media (max-width: 700px) {
             header {
-                padding-left: 0;
+                padding-left: 20px;   /* mismo padding que el body */
+                padding-right: 20px;
             }
-            header h1 {
-                font-size: clamp(1.2rem, 7.5vw, 1.8rem);
-                width: 90%;
-                justify-content: flex-start;
-                flex-wrap: nowrap;
-                gap: 0.25em;
-                white-space: nowrap;
-            }
+    header h1 {
+        font-size: clamp(1.4rem, 8vw, 1.9rem);
+        width: 100%;                    /* ocupa todo el ancho del header */
+        justify-content: flex-start;    /* el texto arranca pegado a la izquierda */
+        flex-wrap: nowrap;
+        gap: 0.25em;
+        white-space: nowrap;
+    }
             header h1 .icono-reciclado {
                 width: 1em;
                 height: 1em;
