@@ -736,17 +736,17 @@
            ============================================================ */
         @media (max-width: 700px) {
             header {
-                padding-left: 20px;   /* mismo padding que el body */
+                padding-left: 20px;
                 padding-right: 20px;
             }
-    header h1 {
-        font-size: clamp(1.4rem, 8vw, 1.9rem);
-        width: 100%;                    /* ocupa todo el ancho del header */
-        justify-content: flex-start;    /* el texto arranca pegado a la izquierda */
-        flex-wrap: nowrap;
-        gap: 0.25em;
-        white-space: nowrap;
-    }
+            header h1 {
+                font-size: clamp(1.4rem, 8vw, 1.9rem);
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: nowrap;
+                gap: 0.25em;
+                white-space: nowrap;
+            }
             header h1 .icono-reciclado {
                 width: 1em;
                 height: 1em;
@@ -798,6 +798,15 @@
             .footer-logo .icono-reciclado {
                 margin-left: 0.1em;
                 margin-right: 0.1em;
+            }
+        
+            /* ⬇️ ESTE ES EL FIX: resetear las columnas del footer en mobile */
+            .footer-marca,
+            .footer-contacto {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
             }
         }
 
