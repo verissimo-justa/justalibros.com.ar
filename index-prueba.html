@@ -543,6 +543,7 @@
             font-size: 0.9rem;
             line-height: 1.6;
         }
+        
         .footer-inner {
             display: flex;
             justify-content: space-between;
@@ -550,32 +551,67 @@
             flex-wrap: wrap;
             margin-bottom: 30px;
         }
-        .footer-marca { flex: 1; min-width: 240px; }
+        
+        .footer-marca {
+            flex: 1;
+            min-width: 240px;
+        }
+        
+        /* Logo del footer */
         .footer-logo {
             font-size: 1.5rem;
             font-weight: 500;
             letter-spacing: -0.5px;
             color: var(--color-texto);
             display: flex;
-            flex-direction: column;
-            gap: 2px;
+            flex-direction: row;        /* ← ahora en una línea */
+            align-items: center;
+            flex-wrap: wrap;            /* si no entra en pantallas chicas, baja a 2 líneas */
+            gap: 0.3em;
         }
+        
         .footer-logo .fila-1 {
             display: flex;
             align-items: baseline;
             gap: 0.3em;
         }
-        .footer-logo .marca { font-weight: 400; letter-spacing: -0.6px; }
-        .footer-logo .tagline-f { font-weight: 200; }
+        
+        .footer-logo .marca {
+            font-weight: 400;
+            letter-spacing: -0.6px;
+        }
+        
+        .footer-logo .tagline-f {
+            font-weight: 200;
+            color: var(--color-texto);
+        }
+        
+        .footer-logo .icono-reciclado {
+            width: 0.75em;
+            height: 0.75em;
+            flex-shrink: 0;
+            opacity: 0.6;
+            margin-left: 0.15em;
+            margin-right: 0.15em;
+            transform: translateY(0.10em);
+        }
+        
         .footer-logo .fila-2 {
             font-weight: 200;
-            color: rgba(26, 31, 43, 0.6);   /* antes 0.7 */
+            color: rgba(26, 31, 43, 0.6);
         }
+        
         .footer-logo .fila-2 strong {
             font-weight: 300;
-            color: rgba(26, 31, 43, 0.45);   /* o 0.6, según lo que elijas arriba */
+            color: rgba(26, 31, 43, 0.45);
         }
-        .footer-contacto { flex: 1; min-width: 240px; }
+        
+        /* Contacto */
+        .footer-contacto {
+            flex: 1;
+            min-width: 240px;
+        }
+        
         .footer-titulo {
             font-size: 0.85rem;
             font-weight: 400;
@@ -584,33 +620,40 @@
             letter-spacing: 0.5px;
             margin-bottom: 12px;
         }
+        
         .footer-lista {
             list-style: none;
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
+        
         .footer-lista li {
             display: flex;
             align-items: center;
             gap: 8px;
         }
+        
         .footer-lista svg {
-            width: 16px; height: 16px;
+            width: 16px;
+            height: 16px;
             stroke: var(--color-texto-tenue);
             stroke-width: 1.5;
             fill: none;
             flex-shrink: 0;
         }
+        
         .footer-lista a {
             color: var(--color-texto-suave);
             text-decoration: none;
             transition: color 0.2s;
         }
+        
         .footer-lista a:hover {
             color: var(--color-texto);
             text-decoration: underline;
         }
+        
         .footer-copy {
             padding-top: 20px;
             border-top: 1px solid var(--color-borde);
@@ -618,7 +661,6 @@
             color: var(--color-texto-tenue);
             text-align: center;
         }
-
         /* ---------- Skeleton de carga ---------- */
         .skeleton-tarjeta {
             background: var(--color-superficie);
@@ -744,13 +786,8 @@
                 gap: 0.25em;
             }
             .footer-logo .icono-reciclado {
-                width: 0.75em;
-                height: 0.75em;
-                flex-shrink: 0;
-                opacity: 0.6;
-                margin-left: 0.15em;
-                margin-right: 0.15em;
-                transform: translateY(0.10em);
+                margin-left: 0.1em;
+                margin-right: 0.1em;
             }
         }
 
@@ -826,57 +863,57 @@
         <div class="paginacion-info" id="paginacion-info"></div>
     </div>
 
-<!-- Footer -->
-<footer class="footer">
-    <div class="footer-inner">
-        <div class="footer-marca">
-            <div class="footer-logo">
-                <span class="fila-1">
-                    <span class="marca">justa</span>
-                    <span class="tagline-f">libros</span>
-                </span>
-                <img class="icono-reciclado" src="./img/recicle.svg" alt="" aria-hidden="true">
-                <span class="fila-2"><strong>re</strong>lecturas</span>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-marca">
+                <div class="footer-logo">
+                    <span class="fila-1">
+                        <span class="marca">justa</span>
+                        <span class="tagline-f">libros</span>
+                    </span>
+                    <img class="icono-reciclado" src="./img/recicle.svg" alt="" aria-hidden="true">
+                    <span class="fila-2"><strong>re</strong>lecturas</span>
+                </div>
+            </div>
+            <div class="footer-contacto">
+                <h3 class="footer-titulo">Contacto</h3>
+                <ul class="footer-lista">
+                    <li>
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span>Haedo, Buenos Aires, Argentina</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                        </svg>
+                        <a href="https://wa.me/5491178195590" target="_blank" rel="noopener">+54 9 11 7819-5590</a>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                        <a href="https://instagram.com/justalibros" target="_blank" rel="noopener">@justalibros</a>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <a href="mailto:hola@justalibros.com.ar">hola@justalibros.com.ar</a>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="footer-contacto">
-            <h3 class="footer-titulo">Contacto</h3>
-            <ul class="footer-lista">
-                <li>
-                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                        <circle cx="12" cy="10" r="3"/>
-                    </svg>
-                    <span>Haedo, Buenos Aires, Argentina</span>
-                </li>
-                <li>
-                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                    </svg>
-                    <a href="https://wa.me/5491178195590" target="_blank" rel="noopener">+54 9 11 7819-5590</a>
-                </li>
-                <li>
-                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                    </svg>
-                    <a href="https://instagram.com/justalibros" target="_blank" rel="noopener">@justalibros</a>
-                </li>
-                <li>
-                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                        <polyline points="22,6 12,13 2,6"/>
-                    </svg>
-                    <a href="mailto:hola@justalibros.com.ar">hola@justalibros.com.ar</a>
-                </li>
-            </ul>
+        <div class="footer-copy">
+            © <span id="anio-copyright"></span> JUSTA · Todos los derechos reservados
         </div>
-    </div>
-    <div class="footer-copy">
-        © <span id="anio-copyright"></span> JUSTA · Todos los derechos reservados
-    </div>
-</footer>
+    </footer>
     <!-- Botón volver arriba -->
     <button type="button" class="btn-volver-arriba" id="btn-volver-arriba"
             aria-label="Volver arriba" title="Volver arriba">↑</button>
