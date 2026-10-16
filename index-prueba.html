@@ -550,11 +550,19 @@
             gap: 40px;
             flex-wrap: wrap;
             margin-bottom: 30px;
+            align-items: flex-start;   /* ← alinea columnas al tope */
         }
         
         .footer-marca {
-            flex: 1;
+            flex: 1 1 300px;
             min-width: 240px;
+            max-width: 50%;            /* ← deja espacio para la otra columna */
+        }
+        
+        .footer-contacto {
+            flex: 1 1 300px;
+            min-width: 240px;
+            max-width: 50%;            /* ← simétrico */
         }
         
         /* Logo del footer */
@@ -567,8 +575,8 @@
             flex-direction: row;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.28em;
-            justify-content: flex-start;   /* ← alinea a la izquierda */
+            gap: 0.25em;
+            justify-content: flex-start;
         }
         
         .footer-logo .fila-1 {
@@ -730,25 +738,23 @@
         /* ============================================================
            RESPONSIVE
            ============================================================ */
-            @media (max-width: 700px) {
-                header {
-                    padding-left: 0;
-                }
-                header h1 {
-                    font-size: 8.5vw;
-                    width: 100%;
-                    justify-content: flex-start;
-                    flex-wrap: nowrap;
-                    gap: 0.25em;
-                    white-space: nowrap;
-                    overflow: hidden;   /* si no entra, recorta en lugar de romper */
-                }
-                header h1 .icono-reciclado {
-                    width: 1em;
-                    height: 1em;
-                    margin-left: 0.15em;
-                    margin-right: 0.15em;
-                }
+        @media (max-width: 700px) {
+            header {
+                padding-left: 0;
+            }
+            header h1 {
+                font-size: clamp(1.2rem, 7.5vw, 1.8rem);
+                width: 90%;
+                justify-content: flex-start;
+                flex-wrap: nowrap;
+                gap: 0.25em;
+                white-space: nowrap;
+            }
+            header h1 .icono-reciclado {
+                width: 1em;
+                height: 1em;
+                margin-left: 0.1em;
+                margin-right: 0.1em;
             }
             .precio { font-size: 1.25rem; }
             .btn-comprar {
@@ -786,7 +792,7 @@
                 align-items: center;
                 flex-wrap: nowrap;
                 width: 100%;
-                justify-content: flex-start;   /* en lugar de space-around */
+                justify-content: flex-start;
                 gap: 0.2em;
             }
             .footer-logo .fila-1 {
