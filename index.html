@@ -337,7 +337,60 @@
             display: inline-block;
         }
         .btn-comprar:hover { background: var(--color-primario-hover); }
-
+                /* ---------- Botón agregar al carrito (dentro de la tarjeta) ---------- */
+        .footer-tarjeta-acciones {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-agregar-carrito {
+            background: transparent;
+            border: 1px solid var(--color-borde-input);
+            color: var(--color-texto-suave);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            line-height: 1;
+        }
+        
+        .btn-agregar-carrito:hover:not(:disabled) {
+            border-color: var(--color-borde-focus);
+            color: var(--color-texto);
+            background: var(--color-portada-fondo);
+        }
+        
+        .btn-agregar-carrito:focus-visible {
+            outline: 3px solid var(--color-borde-focus);
+            outline-offset: 2px;
+        }
+        
+        .btn-agregar-carrito__icono {
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 0.8;
+        }
+        
+        /* Estado "en el carrito" */
+        .btn-agregar-carrito.en-carrito,
+        .btn-agregar-carrito:disabled {
+            background: var(--color-portada-fondo);
+            border-color: var(--color-borde-focus);
+            color: var(--color-texto-suave);
+            cursor: default;
+        }
+        
+        .btn-agregar-carrito.en-carrito .btn-agregar-carrito__icono {
+            font-size: 0.85rem;
+        }
         /* ---------- Modal ---------- */
         .modal {
             display: none;
@@ -1170,6 +1223,33 @@
         function formatearPrecioCarrito(n) {
             return '$' + Number(n || 0).toLocaleString('es-AR');
         }
+                // ------------------------------------------------------------
+        // Actualizar el botón de una tarjeta según su estado en el carrito
+        // ------------------------------------------------------------
+        function actualizarBotonCarrito(boton) {
+            if (!boton) return;
+            const id = boton.dataset.id;
+            const enCarrito = estaEnCarrito(id);
+            const icono = boton.querySelector('.btn-agregar-carrito__icono');
+            const texto = boton.querySelector('.btn-agregar-carrito__texto');
+
+            if (enCarrito) {
+                boton.classList.add('en-carrito');
+                boton.disabled = true;
+                if (icono) icono.textContent = '✓';
+                if (texto) texto.textContent = 'En el carrito';
+            } else {
+                boton.classList.remove('en-carrito');
+                boton.disabled = false;
+                if (icono) icono.textContent = '+';
+                if (texto) texto.textContent = 'Agregar';
+            }
+        }
+
+        // Actualiza TODOS los botones visibles (por si cambió el carrito)
+        function actualizarTodosLosBotonesCarrito() {
+            document.querySelectorAll('.btn-agregar-carrito').forEach(actualizarBotonCarrito);
+        }
         function enlaceCompra(libro) {
             const w = (libro.whatsapp || '').trim();
             if (!w) return '';
@@ -1451,15 +1531,26 @@
                         </div>
                     </div>
                     <div class="footer-tarjeta">
-                        <span class="precio">${esc(formatearPrecio(libro.precio))}</span>
+                    <span class="precio">${esc(formatearPrecio(libro.precio))}</span>
+                    <div class="footer-tarjeta-acciones">
                         <span class="btn-comprar">Ver ficha</span>
+                        <button type="button" class="btn-agregar-carrito"
+                                data-id="${esc(libro.id)}"
+                                aria-label="Agregar al carrito">
+                            <span class="btn-agregar-carrito__icono" aria-hidden="true">+</span>
+                            <span class="btn-agregar-carrito__texto">Agregar</span>
+                        </button>
                     </div>
+                </div>
                 `;
                 fragment.appendChild(tarjeta);
             });
 
             grilla.appendChild(fragment);
-        }
+
+            // Sincronizar el estado de los botones con el carrito actual
+            actualizarTodosLosBotonesCarrito();
+        }        // ← acá cierra la función
 
         // ============================================================
         // MODAL DE FICHA (E2 + E4 + F1)
@@ -1948,6 +2039,7 @@
 
         // Delegación: filtrar por autor o categoría al clickear sus links
         document.addEventListener('click', (e) => {
+            // Link de autor
             const linkAutor = e.target.closest('.autor-link');
             if (linkAutor) {
                 e.preventDefault();
@@ -1956,11 +2048,34 @@
                 return;
             }
 
+            // Link de categoría
             const linkCat = e.target.closest('.categoria-link');
             if (linkCat) {
                 e.preventDefault();
                 e.stopPropagation();
                 filtrarPorCategoria(linkCat.dataset.categoria);
+                return;
+            }
+
+            // Botón "Agregar al carrito"
+            const btnAgregar = e.target.closest('.btn-agregar-carrito');
+            if (btnAgregar) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (btnAgregar.disabled) return;
+
+                const id = btnAgregar.dataset.id;
+                const libro = librosData.find(l => l.id === id);
+                if (!libro) return;
+
+                const resultado = agregarAlCarrito(libro);
+                if (resultado.ok) {
+                    actualizarBotonCarrito(btnAgregar);
+                    actualizarContadorHeader();  // función del Bloque 3
+                } else if (resultado.motivo === 'duplicado') {
+                    actualizarBotonCarrito(btnAgregar); // por las dudas
+                }
                 return;
             }
         });
