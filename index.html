@@ -193,7 +193,7 @@
             height: 20px;
             padding: 0 6px;
             border-radius: 999px;
-            background: var(--color-primario);
+            background: var(--azul-600);   /* #003B6F */
             color: #ffffff;
             font-size: 0.72rem;
             font-weight: 700;
@@ -948,32 +948,33 @@
                 max-width: 100%;
                 min-width: 0;
             }
-        }
-                /* ---------- Carrito flotante en mobile ---------- */
-        .btn-carrito-header {
-            position: fixed;
-            right: 20px;
-            bottom: 20px;
-            z-index: 91;
-            width: 52px;
-            height: 52px;
-            background: var(--color-primario);
-            border-color: var(--color-primario);
-            box-shadow: 0 4px 12px rgba(0, 31, 59, 0.35);
-        }
-        .btn-carrito-header__icono {
-            filter: brightness(0) invert(1);
-            width: 24px;
-            height: 24px;
-        }
-        .btn-carrito-header__contador {
-            box-shadow: 0 0 0 2px var(--color-primario);
-            top: -4px;
-            right: -4px;
-        }
-        /* En mobile, el header vuelve al layout de una sola línea */
-        header {
-            display: block;
+
+            /* ---------- Carrito flotante en mobile ---------- */
+            .btn-carrito-header {
+                position: fixed;
+                right: 20px;
+                bottom: 90px;                    /* ← subido para no chocar con la barra del navegador */
+                z-index: 91;
+                width: 52px;
+                height: 52px;
+                background: var(--azul-700);     /* #002D55 */
+                border-color: var(--azul-700);
+                box-shadow: 0 4px 12px rgba(0, 31, 59, 0.35);
+            }
+            .btn-carrito-header__icono {
+                filter: brightness(0) invert(1);
+                width: 24px;
+                height: 24px;
+            }
+            .btn-carrito-header__contador {
+                box-shadow: 0 0 0 2px var(--azul-700);
+                top: -4px;
+                right: -4px;
+            }
+            /* En mobile, el header vuelve al layout de una sola línea */
+            header {
+                display: block;
+            }
         }
         /* ============================================================
            PREFERS-REDUCED-MOTION (E5)
