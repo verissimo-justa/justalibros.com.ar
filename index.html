@@ -1226,7 +1226,8 @@
         function formatearPrecioCarrito(n) {
             return '$' + Number(n || 0).toLocaleString('es-AR');
         }
-                // ------------------------------------------------------------
+
+        // ------------------------------------------------------------
         // Actualizar el botón de una tarjeta según su estado en el carrito
         // ------------------------------------------------------------
         function actualizarBotonCarrito(boton) {
@@ -1234,18 +1235,19 @@
             const id = boton.dataset.id;
             const enCarrito = estaEnCarrito(id);
             const icono = boton.querySelector('.btn-agregar-carrito__icono');
-            const texto = boton.querySelector('.btn-agregar-carrito__texto');
 
             if (enCarrito) {
                 boton.classList.add('en-carrito');
                 boton.disabled = true;
-                if (icono) icono.textContent = '✓';
-                if (texto) texto.textContent = 'En el carrito';
+                boton.setAttribute('aria-label', 'En el carrito');
+                boton.title = 'En el carrito';
+                if (icono) icono.src = './img/carrito.svg';
             } else {
                 boton.classList.remove('en-carrito');
                 boton.disabled = false;
-                if (icono) icono.textContent = '+';
-                if (texto) texto.textContent = 'Agregar';
+                boton.setAttribute('aria-label', 'Agregar al carrito');
+                boton.title = 'Agregar al carrito';
+                if (icono) icono.src = './img/carrito-claro.svg';
             }
         }
 
@@ -1258,33 +1260,10 @@
         function actualizarContadorHeader() {
             // Bloque 3
         }
-                // ------------------------------------------------------------
-        // Actualizar el botón de una tarjeta según su estado en el carrito
+
         // ------------------------------------------------------------
-        function actualizarBotonCarrito(boton) {
-            if (!boton) return;
-            const id = boton.dataset.id;
-            const enCarrito = estaEnCarrito(id);
-            const icono = boton.querySelector('.btn-agregar-carrito__icono');
-            const texto = boton.querySelector('.btn-agregar-carrito__texto');
-
-            if (enCarrito) {
-                boton.classList.add('en-carrito');
-                boton.disabled = true;
-                if (icono) icono.textContent = '✓';
-                if (texto) texto.textContent = 'En el carrito';
-            } else {
-                boton.classList.remove('en-carrito');
-                boton.disabled = false;
-                if (icono) icono.textContent = '+';
-                if (texto) texto.textContent = 'Agregar';
-            }
-        }
-
-        // Actualiza TODOS los botones visibles (por si cambió el carrito)
-        function actualizarTodosLosBotonesCarrito() {
-            document.querySelectorAll('.btn-agregar-carrito').forEach(actualizarBotonCarrito);
-        }
+        // Enlace de compra por WhatsApp
+        // ------------------------------------------------------------
         function enlaceCompra(libro) {
             const w = (libro.whatsapp || '').trim();
             if (!w) return '';
@@ -1313,13 +1292,9 @@
                         <div class="skeleton-linea precio"></div>
                     </div>
                 `;
-                fragment.appendChild(tarjeta);
-            });
-
+                fragment.appendChild(sk);
+            }
             grilla.appendChild(fragment);
-
-            // Sincronizar el estado de los botones con el carrito actual
-            actualizarTodosLosBotonesCarrito();
         }
 
         // ============================================================
@@ -1476,118 +1451,119 @@
                 });
         }
 
-        // ============================================================
-        // RENDER DE TARJETAS
-        // ============================================================
-        function renderizarLibros(libros) {
-            const grilla = document.getElementById('grilla-libros');
-            const contador = document.getElementById('contador-texto');
-            grilla.innerHTML = '';
-
-            const totalCatalogo = librosData.length;
-            const totalFiltrado = librosFiltrados.length;
-
-            const hayFiltros =
-                !!document.getElementById('buscador').value.trim() ||
-                !!document.getElementById('filtro-categoria').value ||
-                !!document.getElementById('filtro-estado').value;
-
-            actualizarBotonLimpiar(hayFiltros);
-
-            if (libros.length === 0) {
-                grilla.innerHTML = `
-                    <div class="no-resultados">
-                        <p>No encontramos libros con esos filtros.</p>
-                        <p>Probá quitar algún filtro, revisar la ortografía o buscar por editorial.</p>
-                        <button type="button" class="btn-comprar" onclick="limpiarFiltros()">Limpiar filtros</button>
-                    </div>`;
-                contador.innerText = hayFiltros
-                    ? `0 resultados de ${totalCatalogo} libros en el catálogo`
-                    : '0 libros disponibles';
-                return;
-            }
-
-            if (hayFiltros) {
-                contador.innerText = totalFiltrado === 1
-                    ? `1 resultado de ${totalCatalogo} libros en el catálogo`
-                    : `${totalFiltrado} resultados de ${totalCatalogo} libros en el catálogo`;
-            } else {
-                contador.innerText = totalCatalogo === 1
-                    ? '1 libro de segunda mano disponible en este momento'
-                    : `${totalCatalogo} libros de segunda mano disponibles en este momento`;
-            }
-
-            const fragment = document.createDocumentFragment();
-
-            libros.forEach(libro => {
-                const tarjeta = document.createElement('div');
-                tarjeta.className = 'tarjeta';
-                tarjeta.tabIndex = 0;
-                tarjeta.setAttribute('role', 'button');
-                tarjeta.setAttribute('aria-label', `${libro.titulo} — ${libro.autor}`);
-
-                // Bug 1: si el click viene de un link interno, no abre el modal
-                tarjeta.onclick = (e) => {
-                    if (e.target.closest('a')) return;
-                    abrirModal(libro);
-                };
-
-                // Bug 2: si el Enter/Space viene de un link interno, no abre el modal
-                tarjeta.onkeydown = (e) => {
-                    if (e.target !== tarjeta) return;
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
+            // ============================================================
+            // RENDER DE TARJETAS
+            // ============================================================
+            function renderizarLibros(libros) {
+                const grilla = document.getElementById('grilla-libros');
+                const contador = document.getElementById('contador-texto');
+                grilla.innerHTML = '';
+    
+                const totalCatalogo = librosData.length;
+                const totalFiltrado = librosFiltrados.length;
+    
+                const hayFiltros =
+                    !!document.getElementById('buscador').value.trim() ||
+                    !!document.getElementById('filtro-categoria').value ||
+                    !!document.getElementById('filtro-estado').value;
+    
+                actualizarBotonLimpiar(hayFiltros);
+    
+                if (libros.length === 0) {
+                    grilla.innerHTML = `
+                        <div class="no-resultados">
+                            <p>No encontramos libros con esos filtros.</p>
+                            <p>Probá quitar algún filtro, revisar la ortografía o buscar por editorial.</p>
+                            <button type="button" class="btn-comprar" onclick="limpiarFiltros()">Limpiar filtros</button>
+                        </div>`;
+                    contador.innerText = hayFiltros
+                        ? `0 resultados de ${totalCatalogo} libros en el catálogo`
+                        : '0 libros disponibles';
+                    return;
+                }
+    
+                if (hayFiltros) {
+                    contador.innerText = totalFiltrado === 1
+                        ? `1 resultado de ${totalCatalogo} libros en el catálogo`
+                        : `${totalFiltrado} resultados de ${totalCatalogo} libros en el catálogo`;
+                } else {
+                    contador.innerText = totalCatalogo === 1
+                        ? '1 libro de segunda mano disponible en este momento'
+                        : `${totalCatalogo} libros de segunda mano disponibles en este momento`;
+                }
+    
+                const fragment = document.createDocumentFragment();
+    
+                libros.forEach(libro => {
+                    const tarjeta = document.createElement('div');
+                    tarjeta.className = 'tarjeta';
+                    tarjeta.tabIndex = 0;
+                    tarjeta.setAttribute('role', 'button');
+                    tarjeta.setAttribute('aria-label', `${libro.titulo} — ${libro.autor}`);
+    
+                    // Bug 1: si el click viene de un link interno, no abre el modal
+                    tarjeta.onclick = (e) => {
+                        if (e.target.closest('a')) return;
                         abrirModal(libro);
-                    }
-                };
-
-                const tituloEsc = esc(libro.titulo);
-                const autorEsc = esc(libro.autor);
-                const editorialEsc = esc(libro.editorial) || '-';
-                const estadoEsc = esc(libro.estado) || '-';
-                const catLink = libro.categoria1
-                    ? `<br><strong>Categoría:</strong> <a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria1))}">${esc(libro.categoria1)}</a>`
-                    : '';
-
-                tarjeta.innerHTML = `
-                <div class="portada-contenedor">
-                    <div class="portada-fallback">
-                        <div class="fallback-titulo">${tituloEsc}</div>
-                        <div class="fallback-autor">${autorEsc}</div>
-                    </div>
-                    <img class="portada-img" src="./img/${encodeURIComponent(libro.id)}-tapa.jpg" alt="${tituloEsc}" loading="lazy"
-                         onload="this.previousElementSibling.style.display='none'"
-                         onerror="this.style.display='none'">
-                    <button type="button" class="btn-agregar-carrito"
-                            data-id="${esc(libro.id)}"
-                            aria-label="Agregar al carrito"
-                            title="Agregar al carrito">
-                        <img class="btn-agregar-carrito__icono" src="./img/carrito-claro.svg" alt="" aria-hidden="true">
-                    </button>
-                </div>
-                    <div class="info">
-                        <h2>${tituloEsc}</h2>
-                        <p class="autor">
-                            <a href="#" class="autor-link" data-autor="${autorEsc}">${autorEsc}</a>
-                        </p>
-                        <div class="detalles">
-                            <strong>Editorial:</strong> ${editorialEsc}<br>
-                            <strong>Estado:</strong> ${estadoEsc}${catLink}
+                    };
+    
+                    // Bug 2: si el Enter/Space viene de un link interno, no abre el modal
+                    tarjeta.onkeydown = (e) => {
+                        if (e.target !== tarjeta) return;
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            abrirModal(libro);
+                        }
+                    };
+    
+                    const tituloEsc = esc(libro.titulo);
+                    const autorEsc = esc(libro.autor);
+                    const editorialEsc = esc(libro.editorial) || '-';
+                    const estadoEsc = esc(libro.estado) || '-';
+                    const catLink = libro.categoria1
+                        ? `<br><strong>Categoría:</strong> <a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria1))}">${esc(libro.categoria1)}</a>`
+                        : '';
+    
+                    tarjeta.innerHTML = `
+                    <div class="portada-contenedor">
+                        <div class="portada-fallback">
+                            <div class="fallback-titulo">${tituloEsc}</div>
+                            <div class="fallback-autor">${autorEsc}</div>
                         </div>
+                        <img class="portada-img" src="./img/${encodeURIComponent(libro.id)}-tapa.jpg" alt="${tituloEsc}" loading="lazy"
+                             onload="this.previousElementSibling.style.display='none'"
+                             onerror="this.style.display='none'">
+                        <button type="button" class="btn-agregar-carrito"
+                                data-id="${esc(libro.id)}"
+                                aria-label="Agregar al carrito"
+                                title="Agregar al carrito">
+                            <img class="btn-agregar-carrito__icono" src="./img/carrito-claro.svg" alt="" aria-hidden="true">
+                        </button>
                     </div>
-                    <div class="footer-tarjeta">
-                        <span class="precio">${esc(formatearPrecio(libro.precio))}</span>
-                        <span class="btn-comprar">Ver ficha</span>
-                    </div>
-                `;
-                fragment.appendChild(tarjeta);
-            });
-
-            grilla.appendChild(fragment);
-
-            // Sincronizar el estado de los botones con el carrito actual
-            actualizarTodosLosBotonesCarrito();
-        }        // ← acá cierra la función
+                        <div class="info">
+                            <h2>${tituloEsc}</h2>
+                            <p class="autor">
+                                <a href="#" class="autor-link" data-autor="${autorEsc}">${autorEsc}</a>
+                            </p>
+                            <div class="detalles">
+                                <strong>Editorial:</strong> ${editorialEsc}<br>
+                                <strong>Estado:</strong> ${estadoEsc}${catLink}
+                            </div>
+                        </div>
+                        <div class="footer-tarjeta">
+                            <span class="precio">${esc(formatearPrecio(libro.precio))}</span>
+                            <span class="btn-comprar">Ver ficha</span>
+                        </div>
+                    `;
+    
+                    fragment.appendChild(tarjeta);
+                });
+    
+                grilla.appendChild(fragment);
+    
+                // Sincronizar el estado de los botones con el carrito actual
+                actualizarTodosLosBotonesCarrito();
+            }
 
         // ============================================================
         // MODAL DE FICHA (E2 + E4 + F1)
@@ -2112,29 +2088,6 @@
                     actualizarContadorHeader();
                 } else if (resultado.motivo === 'duplicado') {
                     actualizarBotonCarrito(btnAgregar);
-                }
-                return;
-            }
-        });
-
-            // Botón "Agregar al carrito"
-            const btnAgregar = e.target.closest('.btn-agregar-carrito');
-            if (btnAgregar) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (btnAgregar.disabled) return;
-
-                const id = btnAgregar.dataset.id;
-                const libro = librosData.find(l => l.id === id);
-                if (!libro) return;
-
-                const resultado = agregarAlCarrito(libro);
-                if (resultado.ok) {
-                    actualizarBotonCarrito(btnAgregar);
-                    actualizarContadorHeader();  // función del Bloque 3
-                } else if (resultado.motivo === 'duplicado') {
-                    actualizarBotonCarrito(btnAgregar); // por las dudas
                 }
                 return;
             }
