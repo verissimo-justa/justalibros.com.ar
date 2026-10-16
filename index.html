@@ -1069,7 +1069,107 @@
                 timerId = setTimeout(() => fn(...args), delay);
             };
         }
+        // ============================================================
+        // CARRITO DE COMPRAS
+        // ============================================================
+        const CARRITO_STORAGE_KEY = 'justa-carrito';
 
+        // Opciones de envío (tarifas planas por ahora)
+        const OPCIONES_ENVIO = {
+            retiro: {
+                id: 'retiro',
+                nombre: 'Retiro en Haedo',
+                costo: 0,
+                aclaracion: ''
+            },
+            moto: {
+                id: 'moto',
+                nombre: 'Envío Moto (CABA/GBA)',
+                costo: 6000,
+                aclaracion: 'Solo CABA y GBA'
+            },
+            correo: {
+                id: 'correo',
+                nombre: 'Correo Argentino (Nacional)',
+                costo: 10000,
+                aclaracion: 'A todo el país. Envíos a zonas alejadas pueden tener un adicional.'
+            }
+        };
+
+        // ------------------------------------------------------------
+        // Lectura y escritura del carrito en localStorage
+        // ------------------------------------------------------------
+        function leerCarrito() {
+            try {
+                const raw = localStorage.getItem(CARRITO_STORAGE_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (err) {
+                console.warn('Carrito corrupto, se reinicia:', err);
+                return [];
+            }
+        }
+
+        function guardarCarrito(items) {
+            try {
+                localStorage.setItem(CARRITO_STORAGE_KEY, JSON.stringify(items));
+            } catch (err) {
+                console.warn('No se pudo guardar el carrito:', err);
+            }
+        }
+
+        // ------------------------------------------------------------
+        // Operaciones básicas
+        // ------------------------------------------------------------
+        function estaEnCarrito(id) {
+            return leerCarrito().some(item => item.id === id);
+        }
+
+        function agregarAlCarrito(libro) {
+            const carrito = leerCarrito();
+
+            // Como cada libro es único, no permitimos duplicados
+            if (carrito.some(item => item.id === libro.id)) {
+                return { ok: false, motivo: 'duplicado' };
+            }
+
+            // Guardamos solo lo necesario para el checkout
+            carrito.push({
+                id: libro.id,
+                titulo: libro.titulo,
+                autor: libro.autor,
+                precio: Number(String(libro.precio).replace(/[^0-9]/g, '')) || 0
+            });
+
+            guardarCarrito(carrito);
+            return { ok: true };
+        }
+
+        function quitarDelCarrito(id) {
+            const carrito = leerCarrito().filter(item => item.id !== id);
+            guardarCarrito(carrito);
+            return carrito;
+        }
+
+        function vaciarCarrito() {
+            guardarCarrito([]);
+        }
+
+        function cantidadCarrito() {
+            return leerCarrito().length;
+        }
+
+        function subtotalCarrito() {
+            return leerCarrito().reduce((acc, item) => acc + (item.precio || 0), 0);
+        }
+
+        // ------------------------------------------------------------
+        // Formato de precio para mostrar
+        // ------------------------------------------------------------
+        function formatearPrecioCarrito(n) {
+            return '$' + Number(n || 0).toLocaleString('es-AR');
+        }
         function enlaceCompra(libro) {
             const w = (libro.whatsapp || '').trim();
             if (!w) return '';
