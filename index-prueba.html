@@ -50,8 +50,8 @@
             --color-portada-accento:    #8a9bb5;
             --color-portada-grad-1:     #f4f7fb;
             --color-portada-grad-2:     #dde6f0;
-            --color-titulo-libro: #001F3B;
-            --color-autor-libro: #4C7BB3;
+            --color-titulo-libro:       #002D55;
+            --color-autor-libro:        #003B6F;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -277,9 +277,18 @@
         .info .autor a:hover,
         .modal-info .autor a:hover {
             color: #003B6F;
-            text-decoration: underline;
         }
-        .info .detalles { font-size: 0.85rem; color: var(--color-autor-libro); margin-bottom: auto; line-height: 1.4; }
+        .info .detalles a.categoria-link,
+        .modal-detalles a.categoria-link {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s;
+        }   
+        .info .detalles a.categoria-link:hover,
+        .modal-detalles a.categoria-link:hover {
+            color: #003B6F;
+        }
+        .info .detalles { font-size: 0.85rem; color: var(--color-autor-libro); margin-top: 0.6em; margin-bottom: auto; line-height: 1.4; }
 
         .footer-tarjeta {
             padding: 15px;
@@ -671,7 +680,6 @@
         
         .footer-lista a:hover {
             color: var(--color-texto);
-            text-decoration: underline;
         }
         
         .footer-copy {
@@ -1138,7 +1146,12 @@
                 document.getElementById('buscador').value = autorBuscado;
                 filtrarCatalogo();
             }
-    
+            // F: si hay ?categoria=XXX en la URL, filtrar por esa categoría
+        const catBuscada = params.get('categoria');
+        if (catBuscada) {
+            document.getElementById('filtro-categoria').value = catBuscada;
+            filtrarCatalogo();
+        }
         } catch (error) {
             console.error('Error en la carga:', error);
             contador.innerText = 'Error al conectar con el archivo de libros.';
@@ -1313,10 +1326,14 @@
                         <p class="autor">
                             <a href="#" class="autor-link" data-autor="${esc(libro.autor)}">${esc(libro.autor)}</a>
                         </p>
-                        <div class="detalles">
-                            <strong>Editorial:</strong> ${esc(libro.editorial) || '-'}<br>
-                            <strong>Estado:</strong> ${esc(libro.estado) || '-'}
-                        </div>
+                    <div class="detalles">
+                        <strong>Editorial:</strong> ${esc(libro.editorial) || '-'}<br>
+                        <strong>Estado:</strong> ${esc(libro.estado) || '-'}${
+                            libro.categoria1
+                                ? `<br><strong>Categoría:</strong> <a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria1))}">${esc(libro.categoria1)}</a>`
+                                : ''
+                        }
+                    </div>
                     </div>
                     <div class="footer-tarjeta">
                         <span class="precio">${esc(formatearPrecio(libro.precio))}</span>
@@ -1347,11 +1364,19 @@
             btn.href = enlace || '#';
             btn.style.display = enlace ? 'inline-block' : 'none';
 
+            const cat1HTML = libro.categoria1
+                ? `<a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria1))}">${esc(libro.categoria1)}</a>`
+                : '-';
+            
+            const cat2HTML = libro.categoria2
+                ? `<a href="#" class="categoria-link" data-categoria="${esc(normalizar(libro.categoria2))}">${esc(libro.categoria2)}</a>`
+                : '-';
+            
             document.getElementById('modal-txt-detalles').innerHTML = `
                 <p><strong>Editorial:</strong> ${esc(libro.editorial) || 'No especificada'}</p>
                 <p><strong>Año de edición:</strong> ${esc(libro.anio) || '-'}</p>
-                <p><strong>Categoría principal:</strong> ${esc(libro.categoria1) || '-'}</p>
-                <p><strong>Subcategoría:</strong> ${esc(libro.categoria2) || '-'}</p>
+                <p><strong>Categoría principal:</strong> ${cat1HTML}</p>
+                <p><strong>Subcategoría:</strong> ${cat2HTML}</p>
                 <p><strong>Estado de conservación:</strong> ${esc(libro.estado) || '-'}</p>
             `;
 
@@ -1484,7 +1509,19 @@
             history.replaceState(null, '', `?autor=${encodeURIComponent(autor)}`);
             document.getElementById('grilla-libros').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-
+        function filtrarPorCategoria(categoriaKey) {
+            if (!categoriaKey) return;
+        
+            document.getElementById('buscador').value = '';
+            document.getElementById('filtro-categoria').value = categoriaKey;
+            document.getElementById('filtro-estado').value = '';
+            document.getElementById('ordenar-por').value = '';
+        
+            cerrarModal();
+            filtrarCatalogo();
+            history.replaceState(null, '', `?categoria=${encodeURIComponent(categoriaKey)}`);
+            document.getElementById('grilla-libros').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
         // ============================================================
         // PAGINACIÓN
         // ============================================================
@@ -1803,11 +1840,23 @@
 
         // Delegación: filtrar por autor al clickear el nombre
         document.addEventListener('click', (e) => {
-            const link = e.target.closest('.autor-link');
-            if (!link) return;
-            e.preventDefault();
-            e.stopPropagation();
-            filtrarPorAutor(link.dataset.autor);
+            // Autor
+            const linkAutor = e.target.closest('.autor-link');
+            if (linkAutor) {
+                e.preventDefault();
+                e.stopPropagation();
+                filtrarPorAutor(linkAutor.dataset.autor);
+                return;
+            }
+        
+            // Categoría
+            const linkCat = e.target.closest('.categoria-link');
+            if (linkCat) {
+                e.preventDefault();
+                e.stopPropagation();
+                filtrarPorCategoria(linkCat.dataset.categoria);
+                return;
+            }
         });
         
         // Escape: cierra popup de imagen o modal
