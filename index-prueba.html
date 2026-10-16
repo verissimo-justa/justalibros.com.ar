@@ -735,16 +735,20 @@
                     padding-left: 0;
                 }
                 header h1 {
-                    font-size: 2.4rem;               /* ← sube hasta completar el ancho */
+                    font-size: 8.5vw;
                     width: 100%;
-                    justify-content: space-between;  /* ← reparte "justa libros" | "♻" | "relecturas" */
-                    gap: 0.28em;                      /* mismo gap proporcional que desktop */
+                    justify-content: flex-start;
+                    flex-wrap: nowrap;
+                    gap: 0.25em;
+                    white-space: nowrap;
+                    overflow: hidden;   /* si no entra, recorta en lugar de romper */
                 }
                 header h1 .icono-reciclado {
                     width: 1em;
                     height: 1em;
+                    margin-left: 0.15em;
+                    margin-right: 0.15em;
                 }
-                /* ...resto de reglas igual... */
             }
             .precio { font-size: 1.25rem; }
             .btn-comprar {
