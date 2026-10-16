@@ -182,6 +182,7 @@
         .btn-comprar:focus-visible,
         .btn-cerrar:focus-visible,
         .btn-limpiar:focus-visible,
+        .btn-secundario:focus-visible,
         .btn-volver-arriba:focus-visible {
             outline: 3px solid var(--color-borde-focus);
             outline-offset: 2px;
@@ -851,7 +852,6 @@
         }
     </style>
 </head>
-
 <body>
     <!-- Skip link (E7) -->
     <a href="#grilla-libros" class="skip-link">Saltar al catálogo</a>
@@ -892,7 +892,7 @@
         </select>
     </div>
 
-    <div class="grilla" id="grilla-libros" role="region" aria-label="Catálogo de libros"></div>
+    <div class="grilla" id="grilla-libros" role="region" aria-label="Catálogo de libros" tabindex="-1"></div>
 
     <!-- Paginación -->
     <div class="paginacion" id="paginacion" style="display: none;">
@@ -998,13 +998,13 @@
 
     <!-- Lupa circular -->
     <div class="lupa-circular" id="lupa-circular"></div>
-
-    <script>
+        <script>
         // ============================================================
         // CONFIGURACIÓN
         // ============================================================
         const URL_SHEETS_TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRqiqbESbtl1SVOFo_7kDqXeqs7IcbzWjfdEjB3m0_d-3EOHRnI460qYc0nc97wEXbRGZriVz6RrWc_/pub?output=tsv';
         const ORDEN_ESTADOS = ['como nuevo', 'muy bueno', 'bueno', 'regular'];
+        const ESTADOS_OCULTOS = ['vendido'];
 
         // Estado global
         let librosData = [];
@@ -1032,43 +1032,43 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
 
-	const tituloOrdenable = (titulo) => {
+        const tituloOrdenable = (titulo) => {
             const t = normalizar(titulo);
-            return t.replace(/^(el|la|los|las|un|una|unos|unas|uno)\s+/i, '').trim();
-            };
+            return t.replace(/^(el|la|los|las|un|una|unos|unas)\s+/i, '').trim();
+        };
 
-	const formatearPrecio = (precio) => {
+        const formatearPrecio = (precio) => {
             if (!precio) return '-';
             const num = parseInt(precio.toString().replace(/[^0-9]/g, ''), 10);
             return isNaN(num) ? precio : '$' + num.toLocaleString('es-AR');
-            };
+        };
 
-	const numeroDe = (valor, defaultVal = Infinity) => {
+        const numeroDe = (valor, defaultVal = Infinity) => {
             const n = parseInt((valor || '').toString().replace(/[^0-9]/g, ''), 10);
             return isNaN(n) ? defaultVal : n;
-            };
+        };
 
-	const numeroPrecio = (p) => numeroDe(p);
-	const numeroAnio   = (a) => numeroDe(a);
-	const numeroId     = (id) => numeroDe(id, -Infinity);
+        const numeroPrecio = (p) => numeroDe(p);
+        const numeroAnio   = (a) => numeroDe(a);
+        const numeroId     = (id) => numeroDe(id, -Infinity);
 
-	const cmp = (a, b) => (a === b ? 0 : (a < b ? -1 : 1));
+        const cmp = (a, b) => (a === b ? 0 : (a < b ? -1 : 1));
 
-	const placeholderSVG = (texto) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+        const placeholderSVG = (texto) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
             `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="210">
-            <rect width="100%" height="100%" fill="#e8eef6"/>
-            <text x="50%" y="50%" font-family="sans-serif" font-size="14" fill="#8a9bb5" text-anchor="middle">${esc(texto)}</text>
+                <rect width="100%" height="100%" fill="#e8eef6"/>
+                <text x="50%" y="50%" font-family="sans-serif" font-size="14" fill="#8a9bb5" text-anchor="middle">${esc(texto)}</text>
             </svg>`
-);
+        );
 
-	// Debounce: retrasa la ejecución hasta que pasen `delay` ms sin llamadas
-	function debounce(fn, delay = 200) {
+        // Debounce: retrasa la ejecución hasta que pasen `delay` ms sin llamadas
+        function debounce(fn, delay = 200) {
             let timerId;
             return (...args) => {
-            clearTimeout(timerId);
-            timerId = setTimeout(() => fn(...args), delay);
+                clearTimeout(timerId);
+                timerId = setTimeout(() => fn(...args), delay);
             };
-}
+        }
 
         function enlaceCompra(libro) {
             const w = (libro.whatsapp || '').trim();
@@ -1120,7 +1120,7 @@
                 if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status);
 
                 const texto = await respuesta.text();
-                librosData = interpretarCSV(texto);
+                librosData = interpretarTSV(texto);
 
                 if (librosData.length === 0) {
                     document.getElementById('grilla-libros').innerHTML = '';
@@ -1143,7 +1143,11 @@
 
                 if (idBuscado) {
                     const libro = librosData.find(l => l.id === idBuscado);
-                    if (libro) abrirModal(libro);
+                    if (libro) {
+                        abrirModal(libro);
+                    } else {
+                        contador.innerText = 'El libro que buscás ya no está disponible.';
+                    }
                 } else if (autorBuscado) {
                     document.getElementById('buscador').value = autorBuscado;
                     filtrarCatalogo();
@@ -1161,9 +1165,9 @@
         }
 
         // ============================================================
-        // PARSER CSV
+        // PARSER TSV
         // ============================================================
-        function interpretarCSV(texto) {
+        function interpretarTSV(texto) {
             const limpio = texto.replace(/^\uFEFF/, '').replace(/\r/g, '').trim();
             if (!limpio) return [];
 
@@ -1181,7 +1185,7 @@
                     autorN:         (r.autorn || '').toString().trim(),
                     autorA:         (r.autora || '').toString().trim(),
                     editorial:      (r.editorial || '').toString().trim(),
-                    anio:           (r.anio || '').toString().trim(),
+                    anio:           (r.anio || r.ano || '').toString().trim(),
                     categoria1:     (r.categoria1 || r.categoria || '').toString().trim(),
                     categoria2:     (r.categoria2 || r.subcategoria || '').toString().trim(),
                     estado:         (r.estado || '').toString().trim(),
@@ -1196,7 +1200,7 @@
                 .filter(l =>
                     l.titulo &&
                     l.id &&
-                    normalizar(l.disponibilidad) !== 'vendido'
+                    !ESTADOS_OCULTOS.includes(normalizar(l.disponibilidad))
                 );
         }
 
@@ -1302,8 +1306,16 @@
                 tarjeta.tabIndex = 0;
                 tarjeta.setAttribute('role', 'button');
                 tarjeta.setAttribute('aria-label', `${libro.titulo} — ${libro.autor}`);
-                tarjeta.onclick = () => abrirModal(libro);
+
+                // Bug 1: si el click viene de un link interno, no abre el modal
+                tarjeta.onclick = (e) => {
+                    if (e.target.closest('a')) return;
+                    abrirModal(libro);
+                };
+
+                // Bug 2: si el Enter/Space viene de un link interno, no abre el modal
                 tarjeta.onkeydown = (e) => {
+                    if (e.target !== tarjeta) return;
                     if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
                         abrirModal(libro);
@@ -1482,9 +1494,8 @@
             cerrarModal();
             filtrarCatalogo();
 
-            if (urlParam) {
-                history.replaceState(null, '', urlParam);
-            }
+            // Bug 4: siempre actualizamos la URL (con pathname si no hay param)
+            history.replaceState(null, '', urlParam || location.pathname);
 
             document.getElementById('grilla-libros')
                 .scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1703,7 +1714,7 @@
 
             return copia;
         }
-        // ============================================================
+                // ============================================================
         // POP-UP DE IMAGEN AMPLIADA
         // ============================================================
         function abrirPopupImagen(src, alt) {
@@ -1864,13 +1875,17 @@
             }
         });
 
-        // Tab atrapado dentro del modal
+        // Tab atrapado dentro del modal (solo sobre elementos visibles)
         document.getElementById('modal-libro').addEventListener('keydown', (e) => {
             if (e.key !== 'Tab') return;
             const modal = e.currentTarget;
-            const focusables = modal.querySelectorAll(
+
+            // Bug 3: filtramos solo los elementos visibles (offsetParent no es null
+            // cuando el elemento está renderizado dentro del DOM)
+            const focusables = [...modal.querySelectorAll(
                 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            );
+            )].filter(el => el.offsetParent !== null);
+
             if (focusables.length === 0) return;
             const primero = focusables[0];
             const ultimo = focusables[focusables.length - 1];
