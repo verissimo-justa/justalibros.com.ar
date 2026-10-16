@@ -92,7 +92,7 @@
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.3em;
+            gap: 0.28em;
             font-weight: 400;
         }
         header h1 .marca {
@@ -567,7 +567,7 @@
             flex-direction: row;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.3em;
+            gap: 0.28em;
             justify-content: flex-start;   /* ← alinea a la izquierda */
         }
         
@@ -730,19 +730,21 @@
         /* ============================================================
            RESPONSIVE
            ============================================================ */
-        @media (max-width: 700px) {
-            header {
-                padding-left: 0;
-            }
-            header h1 {
-                font-size: 1.8rem;
-                width: 100%;
-                justify-content: space-around;
-                gap: 0.2em;
-            }
-            header h1 .icono-reciclado {
-                width: 1em;
-                height: 1em;
+            @media (max-width: 700px) {
+                header {
+                    padding-left: 0;
+                }
+                header h1 {
+                    font-size: 2.4rem;               /* ← sube hasta completar el ancho */
+                    width: 100%;
+                    justify-content: space-between;  /* ← reparte "justa libros" | "♻" | "relecturas" */
+                    gap: 0.28em;                      /* mismo gap proporcional que desktop */
+                }
+                header h1 .icono-reciclado {
+                    width: 1em;
+                    height: 1em;
+                }
+                /* ...resto de reglas igual... */
             }
             .precio { font-size: 1.25rem; }
             .btn-comprar {
