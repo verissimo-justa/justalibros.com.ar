@@ -532,7 +532,197 @@
             border-color: var(--color-borde-focus);
             color: var(--color-texto);
         }
+        /* ---------- Modal del carrito ---------- */
+        .modal-carrito-contenido {
+            flex-direction: column;
+            max-width: 560px;
+            gap: 20px;
+        }
+        .modal-carrito-titulo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-titulo-libro);
+            padding-right: 40px;   /* espacio para el botón cerrar */
+        }
 
+        /* Lista de items */
+        .carrito-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 40vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .carrito-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--color-borde);
+        }
+        .carrito-item:last-child {
+            border-bottom: none;
+        }
+        .carrito-item__info {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .carrito-item__titulo {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-titulo-libro);
+            line-height: 1.3;
+            margin-bottom: 2px;
+        }
+        .carrito-item__autor {
+            font-size: 0.85rem;
+            color: var(--color-autor-libro);
+            margin-bottom: 4px;
+        }
+        .carrito-item__precio {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--color-texto);
+        }
+        .carrito-item__quitar {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid var(--color-borde-input);
+            background: transparent;
+            color: var(--color-texto-tenue);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .carrito-item__quitar:hover {
+            border-color: var(--color-borde-focus);
+            color: var(--color-texto);
+            background: var(--color-portada-fondo);
+        }
+
+        /* Estado vacío */
+        .carrito-vacio {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-texto-suave);
+        }
+        .carrito-vacio__sub {
+            font-size: 0.9rem;
+            color: var(--color-texto-tenue);
+            margin-top: 6px;
+        }
+
+        /* Envío */
+        .carrito-envio__titulo {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-texto-tenue);
+            margin-bottom: 10px;
+        }
+        .carrito-envio__opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .carrito-envio__opcion {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid var(--color-borde);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--color-superficie);
+        }
+        .carrito-envio__opcion:hover {
+            border-color: var(--color-borde-focus);
+            background: var(--color-portada-fondo);
+        }
+        .carrito-envio__opcion input[type="radio"] {
+            margin-top: 3px;
+            accent-color: var(--color-primario);
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .carrito-envio__opcion-texto {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .carrito-envio__opcion-nombre {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-texto);
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: baseline;
+        }
+        .carrito-envio__opcion-costo {
+            font-weight: 700;
+            color: var(--color-titulo-libro);
+            white-space: nowrap;
+        }
+        .carrito-envio__opcion-aclaracion {
+            font-size: 0.78rem;
+            color: var(--color-texto-tenue);
+            margin-top: 2px;
+            line-height: 1.3;
+        }
+        .carrito-envio__opcion input[type="radio"]:checked ~ .carrito-envio__opcion-texto .carrito-envio__opcion-nombre {
+            color: var(--color-primario);
+        }
+
+        /* Resumen */
+        .carrito-resumen {
+            padding-top: 12px;
+            border-top: 1px solid var(--color-borde);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .carrito-resumen__fila {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: var(--color-texto-suave);
+        }
+        .carrito-resumen__fila--total {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--color-texto);
+            padding-top: 8px;
+            border-top: 1px solid var(--color-borde);
+            margin-top: 6px;
+        }
+
+        /* Acciones */
+        .carrito-acciones {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        .btn-finalizar-compra {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+        .btn-finalizar-compra:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         .no-resultados {
             grid-column: 1 / -1;
             text-align: center;
@@ -1136,7 +1326,56 @@
             </div>
         </div>
     </div>
+    <!-- Modal del carrito -->
+    <div class="modal" id="modal-carrito"
+         role="dialog" aria-modal="true" aria-labelledby="modal-carrito-titulo"
+         onclick="if(event.target === this) cerrarModalCarrito()">
+        <div class="modal-contenido modal-carrito-contenido">
+            <button class="btn-cerrar" onclick="cerrarModalCarrito()" aria-label="Cerrar">&times;</button>
 
+            <h2 id="modal-carrito-titulo" class="modal-carrito-titulo">Tu carrito</h2>
+
+            <!-- Lista de items -->
+            <div class="carrito-items" id="carrito-items"></div>
+
+            <!-- Estado vacío -->
+            <div class="carrito-vacio" id="carrito-vacio" hidden>
+                <p>Tu carrito está vacío.</p>
+                <p class="carrito-vacio__sub">Agregá libros desde el catálogo para empezar.</p>
+            </div>
+
+            <!-- Envío -->
+            <div class="carrito-envio" id="carrito-envio">
+                <h3 class="carrito-envio__titulo">Envío</h3>
+                <div class="carrito-envio__opciones" id="carrito-envio-opciones"></div>
+            </div>
+
+            <!-- Resumen -->
+            <div class="carrito-resumen">
+                <div class="carrito-resumen__fila">
+                    <span>Subtotal</span>
+                    <span id="carrito-subtotal">$0</span>
+                </div>
+                <div class="carrito-resumen__fila">
+                    <span>Envío</span>
+                    <span id="carrito-envio-costo">$0</span>
+                </div>
+                <div class="carrito-resumen__fila carrito-resumen__fila--total">
+                    <span>Total</span>
+                    <span id="carrito-total">$0</span>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="carrito-acciones">
+                <button type="button" class="btn-secundario" onclick="cerrarModalCarrito()">Seguir mirando</button>
+                <button type="button" class="btn-comprar btn-finalizar-compra" id="btn-finalizar-compra"
+                        disabled>
+                    Finalizar compra
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- Pop-up de imagen ampliada -->
     <div class="img-popup-overlay" id="img-popup" onclick="cerrarPopupImagen()">
         <img id="img-popup-src" src="" alt="" onclick="event.stopPropagation()">
@@ -1360,7 +1599,133 @@
                 contador.hidden = true;
             }
         }
+        // ------------------------------------------------------------
+        // Modal del carrito
+        // ------------------------------------------------------------
+        function abrirModalCarrito() {
+            elementoFocoAnterior = document.activeElement;
+            renderizarCarrito();
+            document.getElementById('modal-carrito').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
 
+            setTimeout(() => {
+                const cerrar = document.querySelector('#modal-carrito .btn-cerrar');
+                if (cerrar) cerrar.focus();
+            }, 50);
+        }
+
+        function cerrarModalCarrito() {
+            const modal = document.getElementById('modal-carrito');
+            if (modal.style.display !== 'flex') return;
+
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+
+            if (elementoFocoAnterior && elementoFocoAnterior.focus) {
+                elementoFocoAnterior.focus();
+                elementoFocoAnterior = null;
+            }
+        }
+
+        // Guarda la opción de envío elegida (persiste mientras el modal esté abierto)
+        let envioSeleccionado = null;
+
+        function renderizarCarrito() {
+            const items = leerCarrito();
+            const contenedorItems = document.getElementById('carrito-items');
+            const contenedorVacio = document.getElementById('carrito-vacio');
+            const contenedorEnvio = document.getElementById('carrito-envio');
+            const contenedorResumen = document.querySelector('.carrito-resumen');
+            const contenedorAcciones = document.querySelector('.carrito-acciones');
+            const btnFinalizar = document.getElementById('btn-finalizar-compra');
+
+            // Vaciar contenedores
+            contenedorItems.innerHTML = '';
+            document.getElementById('carrito-envio-opciones').innerHTML = '';
+
+            // --- Estado vacío ---
+            if (items.length === 0) {
+                contenedorVacio.hidden = false;
+                contenedorEnvio.hidden = true;
+                contenedorResumen.hidden = true;
+                contenedorAcciones.hidden = true;
+                btnFinalizar.disabled = true;
+                return;
+            }
+
+            contenedorVacio.hidden = true;
+            contenedorEnvio.hidden = false;
+            contenedorResumen.hidden = false;
+            contenedorAcciones.hidden = false;
+
+            // --- Renderizar items ---
+            const fragment = document.createDocumentFragment();
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'carrito-item';
+                div.innerHTML = `
+                    <div class="carrito-item__info">
+                        <div class="carrito-item__titulo">${esc(item.titulo)}</div>
+                        <div class="carrito-item__autor">${esc(item.autor)}</div>
+                        <div class="carrito-item__precio">${formatearPrecioCarrito(item.precio)}</div>
+                    </div>
+                    <button type="button" class="carrito-item__quitar"
+                            data-id="${esc(item.id)}"
+                            aria-label="Quitar del carrito"
+                            title="Quitar del carrito">✕</button>
+                `;
+                fragment.appendChild(div);
+            });
+            contenedorItems.appendChild(fragment);
+
+            // --- Renderizar opciones de envío ---
+            const contenedorOpciones = document.getElementById('carrito-envio-opciones');
+            Object.values(OPCIONES_ENVIO).forEach(opcion => {
+                const label = document.createElement('label');
+                label.className = 'carrito-envio__opcion';
+                const aclaracion = opcion.aclaracion
+                    ? `<div class="carrito-envio__opcion-aclaracion">${esc(opcion.aclaracion)}</div>`
+                    : '';
+                label.innerHTML = `
+                    <input type="radio" name="envio" value="${opcion.id}"
+                           ${envioSeleccionado === opcion.id ? 'checked' : ''}>
+                    <div class="carrito-envio__opcion-texto">
+                        <div class="carrito-envio__opcion-nombre">
+                            <span>${esc(opcion.nombre)}</span>
+                            <span class="carrito-envio__opcion-costo">${opcion.costo === 0 ? 'Gratis' : formatearPrecioCarrito(opcion.costo)}</span>
+                        </div>
+                        ${aclaracion}
+                    </div>
+                `;
+                contenedorOpciones.appendChild(label);
+            });
+
+            // --- Actualizar totales ---
+            actualizarTotalesCarrito();
+
+            // --- Habilitar/deshabilitar Finalizar ---
+            btnFinalizar.disabled = !envioSeleccionado;
+        }
+
+        function actualizarTotalesCarrito() {
+            const subtotal = subtotalCarrito();
+            let costoEnvio = 0;
+
+            if (envioSeleccionado && OPCIONES_ENVIO[envioSeleccionado]) {
+                costoEnvio = OPCIONES_ENVIO[envioSeleccionado].costo;
+            }
+
+            const total = subtotal + costoEnvio;
+
+            document.getElementById('carrito-subtotal').textContent = formatearPrecioCarrito(subtotal);
+            document.getElementById('carrito-envio-costo').textContent =
+                envioSeleccionado ? formatearPrecioCarrito(costoEnvio) : '—';
+            document.getElementById('carrito-total').textContent = formatearPrecioCarrito(total);
+
+            // Habilitar finalizar solo si hay envío elegido y hay items
+            const btnFinalizar = document.getElementById('btn-finalizar-compra');
+            btnFinalizar.disabled = !envioSeleccionado || cantidadCarrito() === 0;
+        }
         // ------------------------------------------------------------
         // Enlace de compra por WhatsApp
         // ------------------------------------------------------------
@@ -2193,12 +2558,41 @@
                 return;
             }
         });
+        // Modal del carrito: cambio de opción de envío
+        document.getElementById('carrito-envio-opciones').addEventListener('change', (e) => {
+            if (e.target.name === 'envio') {
+                envioSeleccionado = e.target.value;
+                actualizarTotalesCarrito();
+            }
+        });
 
+        // Modal del carrito: quitar item (delegación)
+        document.getElementById('carrito-items').addEventListener('click', (e) => {
+            const btn = e.target.closest('.carrito-item__quitar');
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+
+            const id = btn.dataset.id;
+            quitarDelCarrito(id);
+            renderizarCarrito();
+            actualizarContadorHeader();
+            actualizarTodosLosBotonesCarrito();
+        });
+
+        // Botón "Finalizar compra" (placeholder, se completa en el Bloque 5)
+        document.getElementById('btn-finalizar-compra').addEventListener('click', () => {
+            console.log('Finalizar compra. Falta conectar con Apps Script y Mercado Pago (Bloque 5).');
+            console.log('Items:', leerCarrito());
+            console.log('Envío:', envioSeleccionado);
+        });
         // Escape: cierra popup de imagen o modal
         document.addEventListener('keydown', (e) => {
             if (e.key !== 'Escape') return;
             if (document.getElementById('img-popup').classList.contains('activo')) {
                 cerrarPopupImagen();
+            } else if (document.getElementById('modal-carrito').style.display === 'flex') {
+                cerrarModalCarrito();
             } else {
                 cerrarModal();
             }
@@ -2260,10 +2654,9 @@
             renderizarPaginaActual();
         });
 
-        // Botón del carrito en el header (se completa en el Bloque 4)
+        // Botón del carrito en el header → abrir modal
         document.getElementById('btn-carrito-header').addEventListener('click', () => {
-            // Bloque 4: acá abriremos el modal del carrito
-            console.log('Click en carrito. Falta implementar el modal (Bloque 4).');
+            abrirModalCarrito();
         });
 
         // Botón "volver arriba"
