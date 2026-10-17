@@ -534,8 +534,11 @@
         }
         /* ---------- Modal del carrito ---------- */
         .modal-carrito-contenido {
+            display: flex;
             flex-direction: column;
+            flex-wrap: nowrap;   /* ← no permitir wrap */
             max-width: 560px;
+            width: 100%;
             gap: 20px;
         }
         .modal-carrito-titulo {
