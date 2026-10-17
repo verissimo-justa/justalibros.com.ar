@@ -2623,7 +2623,6 @@
                 }
                 return;
             }
-
             // Botón "Agregar" del modal de ficha
             const btnAgregarModal = e.target.closest('#modal-btn-agregar');
             if (btnAgregarModal) {
@@ -2641,6 +2640,32 @@
                     actualizarBotonAgregarModal(btnAgregarModal, true);
                     actualizarTodosLosBotonesCarrito();
                     actualizarContadorHeader();
+                    setTimeout(() => cerrarModal(), 500);
+                }
+                return;
+            }
+            // Botón "Agregar" del modal de ficha
+            const btnAgregarModal = e.target.closest('#modal-btn-agregar');
+            if (btnAgregarModal) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (btnAgregarModal.disabled) return;
+
+                const idModal = btnAgregarModal.dataset.id;
+                const libroModal = librosData.find(l => l.id === idModal);
+                if (!libroModal) return;
+
+                const resultadoModal = agregarAlCarrito(libroModal);
+                if (resultadoModal.ok) {
+                    actualizarBotonAgregarModal(btnAgregarModal, true);
+                    actualizarTodosLosBotonesCarrito();
+                    actualizarContadorHeader();
+                    setTimeout(() => cerrarModal(), 500);
+                } else if (resultadoModal.motivo === 'duplicado') {
+                    // Si ya estaba en el carrito, actualizar el botón visualmente
+                    // y cerrar el modal igual (para que no quede raro)
+                    actualizarBotonAgregarModal(btnAgregarModal, true);
                     setTimeout(() => cerrarModal(), 500);
                 }
                 return;
