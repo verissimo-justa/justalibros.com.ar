@@ -713,6 +713,13 @@
             flex-direction: column;
             gap: 6px;
         }
+        /* Forzar display: none cuando el elemento tiene el atributo hidden */
+        .carrito-resumen[hidden],
+        .carrito-acciones[hidden],
+        .carrito-envio[hidden],
+        .carrito-vacio[hidden] {
+            display: none !important;
+        }
         .carrito-resumen__fila {
             display: flex;
             justify-content: space-between;
@@ -1694,6 +1701,12 @@
                 contenedorResumen.hidden = true;
                 contenedorAcciones.hidden = true;
                 btnFinalizar.disabled = true;
+
+                // Resetear totales a 0
+                document.getElementById('carrito-subtotal').textContent = formatearPrecioCarrito(0);
+                document.getElementById('carrito-envio-costo').textContent = '—';
+                document.getElementById('carrito-total').textContent = formatearPrecioCarrito(0);
+
                 return;
             }
 
@@ -2656,12 +2669,79 @@
             actualizarTodosLosBotonesCarrito();
         });
 
-        // Botón "Finalizar compra" (placeholder, se completa en el Bloque 5)
-        document.getElementById('btn-finalizar-compra').addEventListener('click', () => {
-            console.log('Finalizar compra. Falta conectar con Apps Script y Mercado Pago (Bloque 5).');
-            console.log('Items:', leerCarrito());
-            console.log('Envío:', envioSeleccionado);
-        });
+        // ============================================================
+        // FINALIZAR COMPRA - CONEXIÓN CON MERCADO PAGO
+        // ============================================================
+        // ⚠️ PEGÁ ACÁ LA URL QUE TE DIO GOOGLE APPS SCRIPT
+        const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwnqoxa07fhlipZCxtjW1Knc1fucJSO5XT5KVuOBS-ERqZBqldmi9-qSExN_51FCMIt/exec';
+
+        async function finalizarCompra() {
+            const items = leerCarrito();
+            if (items.length === 0) return;
+
+            // Validar que haya un envío seleccionado
+            if (!envioSeleccionado) {
+                alert('Por favor, elegí una opción de envío.');
+                return;
+            }
+
+            // Pedir nombre y teléfono al cliente
+            const nombre = prompt('¿Tu nombre completo?');
+            if (!nombre || !nombre.trim()) {
+                alert('Necesitamos tu nombre para procesar el pedido.');
+                return;
+            }
+
+            const telefono = prompt('¿Tu teléfono de contacto?');
+            if (!telefono || !telefono.trim()) {
+                alert('Necesitamos tu teléfono para coordinar el envío.');
+                return;
+            }
+
+            const costoEnvio = OPCIONES_ENVIO[envioSeleccionado].costo;
+
+            const payload = {
+                items: items,
+                nombre: nombre.trim(),
+                telefono: telefono.trim(),
+                costoEnvio: costoEnvio,
+                tipoEnvio: envioSeleccionado
+            };
+
+            // Mostrar estado de carga en el botón
+            const btn = document.getElementById('btn-finalizar-compra');
+            const textoOriginal = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Procesando...';
+
+            try {
+                const respuesta = await fetch(URL_APPS_SCRIPT, {
+                    method: 'POST',
+                    // IMPORTANTE: text/plain para evitar preflight CORS
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+
+                const datos = await respuesta.json();
+
+                if (datos.init_point) {
+                    // Redirigir a Mercado Pago
+                    window.location.href = datos.init_point;
+                } else {
+                    alert('Error: ' + (datos.error || 'No se pudo generar el pago'));
+                    btn.disabled = false;
+                    btn.textContent = textoOriginal;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión. Por favor, intentá de nuevo.');
+                btn.disabled = false;
+                btn.textContent = textoOriginal;
+            }
+        }
+
+        // Reemplazar el listener del botón
+        document.getElementById('btn-finalizar-compra').addEventListener('click', finalizarCompra);
 
         // Escape: cierra popup de imagen o modal
         document.addEventListener('keydown', (e) => {
