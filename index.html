@@ -536,10 +536,12 @@
         .modal-carrito-contenido {
             display: flex;
             flex-direction: column;
-            flex-wrap: nowrap;   /* ← no permitir wrap */
+            flex-wrap: nowrap;
             max-width: 560px;
             width: 100%;
             gap: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-carrito-titulo {
             font-size: 1.5rem;
@@ -553,9 +555,6 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-height: 40vh;
-            overflow-y: auto;
-            padding-right: 4px;
         }
         .carrito-item {
             display: flex;
