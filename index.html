@@ -2677,7 +2677,7 @@
         // FINALIZAR COMPRA - CONEXIÓN CON MERCADO PAGO
         // ============================================================
         // ⚠️ PEGÁ ACÁ LA URL QUE TE DIO GOOGLE APPS SCRIPT
-        const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwnqoxa07fhlipZCxtjW1Knc1fucJSO5XT5KVuOBS-ERqZBqldmi9-qSExN_51FCMIt/exec';
+        const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzm2ztxIbzu9us8HgrSbRGdfC1M3T1R2Do7d-dCj9rAJ4UY7eAuvzZq7Exy3CInAt3c/exec';
 
         async function finalizarCompra() {
             const items = leerCarrito();
@@ -2719,11 +2719,15 @@
             btn.textContent = 'Procesando...';
 
             try {
+                // Convertimos el objeto a un formato de formulario (clave=valor&clave2=valor2)
+                const formData = new URLSearchParams();
+                formData.append('datos', JSON.stringify(payload)); // Mandamos todo el JSON como un solo campo
+
                 const respuesta = await fetch(URL_APPS_SCRIPT, {
                     method: 'POST',
-                    // IMPORTANTE: text/plain para evitar preflight CORS
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
+                    // Usamos el tipo de contenido de formulario clásico
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
                 });
 
                 const datos = await respuesta.json();
