@@ -2381,9 +2381,7 @@
                 alert('Necesitamos tu teléfono para coordinar el envío.');
                 return;
             }
-
             const costoEnvio = OPCIONES_ENVIO[envioSeleccionado].costo;
-
             const payload = {
                 items: items,
                 nombre: nombre.trim(),
@@ -2392,8 +2390,7 @@
                 tipoEnvio: envioSeleccionado
             };
 
-            const btn = document.getElementById('btn-finalizar-compra
-                                                );
+            const btn = document.getElementById('btn-finalizar-compra');
             const textoOriginal = btn.textContent;
             btn.disabled = true;
             btn.textContent = 'Procesando...';
