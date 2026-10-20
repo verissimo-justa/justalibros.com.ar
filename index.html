@@ -2359,73 +2359,65 @@
         // ============================================================
         // FINALIZAR COMPRA — MERCADO PAGO
         // ============================================================
-        const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwJObKCcAKQFUvSJID1RyCC3CJf3N9SAziLFpRLoJHqZan1-uVyPVlMhq5yHQXtALcH/exec';
+        const URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbyNxdFJQdYoceAaY-EP49Olk2MO_ObNNsMJDtRBaGngrGFn8w2-3jD8XBQJcJrL36Y8/exec';
 
-        async function finalizarCompra() {
-            const items = leerCarrito();
-            if (items.length === 0) return;
+async function finalizarCompra() {
+    const items = leerCarrito();
+    if (items.length === 0) return;
 
-            if (!envioSeleccionado) {
-                alert('Por favor, elegí una opción de envío.');
-                return;
-            }
+    // Validaciones
+    if (!envioSeleccionado) {
+        alert('Por favor, elegí una opción de envío.');
+        return;
+    }
+    const nombre = prompt('¿Tu nombre completo?');
+    if (!nombre || !nombre.trim()) {
+        alert('Necesitamos tu nombre para procesar el pedido.');
+        return;
+    }
+    const telefono = prompt('¿Tu teléfono de contacto?');
+    if (!telefono || !telefono.trim()) {
+        alert('Necesitamos tu teléfono para coordinar el envío.');
+        return;
+    }
 
-            const nombre = prompt('¿Tu nombre completo?');
-            if (!nombre || !nombre.trim()) {
-                alert('Necesitamos tu nombre para procesar el pedido.');
-                return;
-            }
+    const costoEnvio = OPCIONES_ENVIO[envioSeleccionado].costo;
+    const payload = {
+        items: items,
+        nombre: nombre.trim(),
+        telefono: telefono.trim(),
+        costoEnvio: costoEnvio,
+        tipoEnvio: envioSeleccionado
+    };
 
-            const telefono = prompt('¿Tu teléfono de contacto?');
-            if (!telefono || !telefono.trim()) {
-                alert('Necesitamos tu teléfono para coordinar el envío.');
-                return;
-            }
+    // --- ACÁ ESTÁ EL CAMBIO CLAVE ---
+    // Creamos un formulario HTML (invisible) y lo enviamos a Google
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = URL_APPS_SCRIPT;
+    form.target = '_blank'; // Abre la respuesta (Mercado Pago) en una pestaña nueva
 
-            const costoEnvio = OPCIONES_ENVIO[envioSeleccionado].costo;
+    // Metemos el JSON del carrito en un campo oculto
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'datos';
+    input.value = JSON.stringify(payload);
+    
+    form.appendChild(input);
+    document.body.appendChild(form);
+    
+    // Enviamos y limpiamos
+    form.submit();
+    document.body.removeChild(form);
 
-            const payload = {
-                items: items,
-                nombre: nombre.trim(),
-                telefono: telefono.trim(),
-                costoEnvio: costoEnvio,
-                tipoEnvio: envioSeleccionado
-            };
-
-            const btn = document.getElementById('btn-finalizar-compra');
-            const textoOriginal = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = 'Procesando...';
-
-            try {
-                const formData = new URLSearchParams();
-                formData.append('datos', JSON.stringify(payload));
-
-                const respuesta = await fetch(URL_APPS_SCRIPT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                });
-
-                const datos = await respuesta.json();
-
-                if (datos.init_point) {
-                    window.location.href = datos.init_point;
-                } else {
-                    alert('Error: ' + (datos.error || 'No se pudo generar el pago'));
-                    btn.disabled = false;
-                    btn.textContent = textoOriginal;
-                }
-            } catch (error) {
-                console.error('Error detallado:', error);
-                alert('Error de conexión: ' + error.message);
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
-            }
-        }
-
-        document.getElementById('btn-finalizar-compra').addEventListener('click', finalizarCompra);
-
+    // Restauramos el botón por si el usuario vuelve
+    const btn = document.getElementById('btn-finalizar-compra');
+    btn.textContent = 'Procesando...';
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = 'Finalizar compra';
+    }, 3000);
+}
         // ============================================================
         // EVENTOS DE UI
         // ============================================================
