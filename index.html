@@ -2381,7 +2381,9 @@
                 alert('Necesitamos tu teléfono para coordinar el envío.');
                 return;
             }
+
             const costoEnvio = OPCIONES_ENVIO[envioSeleccionado].costo;
+
             const payload = {
                 items: items,
                 nombre: nombre.trim(),
