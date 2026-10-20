@@ -1263,7 +1263,7 @@
             if (!raw) return [];
             const parsed = JSON.parse(raw);
             return Array.isArray(parsed) ? parsed : [];
-        } catch (err)
+        } catch (err) {
             console.warn('Carrito corrupto, se reinicia:', err);
             return [];
         }
@@ -1340,7 +1340,6 @@
         guardarCarrito(despues);
         return antes.length - despues.length;
     }
-
     // ============================================================
     // SINCRONIZACIÓN DE UI DEL CARRITO
     // ============================================================
