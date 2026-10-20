@@ -2370,16 +2370,9 @@ async function finalizarCompra() {
         alert('Por favor, elegí una opción de envío.');
         return;
     }
-    const nombre = prompt('¿Tu nombre completo?');
-    if (!nombre || !nombre.trim()) {
-        alert('Necesitamos tu nombre para procesar el pedido.');
-        return;
-    }
-    const telefono = prompt('¿Tu teléfono de contacto?');
-    if (!telefono || !telefono.trim()) {
-        alert('Necesitamos tu teléfono para coordinar el envío.');
-        return;
-    }
+    // Datos genéricos (Mercado Pago los pedirá en su pantalla de pago)
+    const nombre = "Cliente Web";
+    const telefono = "0000000000";
 
     const costoEnvio = OPCIONES_ENVIO[envioSeleccionado].costo;
     const payload = {
@@ -2395,7 +2388,7 @@ async function finalizarCompra() {
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = URL_APPS_SCRIPT;
-    form.target = '_blank'; // Abre la respuesta (Mercado Pago) en una pestaña nueva
+    form.target = '_self';
 
     // Metemos el JSON del carrito en un campo oculto
     const input = document.createElement('input');
