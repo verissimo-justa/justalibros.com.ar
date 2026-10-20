@@ -2412,12 +2412,12 @@
                 btn.disabled = false;
                 btn.textContent = textoOriginal;
             }
-            } catch (error) {
-                console.error('Error detallado:', error);   // ← mirá F12 > Console
-                alert('Error: ' + error.message);
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
-            }
+        } catch (error) {
+            console.error('Error detallado:', error);
+            alert('Error: ' + error.message);
+            btn.disabled = false;
+            btn.textContent = textoOriginal;
+        }
     }
 
     document.getElementById('btn-finalizar-compra').addEventListener('click', finalizarCompra);
