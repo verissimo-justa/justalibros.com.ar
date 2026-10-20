@@ -1263,7 +1263,7 @@
             if (!raw) return [];
             const parsed = JSON.parse(raw);
             return Array.isArray(parsed) ? parsed : [];
-        } catch (err) {
+        } catch (err)
             console.warn('Carrito corrupto, se reinicia:', err);
             return [];
         }
