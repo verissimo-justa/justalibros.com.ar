@@ -2365,32 +2365,27 @@ async function finalizarCompra() {
     const items = leerCarrito();
     if (items.length === 0) return;
 
-    // Validaciones
     if (!envioSeleccionado) {
         alert('Por favor, elegí una opción de envío.');
         return;
     }
-    // Datos genéricos (Mercado Pago los pedirá en su pantalla de pago)
-    const nombre = "Cliente Web";
-    const telefono = "0000000000";
 
     const costoEnvio = OPCIONES_ENVIO[envioSeleccionado].costo;
+
+    // Mandamos los datos genéricos, Mercado Pago se encarga de pedir los reales
     const payload = {
         items: items,
-        nombre: nombre.trim(),
-        telefono: telefono.trim(),
+        nombre: "Cliente Web",
+        telefono: "1122334455",
         costoEnvio: costoEnvio,
         tipoEnvio: envioSeleccionado
     };
 
-    // --- ACÁ ESTÁ EL CAMBIO CLAVE ---
-    // Creamos un formulario HTML (invisible) y lo enviamos a Google
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = URL_APPS_SCRIPT;
     form.target = '_self';
 
-    // Metemos el JSON del carrito en un campo oculto
     const input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'datos';
@@ -2398,6 +2393,8 @@ async function finalizarCompra() {
     
     form.appendChild(input);
     document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
     
     // Enviamos y limpiamos
     form.submit();
