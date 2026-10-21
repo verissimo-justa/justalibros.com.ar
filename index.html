@@ -2539,6 +2539,12 @@ async function finalizarCompra() {
         document.getElementById('anio-copyright').textContent = new Date().getFullYear();
 
         // ============================================================
+        // CONEXIONES DE BOTONES (por si se perdieron en el copy/paste)
+        // ============================================================
+        document.getElementById('btn-carrito-header').addEventListener('click', abrirModalCarrito);
+        document.getElementById('btn-finalizar-compra').addEventListener('click', finalizarCompra);
+
+        // ============================================================
         // INICIO
         // ============================================================
         window.addEventListener('DOMContentLoaded', cargarCatalogo);
